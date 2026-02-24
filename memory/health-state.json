@@ -1,0 +1,16 @@
+{
+  "lastChecks": {
+    "email": 1771922941,
+    "calendar": 1771922941,
+    "todoist": 1771922941,
+    "system": 1771922958,
+    "homeassistant": null
+  },
+  "lastAlerts": {},
+  "counters": {
+    "emailChecks": 1,
+    "calendarChecks": 1,
+    "todoistChecks": 1,
+    "systemChecks": 1
+  }
+}

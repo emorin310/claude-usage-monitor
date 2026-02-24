@@ -105,9 +105,11 @@ if [ "$CHECK_TYPE" == "all" ] || [ "$CHECK_TYPE" == "todoist" ]; then
             
             # Run the existing Todoist check
             if /home/magi/clawd/scripts/check-todoist.sh > /tmp/todoist_result.json; then
-                echo '{"type":"todoist","status":"completed","data":"'$(cat /tmp/todoist_result.json)'"}' | jq '.' >> "$RESULTS_FILE"
+                # Properly embed the JSON data
+                TODOIST_DATA=$(cat /tmp/todoist_result.json | jq -c .)
+                echo "{\"type\":\"todoist\",\"status\":\"completed\",\"data\":$TODOIST_DATA}" >> "$RESULTS_FILE"
             else
-                echo '{"type":"todoist","status":"error","message":"Todoist check failed"}' | jq '.' >> "$RESULTS_FILE"
+                echo '{"type":"todoist","status":"error","message":"Todoist check failed"}' >> "$RESULTS_FILE"
             fi
         fi
     fi
