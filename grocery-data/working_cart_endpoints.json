@@ -1,0 +1,460 @@
+[
+  {
+    "name": "Direct Cart Access",
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/carts/8852ea8a-3466-4c02-a93a-e25f80f73ca3",
+    "data": {
+      "id": "8852ea8a-3466-4c02-a93a-e25f80f73ca3",
+      "modifiedTime": "2026-02-22T01:10:53.866Z",
+      "status": "OPEN",
+      "bannerId": "zehrs",
+      "customer": {
+        "pcid": "84e967dd-0846-423d-a3d7-dc20cf3b92a8",
+        "name": "TinaMorin",
+        "email": "emorin310@gmail.com"
+      },
+      "orders": [
+        {
+          "internalOrderId": "e6453d8a-c411-431c-a401-6d6021d9427d",
+          "orderId": "e6453d8a-c411-431c-a401-6d6021d9427d",
+          "status": "OPEN",
+          "vendorId": "zehrs",
+          "entries": [
+            {
+              "quantity": 1.0,
+              "offer": {
+                "id": "21191970_EA",
+                "status": "Active",
+                "product": {
+                  "id": "21191970_EA",
+                  "name": "Pub Style Chicken Burger, Fully Cooked",
+                  "description": "The Janes Pub Style Chicken Burger is a fully cooked and frozen chicken burger made with white meat. It is a convenient and quick source of energy with no preservatives, trans fat, and low in saturated fat. Use these Pub Style Chicken Burgers to make delicious chicken burger sliders for your next backyard BBQ.",
+                  "baseUnit": "each",
+                  "brand": "Janes",
+                  "subBrand": null,
+                  "primaryImage": "https://digital.loblaws.ca/PCX/21191970_EA/en/1/21191970_en_front_120.png",
+                  "weighted": false,
+                  "price": null,
+                  "sizeLabel": "G",
+                  "aisleCategoryCode": "27985",
+                  "aisleName": "Food",
+                  "isVariant": false,
+                  "variantGroupId": null,
+                  "variantTheme": null,
+                  "offerType": "OG",
+                  "memberOnlyPrice": null,
+                  "mop": false
+                },
+                "regularPrice": 14.0,
+                "wasPrice": 14.0,
+                "sellingIncrement": 1,
+                "sellingUnit": "EA",
+                "sellingType": "SOLD_BY_EACH",
+                "fulfillmentMethods": [
+                  "pickup"
+                ],
+                "webLink": "/pub-style-chicken-burger-fully-cooked/p/21191970_EA",
+                "promotionLabel": "Prepared in Canada",
+                "promotions": [],
+                "vendor": {
+                  "id": "0533"
+                },
+                "minOrderQuantity": 1.0,
+                "maxOrderQuantity": 24.0,
+                "availabilityStatus": "OK",
+                "badges": {
+                  "dealBadge": null,
+                  "loyaltyBadge": null,
+                  "textBadge": null,
+                  "newItemBadge": null,
+                  "hotmBadge": null,
+                  "promotionalBadge": null,
+                  "recyclingFeeBadge": null,
+                  "mustTryBadge": null,
+                  "preparedInCanadaBadge": {
+                    "expiryDate": null,
+                    "promoType": null,
+                    "text": "Prepared in Canada",
+                    "type": "PREPARED_IN_CANADA"
+                  },
+                  "madeInCanadaBadge": null,
+                  "productOfCanadaBadge": null,
+                  "tariffAppliedBadge": null,
+                  "preparedInQuebecBadge": null
+                },
+                "liam": "21191970_EA",
+                "itemType": "REGULAR"
+              },
+              "prices": {
+                "totalRegularPrice": 14.0,
+                "totalSalePrice": 14.0,
+                "salePrice": 14.0,
+                "memberOnlyPrice": 0.0,
+                "comparisonPrices": [
+                  {
+                    "price": 2.0,
+                    "unit": "g",
+                    "quantity": 100
+                  }
+                ],
+                "ehfTotal": null,
+                "environmentalHandlingFee": null,
+                "taxInfo": ""
+              },
+              "substitutionPreference": {
+                "substitutionAllowed": true,
+                "comment": ""
+              },
+              "shippingTracking": null,
+              "selectedSubstitutionDetails": null,
+              "modifiedTime": "2026-02-22T01:10:53.866Z",
+              "creationTime": "2026-02-22T01:10:53.866Z",
+              "selectedSubstitution": null,
+              "numberOfItems": 1.0,
+              "subscriptionQuantity": null,
+              "subscriptionAvailableCadences": [],
+              "subscriptionCadenceInterval": null,
+              "subscriptionCadence": null
+            },
+            {
+              "quantity": 1.0,
+              "offer": {
+                "id": "21579825_EA",
+                "status": "Active",
+                "product": {
+                  "id": "21579825_EA",
+                  "name": "Kaiser Rolls White, 6 Pack",
+                  "description": null,
+                  "baseUnit": "each",
+                  "brand": "Scale Label-Div",
+                  "subBrand": null,
+                  "primaryImage": "https://digital.loblaws.ca/PCX/21579825_EA/en/1/21579825_enfr_front_v1_120.png",
+                  "weighted": false,
+                  "price": 4.75,
+                  "sizeLabel": "G",
+                  "aisleCategoryCode": "27985",
+                  "aisleName": "Food",
+                  "isVariant": false,
+                  "variantGroupId": null,
+                  "variantTheme": null,
+                  "offerType": "OG",
+                  "memberOnlyPrice": null,
+                  "mop": false
+                },
+                "regularPrice": 4.5,
+                "wasPrice": 4.5,
+                "sellingIncrement": 1,
+                "sellingUnit": "EA",
+                "sellingType": "SOLD_BY_EACH",
+                "fulfillmentMethods": [
+                  "pickup"
+                ],
+                "webLink": "/kaiser-rolls-white-6-pack/p/21579825_EA",
+                "promotionLabel": "Prepared in Canada",
+                "promotions": [],
+                "vendor": {
+                  "id": "0533"
+                },
+                "minOrderQuantity": 1.0,
+                "maxOrderQuantity": 25.0,
+                "availabilityStatus": "OK",
+                "badges": {
+                  "dealBadge": null,
+                  "loyaltyBadge": null,
+                  "textBadge": null,
+                  "newItemBadge": null,
+                  "hotmBadge": null,
+                  "promotionalBadge": null,
+                  "recyclingFeeBadge": null,
+                  "mustTryBadge": null,
+                  "preparedInCanadaBadge": {
+                    "expiryDate": null,
+                    "promoType": null,
+                    "text": "Prepared in Canada",
+                    "type": "PREPARED_IN_CANADA"
+                  },
+                  "madeInCanadaBadge": null,
+                  "productOfCanadaBadge": null,
+                  "tariffAppliedBadge": null,
+                  "preparedInQuebecBadge": null
+                },
+                "liam": "21579825_EA",
+                "itemType": "REGULAR"
+              },
+              "prices": {
+                "totalRegularPrice": 4.5,
+                "totalSalePrice": 4.75,
+                "salePrice": 4.75,
+                "memberOnlyPrice": 0.0,
+                "comparisonPrices": [
+                  {
+                    "price": 1.14,
+                    "unit": "g",
+                    "quantity": 100
+                  }
+                ],
+                "ehfTotal": null,
+                "environmentalHandlingFee": null,
+                "taxInfo": ""
+              },
+              "substitutionPreference": {
+                "substitutionAllowed": true,
+                "comment": ""
+              },
+              "shippingTracking": null,
+              "selectedSubstitutionDetails": null,
+              "modifiedTime": "2026-02-22T01:10:53.866Z",
+              "creationTime": "2026-02-22T01:10:53.866Z",
+              "selectedSubstitution": null,
+              "numberOfItems": 1.0,
+              "subscriptionQuantity": null,
+              "subscriptionAvailableCadences": [],
+              "subscriptionCadenceInterval": null,
+              "subscriptionCadence": null
+            },
+            {
+              "quantity": 1.0,
+              "offer": {
+                "id": "21371880_EA",
+                "status": "Active",
+                "product": {
+                  "id": "21371880_EA",
+                  "name": "Marble Cheddar Natural Cheese Slices",
+                  "description": "<p>Black Diamond Marble Cheddar Natural Cheese Slices make it easier than ever to enjoy a perfect balance of classic marble cheese flavour and sharpness on sandwiches, burgers and more. Busy families can experience the smooth texture and light nutty note of these natural cheese slices without the need for time-consuming prep work. This sliced cheese comes in a convenient resealable package that\u2019s great for lunches, BBQs and everyday snacking. High in protein and a source of calcium, this convenient pack of 12 marble cheese slices is made with the same commitment to quality that Black Diamond has been known for since 1933.</p><ul><li>Product of Canada</li><li>Delicious and convenient real cheese slices</li><li>Rich taste and smooth texture in a blend of white and orange cheddar</li><li>Made with quality milk from Canadian dairies</li><li>Great for sandwiches, burgers and more</li><li>Handy Peel & Reseal packaging helps keep sliced cheese fresh</li><li>High in protein</li><li>Source of calcium</li><li>A trusted Canadian brand since 1933</li><li>12 slices, 240g</li></ul>",
+                  "baseUnit": "each",
+                  "brand": "Black Diamond",
+                  "subBrand": null,
+                  "primaryImage": "https://digital.loblaws.ca/PCX/21371880_EA/en/1/21371880_en_front_120.png",
+                  "weighted": false,
+                  "price": 6.49,
+                  "sizeLabel": "G",
+                  "aisleCategoryCode": "27985",
+                  "aisleName": "Food",
+                  "isVariant": false,
+                  "variantGroupId": null,
+                  "variantTheme": null,
+                  "offerType": "OG",
+                  "memberOnlyPrice": null,
+                  "mop": false
+                },
+                "regularPrice": 5.0,
+                "wasPrice": 5.0,
+                "sellingIncrement": 1,
+                "sellingUnit": "EA",
+                "sellingType": "SOLD_BY_EACH",
+                "fulfillmentMethods": [
+                  "pickup"
+                ],
+                "webLink": "/marble-cheddar-natural-cheese-slices/p/21371880_EA",
+                "promotionLabel": "Prepared in Canada",
+                "promotions": [
+                  {
+                    "promoNumber": "000002832056",
+                    "pricingMethod": "3",
+                    "type": "DEAL",
+                    "title": "",
+                    "expiryDate": "9999-12-31T00:00:00Z"
+                  }
+                ],
+                "vendor": {
+                  "id": "0533"
+                },
+                "minOrderQuantity": 1.0,
+                "maxOrderQuantity": 25.0,
+                "availabilityStatus": "OK",
+                "badges": {
+                  "dealBadge": {
+                    "expiryDate": null,
+                    "promoType": "ZRP3",
+                    "text": "MULTI",
+                    "type": "MULTI"
+                  },
+                  "loyaltyBadge": null,
+                  "textBadge": null,
+                  "newItemBadge": null,
+                  "hotmBadge": null,
+                  "promotionalBadge": null,
+                  "recyclingFeeBadge": null,
+                  "mustTryBadge": null,
+                  "preparedInCanadaBadge": {
+                    "expiryDate": null,
+                    "promoType": null,
+                    "text": "Prepared in Canada",
+                    "type": "PREPARED_IN_CANADA"
+                  },
+                  "madeInCanadaBadge": null,
+                  "productOfCanadaBadge": null,
+                  "tariffAppliedBadge": null,
+                  "preparedInQuebecBadge": null
+                },
+                "liam": "21371880_EA",
+                "itemType": "REGULAR"
+              },
+              "prices": {
+                "totalRegularPrice": 5.0,
+                "totalSalePrice": 6.49,
+                "salePrice": 6.49,
+                "memberOnlyPrice": 0.0,
+                "comparisonPrices": [
+                  {
+                    "price": 2.7,
+                    "unit": "g",
+                    "quantity": 100
+                  }
+                ],
+                "ehfTotal": null,
+                "environmentalHandlingFee": null,
+                "taxInfo": ""
+              },
+              "substitutionPreference": {
+                "substitutionAllowed": false,
+                "comment": ""
+              },
+              "shippingTracking": null,
+              "selectedSubstitutionDetails": null,
+              "modifiedTime": "2026-02-22T01:10:53.866Z",
+              "creationTime": "2026-02-22T01:10:53.866Z",
+              "selectedSubstitution": null,
+              "numberOfItems": 1.0,
+              "subscriptionQuantity": null,
+              "subscriptionAvailableCadences": [],
+              "subscriptionCadenceInterval": null,
+              "subscriptionCadence": null
+            }
+          ],
+          "exchangedBins": [],
+          "redeemableOptions": [],
+          "fulfillment": {
+            "type": "pickup",
+            "pickupBooking": {
+              "id": "",
+              "pickupStartTime": null,
+              "pickupEndTime": null,
+              "charge": 0,
+              "pickupLocation": {
+                "id": "0533",
+                "name": "Zehrs Cambridge Centre",
+                "orderContactNumber": "5196224343",
+                "locationType": "STORE",
+                "pickupType": "STORE",
+                "storeId": "0533",
+                "visible": true,
+                "shoppable": true,
+                "geoPoint": {
+                  "latitude": 43.391663,
+                  "longitude": -80.316116
+                },
+                "address": {
+                  "country": "Canada",
+                  "city": "Cambridge",
+                  "postalCode": "N1R 7L7",
+                  "addressLabel": "",
+                  "region": "Ontario",
+                  "streetAddress": "400 Conestoga Blvd"
+                },
+                "bufferTimeInHours": 2.0,
+                "orderNotificationTimeRestriction": {
+                  "hoursBeforePickupStartTime": 0.5,
+                  "hoursAfterPickupStartTime": 0.5
+                },
+                "features": {
+                  "scanAndGo": false,
+                  "instoreModeAvailableToPublic": null,
+                  "arrivalDetectionEnabled": false,
+                  "arrivalDetectionAvailableToPublic": false
+                },
+                "timeZone": "EST5EDT",
+                "baggingOptions": []
+              },
+              "slotType": "pickup",
+              "cutOffDate": null,
+              "slotExpiryDateTime": null
+            },
+            "delivery": null,
+            "pickupInstructions": {
+              "allowItemOnTopOrBottomShelf": true,
+              "bringOwnBags": false,
+              "comment": null
+            },
+            "courier": null
+          },
+          "vouchers": [],
+          "modifiedTime": null,
+          "payment": null,
+          "giftCardPayment": null,
+          "maxAllowedGiftCard": 2,
+          "taxEntries": [],
+          "wscMembershipPayment": false,
+          "baggingInfo": null,
+          "customizedPromotions": {
+            "stampCards": {
+              "isRedeemed": true,
+              "balanceAvailable": 114,
+              "rewardsAvailable": 5,
+              "balanceRequestedToRedeem": 0,
+              "eligibleItems": 0
+            },
+            "marvel": {
+              "eligibleToRedeem": true,
+              "isRedeemed": null
+            }
+          },
+          "totals": {
+            "subTotal": 25.24,
+            "totalDiscounts": 0.0,
+            "totalProductDiscounts": 0.0,
+            "totalVoucherDiscounts": 0.0,
+            "totalLoyaltyDiscount": 0.0,
+            "totalMemberOnlySavings": 0.0,
+            "totalPrice": 25.24,
+            "totalPreauth": null,
+            "totalTax": 0.0,
+            "totalShippingFee": null,
+            "totalRedeemablePrice": 0,
+            "totalPointsToRedeem": null,
+            "totalCourierFee": null,
+            "totalPickupFee": 0,
+            "totalLoyaltyPoints": null,
+            "additionalFees": 0.0,
+            "estimatedTotal": 25.24,
+            "totalDeliveryTip": null,
+            "totalDeliveryFee": 0,
+            "totalServiceFee": 0,
+            "totalGiftCardAmount": 0
+          }
+        }
+      ],
+      "minCartValue": 30.0,
+      "hasLiquor": false,
+      "minPCXPassCartValue": 30.0,
+      "orderAggregations": {
+        "live": null,
+        "open": {
+          "taxBreakdown": [],
+          "totals": {
+            "subTotal": 25.24,
+            "totalDiscounts": 0.0,
+            "totalProductDiscounts": 0.0,
+            "totalVoucherDiscounts": 0.0,
+            "totalLoyaltyDiscount": 0.0,
+            "totalMemberOnlySavings": 0.0,
+            "totalPrice": 25.24,
+            "totalPreauth": null,
+            "totalTax": 0.0,
+            "totalShippingFee": null,
+            "totalRedeemablePrice": 0,
+            "totalPointsToRedeem": null,
+            "totalCourierFee": null,
+            "totalPickupFee": 0,
+            "totalLoyaltyPoints": null,
+            "additionalFees": 0.0,
+            "estimatedTotal": 25.24,
+            "totalDeliveryTip": null,
+            "totalDeliveryFee": 0,
+            "totalServiceFee": 0,
+            "totalGiftCardAmount": 0
+          }
+        }
+      }
+    }
+  }
+]

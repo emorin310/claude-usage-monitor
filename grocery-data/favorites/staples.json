@@ -1,0 +1,16 @@
+{
+  "items": [
+    "milk",
+    "bread", 
+    "eggs",
+    "cheese",
+    "chicken",
+    "bananas",
+    "yogurt",
+    "butter",
+    "onions",
+    "potatoes"
+  ],
+  "auto_check_frequency": "weekly",
+  "last_updated": "2026-02-22T21:07:36+00:00"
+}

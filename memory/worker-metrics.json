@@ -1,0 +1,18 @@
+{
+  "workers": {
+    "morning-briefing": {
+      "lastSpawned": "2026-02-02T08:00:00-05:00",
+      "runId": "96908378-49f0-4feb-9a16-abefbbf8cbcc",
+      "model": "ollama/qwen2.5:14b",
+      "status": "running"
+    },
+    "todoist-check": {
+      "lastSpawned": "2026-02-02T09:00:00-05:00",
+      "runId": "87e28fd4-457d-4cbb-bff8-7dcd1d6ce15b",
+      "model": "ollama/llama3.2:3b",
+      "status": "running"
+    }
+  },
+  "comparisons": {},
+  "lastUpdated": "2026-02-02T09:00:00-05:00"
+}

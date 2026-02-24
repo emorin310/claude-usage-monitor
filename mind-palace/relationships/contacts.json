@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "updated": "2026-01-29",
+  "contacts": [
+    {
+      "name": "Eric Morin",
+      "relation": "primary_human",
+      "telegram_id": "6643669380",
+      "email": "emorin310@gmail.com"
+    },
+    {
+      "name": "Tina",
+      "relation": "wife",
+      "phone": "+12267504220"
+    },
+    {
+      "name": "Jessa",
+      "relation": "daughter",
+      "phone": "+15192127711"
+    },
+    {
+      "name": "Chris",
+      "relation": "future_son_in_law",
+      "notes": "Jessa's fiancé, HVAC technician"
+    },
+    {
+      "name": "Justin",
+      "relation": "son"
+    },
+    {
+      "name": "Jordan",
+      "relation": "son"
+    },
+    {
+      "name": "Nadja",
+      "relation": "sister",
+      "notes": "Forestry professor"
+    },
+    {
+      "name": "Rejeanne",
+      "relation": "mother",
+      "notes": "Retired, Sunday calls"
+    }
+  ],
+  "business_contacts": [
+    {
+      "name": "Dawson Dental",
+      "type": "healthcare",
+      "phone": "(519) 622-3332",
+      "address": "541 Hespeler Road, Unit 103, Cambridge, ON",
+      "sms": "+18338111178"
+    },
+    {
+      "name": "Realign Health",
+      "type": "healthcare",
+      "provider": "Dr. Phil Sammut",
+      "address": "2040 Eagle Street N"
+    }
+  ]
+}

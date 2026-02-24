@@ -1,0 +1,258 @@
+{
+  "version": 1,
+  "lastScanned": "2026-02-18T16:46:52.604Z",
+  "stagnantThresholdDays": 7,
+  "totalTasks": 50,
+  "taskActivity": {
+    "68MjP52gmg68VHXc": {
+      "content": "re-design outdoor fireplace",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "d23d9503"
+    },
+    "6WmwXfwwVF5p8XP7": {
+      "content": "pve2 basics",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "06b54ece"
+    },
+    "6WmwXqvrvFxW8xr7": {
+      "content": "video driver",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "4f44d4fd"
+    },
+    "6Wmwc38v4HCv37q7": {
+      "content": "plex / Jellyfin",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "865be9bb"
+    },
+    "6XFCJX3Cwcwffj77": {
+      "content": "Troubleshoot cloudflare",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "5acb9342"
+    },
+    "6XFCJWx64Mwrq5q7": {
+      "content": "Opnsense settings",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "34a543d5"
+    },
+    "6XFCJX7wj9vw8Gjf": {
+      "content": "Hardware transcoding",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "4dc1bb10"
+    },
+    "6XFCJX7GP3hFmjff": {
+      "content": "Ombi",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "82b7ee1c"
+    },
+    "6XFCJXCQ56CGhFff": {
+      "content": "Sabnzbd lxc",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "4ed1a83f"
+    },
+    "6XFCJXCJcMwrXMP7": {
+      "content": "Radarr lxc",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "95bebf32"
+    },
+    "6XFCJX9G24w9r2hf": {
+      "content": "Sonarr lxc",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "4d05733c"
+    },
+    "6XFCJXC82gwhpjF7": {
+      "content": "Pihole",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "82f850d0"
+    },
+    "6XFCJXGx2WJ6GRgf": {
+      "content": "Physical reorg",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "7638675f"
+    },
+    "6XFCJvc47mm55MPJ": {
+      "content": "Metrics",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "414e9984"
+    },
+    "6XFCJvrc98WVh8RJ": {
+      "content": "KPIs",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "3827f209"
+    },
+    "6XGWP5pC7FMXxCqJ": {
+      "content": "job descriptions",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "ba326f5c"
+    },
+    "68Mj2xFQRxFx5226": {
+      "content": "slab for fireplace",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "17c7f31b"
+    },
+    "694FxF23qWGHCj7c": {
+      "content": "mobile workbench",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "9e755429"
+    },
+    "694GhGQCmhrMWJRG": {
+      "content": "renew sketchup",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "3a0fec1e"
+    },
+    "6XFCJXF2PJqF7jff": {
+      "content": "Opnsense dns",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "6e741740"
+    },
+    "6XFCJXJQCjV59GP7": {
+      "content": "Marvin downtime schedule",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "d9d64aec"
+    },
+    "6XFCJvXr7jCv7ChQ": {
+      "content": "Weekly metrics",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "e501d071"
+    },
+    "6XFCJvmCcq2WJcJx": {
+      "content": "month metrics",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "e2b94f69"
+    },
+    "6XG4hFw5FmcrQmX7": {
+      "content": "[draw.io](https://draw.io) updates",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "1b08b88f"
+    },
+    "6XV3Pxf54mfHvWjJ": {
+      "content": "explore superblocks",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "65149860"
+    },
+    "6c9c7VX7R2Wmv3m6": {
+      "content": "ETS Caper Metrics",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "86f61031"
+    },
+    "6cJj33j2gHJjGVM6": {
+      "content": "cornhole",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "b798c1d1"
+    },
+    "6ch3c4CgXXWw4FG7": {
+      "content": "migrate Arrs docker containers from Marvin to Ford",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "3d89f2a8"
+    },
+    "6frMrfvq3h8pc36Q": {
+      "content": "Review Eric's existing Todoist structure",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "94ae4dba"
+    },
+    "6frPMfHW4jP59Xrf": {
+      "content": "Deploy 3-tier monitoring stack (Beszel + Uptime Kuma + ntfy)",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "e88621e0"
+    },
+    "6frPQG28vCpmHfPQ": {
+      "content": "📢 Announcements",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "30807613"
+    },
+    "6frPRgRPWCHpqCPQ": {
+      "content": "🥕 **Cray:** Greetings Council! As Instacart's dedicated wor",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "066c9e48"
+    },
+    "6frV8C7FMPXHmXPc": {
+      "content": "📧 Gmail Inbox Zero Project",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "21ede29a"
+    },
+    "6frcwVW6J6cf38r7": {
+      "content": "Weekly infra health check (automated via cron)",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "df0d338e"
+    },
+    "6frgWcF2fqQ5h3cQ": {
+      "content": "Generate 2 workflow optimization ideas for Eric",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "82bb496b"
+    },
+    "6frmG7447pVpfgq6": {
+      "content": "🖥️ Multi-Chat UI for Clawdbot",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "ee5ed088"
+    },
+    "6frmGCMwwQg9q7Mp": {
+      "content": "update portfolio",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "70995969"
+    },
+    "6frmgP6hPHgFRvvC": {
+      "content": "🧠 Mind Palace Architecture",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "8b78f98d"
+    },
+    "6frp8XR6pCg2JrMC": {
+      "content": "🤖 AI Model Selection Guide",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "b6bcb1c6"
+    },
+    "6fvV3Wf72gH3WPMj": {
+      "content": "📊 Model Tier Management & Auto-Switching Runbook",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "e5bc8ad3"
+    },
+    "6fw4jVC47Xcm8RMj": {
+      "content": "📡 MQTT Inter-Bot Communication",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "b2072600"
+    },
+    "67pM49wrjGm348v2": {
+      "content": "start workout program",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "2e50adf7"
+    },
+    "68gRgVwXwqg38wHc": {
+      "content": "counters",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "ac57ea96"
+    },
+    "694FmVRXWv2GjvCM": {
+      "content": "office ceiling",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "107dc825"
+    },
+    "694G7Fc99rrCVq76": {
+      "content": "lunch bag organizers",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "8f9e374d"
+    },
+    "6XFCJXHjQ4JhMPjf": {
+      "content": "3 tier architecture",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "c528d1d8"
+    },
+    "6XFCJvmRpWCJ655J": {
+      "content": "Product knowledge",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "59ecdb5c"
+    },
+    "6XH53QC6J74wfwhJ": {
+      "content": "explore smartsheets for capturing time spent on tickets with",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "c8b6caa3"
+    },
+    "6XWWxjP4MhM5Xchr": {
+      "content": "get team going in Lattice",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "7f62e4ce"
+    },
+    "6cJj3C5cGwpcCgMc": {
+      "content": "wled house front repairs",
+      "lastUpdated": "2026-02-18T16:46:52.604Z",
+      "lastHash": "29d5e163"
+    }
+  }
+}

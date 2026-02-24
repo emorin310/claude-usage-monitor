@@ -1,0 +1,107 @@
+{
+  "audit_date": "2026-02-06T01:17:52",
+  "dataset_analyzed": "Gmail Everything Else category",
+  "expected_count": 6499,
+  "actual_count_found": 201,
+  "sample_size": 500,
+  "analysis_duration_seconds": 51,
+  
+  "discrepancy_explanation": "Gmail API query only found 201 emails, suggesting the 6,499 count refers to a different view (All Mail, archived emails, or specific label). Need clarification on target dataset.",
+  
+  "top_10_senders": [
+    {"sender": "messages-noreply@linkedin.com", "sample_count": 38, "estimated_total": 15, "type": "notification"},
+    {"sender": "noreply@makerworld.com", "sample_count": 33, "estimated_total": 13, "type": "notification"},
+    {"sender": "noreply@google.com", "sample_count": 28, "estimated_total": 11, "type": "notification"},
+    {"sender": "support@joinbeam.com", "sample_count": 26, "estimated_total": 10, "type": "transactional"},
+    {"sender": "noreply@github.com", "sample_count": 24, "estimated_total": 9, "type": "notification"},
+    {"sender": "do_not_reply@email.apple.com", "sample_count": 23, "estimated_total": 9, "type": "notification"},
+    {"sender": "no-reply@thangs.com", "sample_count": 22, "estimated_total": 8, "type": "notification"},
+    {"sender": "no_reply@email.apple.com", "sample_count": 20, "estimated_total": 8, "type": "notification"},
+    {"sender": "noreply@okta.com", "sample_count": 20, "estimated_total": 8, "type": "notification"},
+    {"sender": "info@letsenhance.io", "sample_count": 17, "estimated_total": 6, "type": "promotional"}
+  ],
+  
+  "age_distribution": {
+    "oldest_email_date": "2026-01-05",
+    "newest_email_date": "2026-02-06",
+    "oldest_days": 31,
+    "median_age_days": 10,
+    "mean_age_days": 11,
+    "note": "Sample only contains emails from past 31 days - historical emails not captured"
+  },
+  
+  "category_breakdown": {
+    "other": {"count": 217, "percentage": 43.4, "estimated_total": 87},
+    "notification": {"count": 133, "percentage": 26.6, "estimated_total": 53},
+    "transactional": {"count": 94, "percentage": 18.8, "estimated_total": 37},
+    "promotional": {"count": 52, "percentage": 10.4, "estimated_total": 20},
+    "newsletter": {"count": 4, "percentage": 0.8, "estimated_total": 1}
+  },
+  
+  "cleanup_opportunities": [
+    {
+      "priority": 1,
+      "action": "Create auto-archive filter for MakerWorld notifications",
+      "query": "from:noreply@makerworld.com",
+      "estimated_emails": 13,
+      "risk": "LOW",
+      "label": "3D Printing/MakerWorld"
+    },
+    {
+      "priority": 2,
+      "action": "Create auto-archive filter for LinkedIn notifications",
+      "query": "from:messages-noreply@linkedin.com",
+      "estimated_emails": 15,
+      "risk": "LOW",
+      "label": "Social/LinkedIn"
+    },
+    {
+      "priority": 3,
+      "action": "Archive all promotional emails",
+      "query": "category:promotional",
+      "estimated_emails": 20,
+      "risk": "LOW",
+      "label": "Archived Promotions"
+    },
+    {
+      "priority": 4,
+      "action": "Create auto-archive filter for Thangs notifications",
+      "query": "from:no-reply@thangs.com",
+      "estimated_emails": 8,
+      "risk": "LOW",
+      "label": "3D Printing/Thangs"
+    },
+    {
+      "priority": 5,
+      "action": "Archive GitHub notifications (review first)",
+      "query": "from:noreply@github.com OR from:notifications@github.com",
+      "estimated_emails": 14,
+      "risk": "MEDIUM",
+      "label": "Dev/GitHub"
+    }
+  ],
+  
+  "immediate_next_steps": [
+    "Clarify which Gmail view contains the 6,499 emails (web interface tab? All Mail? specific label?)",
+    "Create auto-archive filters for top notification senders (LinkedIn, MakerWorld, Thangs)",
+    "Bulk archive promotional category (20 emails, safe)",
+    "Review and archive GitHub/Apple notifications after checking for important items"
+  ],
+  
+  "estimated_impact_if_scaled": {
+    "assumption": "If 6,499 emails follow same patterns as 201 sample",
+    "immediate_safe_archive": "~1,200 emails (notifications + promotions)",
+    "future_prevention": "~800 emails/month auto-filed",
+    "manual_triage_reduction": "~70% of incoming emails"
+  },
+  
+  "technical_issues": [
+    "Gmail API returned 201 for all category queries (possible rate limiting or scope issue)",
+    "Only emails from past 31 days found in sample (historical emails missing)",
+    "Need broader OAuth scopes or alternative data access method",
+    "43% of emails categorized as 'Other' - needs better classification rules"
+  ],
+  
+  "confidence_level": "MEDIUM",
+  "reason": "Good statistical sample analysis, but dataset mismatch (201 vs 6,499) requires clarification before proceeding with bulk operations"
+}

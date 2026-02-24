@@ -1,0 +1,14 @@
+{
+  "council_threads": {
+    "announcements": 22,
+    "handoffs": 12,
+    "status_updates": 16,
+    "questions": 0
+  },
+  "tasks": {
+    "total_magi": 31,
+    "overdue": 3,
+    "needs_magi": 1
+  },
+  "last_checked": "2026-02-24T07:55:59Z"
+}

@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.2.22",
+    "lastTouchedAt": "2026-02-23T12:00:00.000Z",
+    "failsafeConfig": true,
+    "description": "Safe baseline configuration for agent recovery"
+  },
+  "wizard": {
+    "lastRunAt": "2026-02-23T12:00:00.000Z",
+    "lastRunVersion": "2026.2.22",
+    "lastRunCommand": "failsafe",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "anthropic:default": {
+        "provider": "anthropic",
+        "mode": "api_key"
+      },
+      "google:default": {
+        "provider": "google",
+        "mode": "api_key"
+      }
+    }
+  },
+  "models": {},
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "anthropic/claude-sonnet-4-20250514"
+      },
+      "models": {
+        "anthropic/claude-sonnet-4-20250514": {
+          "alias": "sonnet"
+        },
+        "anthropic/claude-haiku-4-5-20251001": {
+          "alias": "haiku"
+        },
+        "google/gemini-2.5-flash": {
+          "alias": "gemini"
+        }
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "workspace": "/home/magi/clawd",
+        "identity": {
+          "name": "Magi",
+          "emoji": "🤖"
+        }
+      }
+    ]
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist",
+      "streaming": "partial"
+    }
+  },
+  "gateway": {
+    "port": 18790,
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": {
+      "allowInsecureAuth": true
+    },
+    "auth": {
+      "mode": "token",
+      "rateLimit": {
+        "maxAttempts": 10,
+        "windowMs": 60000,
+        "lockoutMs": 300000
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "discord": {
+        "enabled": true
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+  "Accept": "application/json, text/plain, */*",
+  "Content-Type": "application/json",
+  "Referer": "https://www.zehrs.ca/",
+  "site-banner": "zehrs",
+  "basesiteid": "zehrs",
+  "x-channel": "web"
+}

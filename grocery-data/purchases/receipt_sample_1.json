@@ -1,0 +1,42 @@
+{
+  "order_number": "12345678",
+  "date": "2026-02-15",
+  "store": "Zehrs Markets - Cambridge",
+  "items": [
+    {
+      "quantity": 1,
+      "name": "2% Milk 4L",
+      "price": 6.49,
+      "total": 6.49
+    },
+    {
+      "quantity": 2,
+      "name": "Whole Wheat Bread",
+      "price": 3.99,
+      "total": 7.98
+    },
+    {
+      "quantity": 12,
+      "name": "Large Eggs",
+      "price": 4.99,
+      "total": 4.99
+    },
+    {
+      "quantity": 1,
+      "name": "Chicken Breast 1kg",
+      "price": 12.99,
+      "total": 12.99
+    },
+    {
+      "quantity": 3,
+      "name": "Bananas 1kg",
+      "price": 1.99,
+      "total": 5.97
+    }
+  ],
+  "subtotal": 38.42,
+  "tax": 0.65,
+  "delivery_fee": 3.99,
+  "total": 43.06,
+  "source": "sample_data"
+}

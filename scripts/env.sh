@@ -1,0 +1,7 @@
+export RADARR_URL="http://10.15.40.89:7878"
+export RADARR_KEY="9357c52a8209410cbfabb2cdad6480bf"
+export SONARR_URL="http://10.15.40.89:8989"
+export SONARR_KEY="09998432e0ec46e590ac9ff9235b4229"
+export JELLYFIN_URL="http://192.168.1.96:8096"
+export JELLYFIN_KEY="c5b4d7fc157b49778470414e5944b0b2"
+export JELLYFIN_PUBLIC="https://jellyfin.ericmorin.online"

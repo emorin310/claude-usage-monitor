@@ -1,0 +1,34 @@
+4.3T	/Volumes/bigstore/REVIEW
+4.2T	/Volumes/bigstore/REVIEW/DOCUMENTS
+4.1T	/Volumes/bigstore/REVIEW/DOCUMENTS/safekeep
+133G	/Volumes/bigstore/REVIEW/DOCUMENTS/Reference
+ 31G	/Volumes/bigstore/REVIEW/PROJECTS
+ 20G	/Volumes/bigstore/REVIEW/PROJECTS/halloween
+6.2G	/Volumes/bigstore/REVIEW/PROJECTS/3D printing
+2.8G	/Volumes/bigstore/REVIEW/PROJECTS/Publishing
+1.5G	/Volumes/bigstore/REVIEW/PROJECTS/photoshop partial edits
+360M	/Volumes/bigstore/REVIEW/DOCUMENTS/draw.io
+240M	/Volumes/bigstore/REVIEW/PROJECTS/in progress
+150M	/Volumes/bigstore/REVIEW/DOCUMENTS/screenshots
+ 38M	/Volumes/bigstore/REVIEW/DOCUMENTS/wled
+ 28M	/Volumes/bigstore/REVIEW/DOCUMENTS/IT
+ 15M	/Volumes/bigstore/REVIEW/PROJECTS/photobook
+9.6M	/Volumes/bigstore/REVIEW/DOCUMENTS/Arduino
+6.2M	/Volumes/bigstore/REVIEW/PROJECTS/stock images
+5.3M	/Volumes/bigstore/REVIEW/DOCUMENTS/Tina
+4.4M	/Volumes/bigstore/REVIEW/DOCUMENTS/Maccy.app
+4.1M	/Volumes/bigstore/REVIEW/PROJECTS/led lighting
+1.8M	/Volumes/bigstore/REVIEW/DOCUMENTS/Health
+1.0M	/Volumes/bigstore/REVIEW/DOCUMENTS/scanned docs
+543K	/Volumes/bigstore/REVIEW/PROJECTS/TRH
+490K	/Volumes/bigstore/REVIEW/DOCUMENTS/icons
+387K	/Volumes/bigstore/REVIEW/DOCUMENTS/brother labels
+347K	/Volumes/bigstore/REVIEW/DOCUMENTS/JumpDesktop
+298K	/Volumes/bigstore/REVIEW/DOCUMENTS/Zoom
+162K	/Volumes/bigstore/REVIEW/DOCUMENTS/Adobe
+122K	/Volumes/bigstore/REVIEW/DOCUMENTS/Obsidian Vault
+ 80K	/Volumes/bigstore/REVIEW/DOCUMENTS/Blackmagic Design
+ 33K	/Volumes/bigstore/REVIEW/DOCUMENTS/$RECYCLE.BIN
+ 23K	/Volumes/bigstore/REVIEW/DOCUMENTS/home assistant
+ 22K	/Volumes/bigstore/REVIEW/DOCUMENTS/LrClassicLogs
+ 16K	/Volumes/bigstore/REVIEW/DOCUMENTS/NoMachine

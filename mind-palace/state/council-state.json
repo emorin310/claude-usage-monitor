@@ -1,0 +1,28 @@
+{
+  "lastChecked": "2026-01-31T15:16:00Z",
+  "botActivity": {
+    "magi": {
+      "lastSeen": "2026-01-31T07:12:18Z",
+      "lastCommentId": "3959748733"
+    },
+    "cray": {
+      "lastSeen": null,
+      "lastCommentId": null,
+      "status": "awaiting_onboarding"
+    },
+    "marvin": {
+      "lastSeen": "2026-01-28T05:45:32Z",
+      "lastCommentId": "3959198214",
+      "status": "credit_limited",
+      "note": "Alive at 192.168.1.201, low credits until Feb 1 noon. Eric confirmed."
+    }
+  },
+  "threadCommentCounts": {
+    "announcements": 9,
+    "handoffs": 1,
+    "status_updates": 1,
+    "questions_for_eric": 0
+  },
+  "alerts": [],
+  "notes": "2026-01-31: Marvin confirmed alive by Eric - credit limited until Feb 1 noon. Not a server issue."
+}

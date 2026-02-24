@@ -1,0 +1,152 @@
+{
+  "milk": [
+    {
+      "title": "Prepared in Canada",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Prepared in Canada",
+      "index": 2
+    },
+    {
+      "title": "$14.99",
+      "price": "$14.99",
+      "link": "",
+      "rawText": "$14.99",
+      "index": 3
+    },
+    {
+      "title": "Kraft",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Kraft",
+      "index": 4
+    },
+    {
+      "title": "Smooth Peanut Butter",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Smooth Peanut Butter",
+      "index": 5
+    }
+  ],
+  "bread": [
+    {
+      "title": "Prepared in Canada",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Prepared in Canada",
+      "index": 2
+    },
+    {
+      "title": "$14.99",
+      "price": "$14.99",
+      "link": "",
+      "rawText": "$14.99",
+      "index": 3
+    },
+    {
+      "title": "Kraft",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Kraft",
+      "index": 4
+    },
+    {
+      "title": "Smooth Peanut Butter",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Smooth Peanut Butter",
+      "index": 5
+    }
+  ],
+  "eggs": [
+    {
+      "title": "Prepared in Canada",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Prepared in Canada",
+      "index": 2
+    },
+    {
+      "title": "$14.99",
+      "price": "$14.99",
+      "link": "",
+      "rawText": "$14.99",
+      "index": 3
+    },
+    {
+      "title": "Kraft",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Kraft",
+      "index": 4
+    },
+    {
+      "title": "Smooth Peanut Butter",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Smooth Peanut Butter",
+      "index": 5
+    }
+  ],
+  "chicken": [
+    {
+      "title": "Prepared in Canada",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Prepared in Canada",
+      "index": 2
+    },
+    {
+      "title": "$14.99",
+      "price": "$14.99",
+      "link": "",
+      "rawText": "$14.99",
+      "index": 3
+    },
+    {
+      "title": "Kraft",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Kraft",
+      "index": 4
+    },
+    {
+      "title": "Smooth Peanut Butter",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Smooth Peanut Butter",
+      "index": 5
+    }
+  ],
+  "cheese": [
+    {
+      "title": "Prepared in Canada",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Prepared in Canada",
+      "index": 2
+    },
+    {
+      "title": "$14.99",
+      "price": "$14.99",
+      "link": "",
+      "rawText": "$14.99",
+      "index": 3
+    },
+    {
+      "title": "Kraft",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Kraft",
+      "index": 4
+    },
+    {
+      "title": "Smooth Peanut Butter",
+      "price": "Price not available",
+      "link": "",
+      "rawText": "Smooth Peanut Butter",
+      "index": 5
+    }
+  ]
+}

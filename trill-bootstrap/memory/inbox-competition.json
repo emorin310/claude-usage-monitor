@@ -1,0 +1,64 @@
+{
+  "competition": {
+    "name": "Gmail Inbox Zero Challenge",
+    "started": "2026-02-02T13:30:00Z",
+    "participants": ["magi", "marvin", "cray"],
+    "rules": {
+      "scoring": {
+        "email_processed": 1,
+        "email_categorized": 2,
+        "spam_caught": 3,
+        "false_positive_penalty": -5
+      },
+      "categories": ["urgent", "actionable", "fyi", "promotional", "spam"]
+    }
+  },
+  "stats": {
+    "magi": {
+      "emails_processed": 20,
+      "emails_categorized": 20,
+      "emails_responded": 0,
+      "emails_archived": 0,
+      "spam_caught": 1,
+      "false_positives": 0,
+      "total_score": 63,
+      "avg_response_time_min": null,
+      "last_active": "2026-02-02T13:35:00Z",
+      "last_run_breakdown": {
+        "urgent": 0,
+        "actionable": 4,
+        "fyi": 9,
+        "promotional": 6,
+        "spam": 1
+      }
+    },
+    "marvin": {
+      "emails_processed": 0,
+      "emails_categorized": 0,
+      "emails_responded": 0,
+      "emails_archived": 0,
+      "spam_caught": 0,
+      "false_positives": 0,
+      "total_score": 0,
+      "avg_response_time_min": null,
+      "last_active": null
+    },
+    "cray": {
+      "emails_processed": 0,
+      "emails_categorized": 0,
+      "emails_responded": 0,
+      "emails_archived": 0,
+      "spam_caught": 0,
+      "false_positives": 0,
+      "total_score": 0,
+      "avg_response_time_min": null,
+      "last_active": null
+    }
+  },
+  "leaderboard": [
+    { "bot": "magi", "score": 63 },
+    { "bot": "marvin", "score": 0 },
+    { "bot": "cray", "score": 0 }
+  ],
+  "lastUpdated": "2026-02-02T13:35:00Z"
+}

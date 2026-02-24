@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-02-22T21:28:04.694060",
+  "summary": {
+    "total_orders": 2,
+    "total_spent": 76.4,
+    "average_order": 38.2
+  },
+  "top_items_by_frequency": [
+    [
+      "large eggs",
+      12
+    ],
+    [
+      "yogurt cups",
+      6
+    ],
+    [
+      "bananas 1kg",
+      3
+    ],
+    [
+      "pasta sauce",
+      2
+    ],
+    [
+      "whole wheat bread",
+      2
+    ],
+    [
+      "ground beef 454g",
+      1
+    ],
+    [
+      "spaghetti 900g",
+      1
+    ],
+    [
+      "cheddar cheese 400g",
+      1
+    ],
+    [
+      "2% milk 4l",
+      1
+    ],
+    [
+      "chicken breast 1kg",
+      1
+    ]
+  ],
+  "top_items_by_spending": [
+    [
+      "chicken breast 1kg",
+      12.99
+    ],
+    [
+      "ground beef 454g",
+      8.99
+    ],
+    [
+      "whole wheat bread",
+      7.98
+    ],
+    [
+      "cheddar cheese 400g",
+      6.99
+    ],
+    [
+      "2% milk 4l",
+      6.49
+    ],
+    [
+      "bananas 1kg",
+      5.97
+    ],
+    [
+      "yogurt cups",
+      5.94
+    ],
+    [
+      "large eggs",
+      4.99
+    ],
+    [
+      "pasta sauce",
+      4.98
+    ],
+    [
+      "spaghetti 900g",
+      1.99
+    ]
+  ],
+  "recommended_staples": [
+    "large eggs",
+    "yogurt cups",
+    "bananas 1kg",
+    "pasta sauce",
+    "whole wheat bread"
+  ],
+  "receipts_analyzed": 2
+}

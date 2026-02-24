@@ -1,0 +1,200 @@
+Current Folder Structure: /Volumes/bigstore/REVIEW/
+═══════════════════════════════════════════════════════════════════
+
+/Volumes/bigstore/REVIEW/  (est. 90-150 GB total)
+│
+├── DOCUMENTS/  (analyzing... likely 60-120 GB)
+│   │
+│   ├── Application Data (should be cleaned/relocated)
+│   │   ├── $RECYCLE.BIN/                       ⚠️ DELETE
+│   │   ├── Adobe/
+│   │   │   ├── Photoshop Cloud Associates/
+│   │   │   ├── amecommand/                     ⚠️ DELETE
+│   │   │   └── dynamiclinkmediaserver/         ⚠️ DELETE
+│   │   ├── Arduino/                            ⚠️ RELOCATE or DELETE
+│   │   │   ├── libraries/
+│   │   │   └── sketch_*/  (4 sketches)
+│   │   ├── Blackmagic Design/
+│   │   │   └── DaVinci Resolve/
+│   │   ├── JumpDesktop/
+│   │   ├── LrClassicLogs/                      ⚠️ DELETE
+│   │   ├── Maccy.app/                          ⚠️ RELOCATE to /Applications
+│   │   └── NoMachine/
+│   │
+│   ├── Personal & Health
+│   │   ├── Health/
+│   │   │   └── Tonsilectomy/
+│   │   └── Tina/
+│   │
+│   ├── Reference Materials (large - multi-GB)
+│   │   └── Reference/
+│   │       ├── MasterClass archives (multiple 7z.NNN multi-volume):
+│   │       │   ├── 5858 George Stephanopoulos/  (~6 GB split)
+│   │       │   ├── 6464 Robin Roberts/
+│   │       │   ├── 9999 JavaScript Masterclass/  (~24 GB split!)
+│   │       │   ├── 9999 Joel Grimes Photography/
+│   │       │   ├── 9999 Jon Kabat-Zinn Mindfulness/
+│   │       │   └── 9999 Photography Masterclass/
+│   │       ├── FINE WOODWORKING Magazine 001-221/
+│   │       ├── MAKE Magazine 01-45/
+│   │       ├── Woodworkers Journal/
+│   │       ├── Woodworking Books II Pack 2/
+│   │       └── ebooks/
+│   │
+│   ├── Zoom Recordings
+│   │   └── Zoom/                               📅 2023 only - consider archiving
+│   │       ├── 2023-01-09 TM - Alberto Avila/
+│   │       ├── 2023-01-11 Les Toastmasters/
+│   │       ├── 2023-01-30 TM - Alberto Avila/
+│   │       ├── 2023-02-06 TM - Alberto Avila/
+│   │       ├── 2023-02-13 TM - Alberto Avila/
+│   │       ├── 2023-02-27 TM - Alberto Avila/
+│   │       ├── 2023-03-27 TM - Alberto Avila/ (2 sessions)
+│   │       ├── 2023-04-11 DiverseCity Toastmasters/
+│   │       └── 2023-05-01 TM - Alberto Avila/
+│   │
+│   ├── Work & Projects
+│   │   ├── IT/
+│   │   ├── Obsidian Vault/
+│   │   │   └── .obsidian/
+│   │   ├── draw.io/
+│   │   └── home assistant/
+│   │
+│   ├── Media & Assets
+│   │   ├── brother labels/
+│   │   ├── icons/                             📦 MOVE to ASSETS
+│   │   ├── scanned docs/
+│   │   └── screenshots/
+│   │
+│   ├── Smart Home
+│   │   └── wled/
+│   │       ├── Backup/
+│   │       ├── Christmas 2023/                 📅 Seasonal content
+│   │       ├── Downloads/
+│   │       ├── RenderCache/
+│   │       ├── colorcurves/
+│   │       ├── palettes/
+│   │       └── valuecurves/
+│   │
+│   └── ⚠️⚠️ safekeep/  ⚠️⚠️  CRITICAL - NESTED BACKUP STRUCTURE
+│       ├── BACKUPS/
+│       ├── DOCUMENTS/                          🔄 DUPLICATES parent?
+│       │   ├── PXL_20241026_223019695.psd     (110 MB - DUPLICATE!)
+│       │   ├── network icons drawio.xml       (8 MB - DUPLICATE!)
+│       │   └── Reference/
+│       │       └── [MasterClass archives]     (24+ GB - likely DUPLICATES!)
+│       ├── Entertainmen/  (typo in name)
+│       ├── Eric Morin Photography/
+│       ├── Health & Fitness/
+│       ├── PHOTOS/
+│       ├── PROJECTS/
+│       ├── VIDEO/
+│       ├── ZAPHOD/
+│       ├── images/
+│       ├── slideshows/
+│       └── voicemail messages/
+│
+└── PROJECTS/  (31 GB, 3,760 files)
+    │
+    ├── 3D printing/  (largest category - 2,015 files, ~6.4 GB)
+    │   ├── 3d models/
+    │   │   ├── _Organization/
+    │   │   │   ├── HSW/
+    │   │   │   ├── opengrid/
+    │   │   │   └── gridfinity/
+    │   │   ├── 3d printer upgrades/
+    │   │   ├── archive/                        🔄 DUPLICATES with parent!
+    │   │   │   ├── Modular Desk Shelf Organizer.3mf  (DUPLICATE!)
+    │   │   │   ├── Gridfinity Cable Storage Bin.3mf  (DUPLICATE!)
+    │   │   │   └── vela colgante final.3mf     (DUPLICATE!)
+    │   │   ├── decor/
+    │   │   ├── holiday/
+    │   │   │   ├── halloween/
+    │   │   │   │   └── vela colgante final.3mf (DUPLICATE of archive!)
+    │   │   │   └── christmas/
+    │   │   ├── toys/
+    │   │   └── Powerful Fan 3.0 BOM/
+    │   ├── custom designs/
+    │   └── finished prints/
+    │
+    ├── Publishing/
+    │   ├── Kris Truong Family/
+    │   ├── ProShow StylePack Volume 1/
+    │   ├── RDM Wallart/
+    │   ├── calendars/
+    │   ├── finished mosaics/
+    │   ├── for coasters/
+    │   ├── hollywood squares - Truong family/
+    │   ├── photobook/                          🔄 DUPLICATE folder name!
+    │   ├── photoshop partial edits/            🔄 DUPLICATE folder name!
+    │   │   ├── _MG_3000.psd                   (38 MB - DUPLICATE!)
+    │   │   ├── mackenzie.psd                  (15 MB - DUPLICATE!)
+    │   │   └── IMG_0374-Edit-Edit.tif         (660 MB - DUPLICATE!)
+    │   ├── tina anni video/
+    │   ├── web design/
+    │   ├── hyperlapse-20151026-132829-8x.mp4   (34 MB - DUPLICATE!)
+    │   └── _MG_3000.psd                        (38 MB - DUPLICATE!)
+    │
+    ├── halloween/
+    │   └── AtmosFX/  (~17+ GB of videos)
+    │       ├── AtmosFX - Enchanted Snowman/
+    │       │   ├── Santa's Visit/
+    │       │   └── Yuletide Window/
+    │       └── AtmosFX - Zombie Invasion/
+    │
+    ├── in progress/
+    │   └── MattMarg/
+    │
+    ├── led lighting/
+    │
+    ├── photobook/                              🔄 DUPLICATE folder name!
+    │   ├── To E-Mail/
+    │   ├── images/
+    │   └── in a word/
+    │
+    ├── photoshop partial edits/                🔄 DUPLICATE folder name!
+    │   ├── stormtroopers poolhouse.psd        (1.26 GB!)
+    │   └── IMG_0374-Edit-Edit.tif             (840 MB)
+    │
+    ├── stock images/
+    │   ├── palm trees.jpeg                     🔄 DUPLICATE (same as .jpg)
+    │   ├── palm trees.jpg                      🔄 DUPLICATE
+    │   └── svg/
+    │
+    ├── TRH/
+    │
+    └── Root-level files (SHOULD BE ORGANIZED):
+        ├── IMG_0359.JPG                        📷 Loose photo
+        ├── IMG_0357.JPG                        📷 Loose photo
+        ├── IMG_0505.JPG                        📷 Loose photo
+        ├── IMG_0939.JPG                        📷 Loose photo
+        ├── IMG_0942.JPG                        📷 Loose photo
+        ├── _MG_3000.psd                        🔄 DUPLICATE!
+        ├── mackenzie.psd                       🔄 DUPLICATE!
+        ├── hyperlapse-20151026-132829-8x.mp4   🔄 DUPLICATE!
+        ├── Jessa's skating party invites.pub   📅 2008 - archivable
+        ├── valentine - girls.pub               📅 2008 - archivable
+        ├── stag-and-doe.png
+        └── lonnie tribute.jpg
+
+═══════════════════════════════════════════════════════════════════
+
+LEGEND:
+  ⚠️  - Needs deletion or relocation
+  🔄  - Duplicate file or folder
+  📅  - Old/temporal content (consider archiving)
+  📦  - Should be moved to library/assets
+  📷  - Loose media file (needs organizing)
+
+CRITICAL ISSUES:
+1. safekeep/ folder - appears to duplicate entire DOCUMENTS structure
+2. Publishing/ vs root PROJECTS - files duplicated in both
+3. 3D printing archive/ - duplicates active models
+4. Loose files at PROJECTS root - need organization
+
+ESTIMATED WASTED SPACE:
+- safekeep/ duplicates:           5-20 GB (needs verification)
+- PROJECTS duplicates:             0.5-1 GB
+- 3D printing archive duplicates:  0.5-1 GB
+- Multi-volume archive overhead:   ~30 GB (split files, not waste)
+═══════════════════════════════════════════════════════════════════

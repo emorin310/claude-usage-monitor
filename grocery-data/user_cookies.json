@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-02-22T22:35:00Z",
+  "source": "user_provided_truncated",
+  "cookies": {
+    "Origin_Session_Cookie": "B",
+    "OptanonAlertBoxClosed": "2026-02-22T21:59:19.850Z",
+    "kampyleUserSessionsCount": "3",
+    "kampyleUserPercentile": "89.0966495732335",
+    "_pin_unauth": "dWlkPVpXTXdaamt6WkdFdFlqSTBNeTAwWW1aM0xUa3hNbVF0TV",
+    "kampyleSessionPageCounter": "4",
+    "ttcsid_C2EM3DIQV140ORDIO5L0": "1771797904574::hfBxrJ1Ml4Vdye5m0wCB.1.177179863179"
+  },
+  "cookie_header": "Origin_Session_Cookie=B; OptanonAlertBoxClosed=2026-02-22T21:59:19.850Z; kampyleUserSessionsCount=3; kampyleUserPercentile=89.0966495732335; _pin_unauth=dWlkPVpXTXdaamt6WkdFdFlqSTBNeTAwWW1aM0xUa3hObVF0TV; kampyleSessionPageCounter=4; ttcsid_C2EM3DIQV140ORDIO5L0=1771797904574::hfBxrJ1Ml4Vdye5m0wCB.1.177179863179"
+}

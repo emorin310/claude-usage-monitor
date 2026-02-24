@@ -1,0 +1,139 @@
+[
+  {
+    "url": "https://dis-prod.assetful.loblaw.ca/content/dam/loblaw-companies-limited/creative-assets/bolt/rapid-mode-logo.svg",
+    "method": "GET",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.zehrs.ca/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://fonts.googleapis.com/css2?family=Alexandria:wght@600;900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap",
+    "method": "GET",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://assets.loblaws.ca/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://sentry.loblaw.ca/api/10/envelope/?sentry_key=46d74b2baccc721b7e856fce4eb4336a&sentry_version=7&sentry_client=sentry.javascript.nextjs%2F7.120.3",
+    "method": "POST",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.zehrs.ca/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "content-type": "text/plain;charset=UTF-8",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/pickup-locations?bannerIds=zehrs",
+    "method": "GET",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "is-helios-account": "false",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "is-iceberg-enabled": "true",
+      "sec-ch-ua-mobile": "?0",
+      "site-banner": "zehrs",
+      "basesiteid": "zehrs",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json",
+      "x-channel": "web",
+      "referer": "https://www.zehrs.ca/",
+      "accept-language": "en",
+      "business-user-agent": "PCXWEB",
+      "x-application-type": "web",
+      "x-loblaw-tenant-id": "ONLINE_GROCERIES",
+      "x-apikey": "C1xujSegT5j3ap3yexJjqhOfELwGKYvz",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+    }
+  },
+  {
+    "url": "https://resource.ecdrsvc.com/api/api/7005022/wk01_pcorganic_728x90_en_2x_v1/wk01_pcorganic_728x90_en_2x.jpg",
+    "method": "GET",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.zehrs.ca/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/geolocation",
+    "method": "GET",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "is-helios-account": "false",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "is-iceberg-enabled": "true",
+      "sec-ch-ua-mobile": "?0",
+      "site-banner": "zehrs",
+      "basesiteid": "zehrs",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json",
+      "x-channel": "web",
+      "referer": "https://www.zehrs.ca/",
+      "accept-language": "en",
+      "business-user-agent": "PCXWEB",
+      "x-application-type": "web",
+      "x-loblaw-tenant-id": "ONLINE_GROCERIES",
+      "x-apikey": "C1xujSegT5j3ap3yexJjqhOfELwGKYvz",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+    }
+  },
+  {
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/carts",
+    "method": "POST",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "is-helios-account": "false",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "is-iceberg-enabled": "true",
+      "sec-ch-ua-mobile": "?0",
+      "site-banner": "zehrs",
+      "basesiteid": "zehrs",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json",
+      "x-channel": "web",
+      "referer": "https://www.zehrs.ca/",
+      "accept-language": "en",
+      "business-user-agent": "PCXWEB",
+      "x-application-type": "web",
+      "x-loblaw-tenant-id": "ONLINE_GROCERIES",
+      "x-apikey": "C1xujSegT5j3ap3yexJjqhOfELwGKYvz",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+    }
+  },
+  {
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/fulfillment/next-available-plan-timeslots?banner=zehrs&orderId=d48525d7-62c2-4aad-a433-7ac82024cb5f&cartId=a5f56081-7d76-464d-a3d9-b0ed88c3cb38&locationId=0533&postalCode=N1R7L7",
+    "method": "GET",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "is-helios-account": "false",
+      "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+      "is-iceberg-enabled": "true",
+      "sec-ch-ua-mobile": "?0",
+      "site-banner": "zehrs",
+      "basesiteid": "zehrs",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json",
+      "x-channel": "web",
+      "referer": "https://www.zehrs.ca/",
+      "accept-language": "en",
+      "business-user-agent": "PCXWEB",
+      "x-application-type": "web",
+      "x-loblaw-tenant-id": "ONLINE_GROCERIES",
+      "x-apikey": "C1xujSegT5j3ap3yexJjqhOfELwGKYvz",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+    }
+  }
+]

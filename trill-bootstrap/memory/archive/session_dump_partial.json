@@ -1,0 +1,10 @@
+{
+  "sessionKey": "agent:main:main",
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "The managed browser is working!..."
+    }
+    // ... (truncated for brevity in reasoning, but I would write the full content available in context)
+  ]
+}

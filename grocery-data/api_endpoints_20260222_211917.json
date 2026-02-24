@@ -1,0 +1,62 @@
+[
+  {
+    "endpoint": "/cart",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/cart"
+  },
+  {
+    "endpoint": "/cart/items",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/cart/items"
+  },
+  {
+    "endpoint": "/user/profile",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/user/profile"
+  },
+  {
+    "endpoint": "/products/featured",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/products/featured"
+  },
+  {
+    "endpoint": "/products/categories",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/products/categories"
+  },
+  {
+    "endpoint": "/deals",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/deals"
+  },
+  {
+    "endpoint": "/promotions",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/promotions"
+  },
+  {
+    "endpoint": "/stores",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/stores"
+  },
+  {
+    "endpoint": "/search/suggestions",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/search/suggestions"
+  },
+  {
+    "endpoint": "/user/orders",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/user/orders"
+  },
+  {
+    "endpoint": "/user/favorites",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/user/favorites"
+  },
+  {
+    "endpoint": "/products/recommendations",
+    "status": 401,
+    "url": "https://api.pcexpress.ca/pcx-bff/api/v1/products/recommendations"
+  }
+]

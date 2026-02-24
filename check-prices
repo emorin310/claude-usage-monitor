@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /home/magi/clawd
+source playwright-env/bin/activate
+python scripts/zehrs-master.py smart-shop

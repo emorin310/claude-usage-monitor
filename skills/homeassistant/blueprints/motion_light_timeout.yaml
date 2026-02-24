@@ -1,0 +1,66 @@
+blueprint:
+  name: Motion-Activated Light Timeout
+  description: >
+    Turn off lights after a specified time without motion.
+    When the occupancy sensor goes to 'off', wait for the timeout period.
+    If no motion is detected during the wait, turn off the specified lights.
+  domain: automation
+  author: Marvin
+  input:
+    motion_sensor:
+      name: Motion/Occupancy Sensor
+      description: The binary sensor that detects motion or occupancy
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class:
+            - motion
+            - occupancy
+    light_target:
+      name: Lights to Control
+      description: The light(s) to turn off when no motion is detected
+      selector:
+        target:
+          entity:
+            domain: light
+    timeout_minutes:
+      name: Timeout (minutes)
+      description: How long to wait after motion stops before turning off lights
+      default: 30
+      selector:
+        number:
+          min: 1
+          max: 120
+          unit_of_measurement: minutes
+          mode: slider
+    only_if_on:
+      name: Only if lights are on
+      description: Only run if the lights are currently on (prevents unnecessary triggers)
+      default: true
+      selector:
+        boolean:
+
+trigger:
+  - platform: state
+    entity_id: !input motion_sensor
+    from: "on"
+    to: "off"
+
+condition:
+  - condition: template
+    value_template: >
+      {% set only_check = only_if_on | default(true) %}
+      {% if only_check %}
+        {{ is_state(light_target.entity_id | default(light_target), 'on') }}
+      {% else %}
+        true
+      {% endif %}
+
+action:
+  - delay:
+      minutes: !input timeout_minutes
+  - condition: state
+    entity_id: !input motion_sensor
+    state: "off"
+  - service: light.turn_off
+    target: !input light_target

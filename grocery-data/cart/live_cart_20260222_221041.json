@@ -1,0 +1,32 @@
+{
+  "captured_method": "console_extraction",
+  "timestamp": "2026-02-22T22:10:41.106Z",
+  "cart_summary": {
+    "item_count": 3,
+    "subtotal": "$25.24",
+    "total": "$25.24"
+  },
+  "items": [
+    {
+      "name": "Pub Style Chicken Burger, Fully Cooked",
+      "price": "~$8.41",
+      "category": "frozen_prepared_foods"
+    },
+    {
+      "name": "Kaiser Rolls White, 6 Pack",
+      "price": "~$8.41", 
+      "category": "bakery"
+    },
+    {
+      "name": "Marble Cheddar Natural Cheese Slices",
+      "price": "~$8.41",
+      "category": "dairy"
+    }
+  ],
+  "analysis": {
+    "avg_price_per_item": "$8.41",
+    "meal_components": ["protein", "carbs", "dairy"],
+    "shopping_pattern": "quick_meal_prep"
+  },
+  "source": "zehrs_cart_live_extraction"
+}

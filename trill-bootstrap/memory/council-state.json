@@ -1,0 +1,54 @@
+{
+  "lastChecked": "2026-02-08T01:35:13Z",
+  "botActivity": {
+    "magi": {
+      "lastSeen": "2026-02-03T14:05:00Z",
+      "lastCommentId": "3963240087",
+      "status": "active",
+      "note": "Housekeeping session. Flagged Marvin monitoring issue."
+    },
+    "cray": {
+      "lastSeen": "2026-01-31T15:59:38Z",
+      "lastCommentId": "3961616008",
+      "status": "quiet",
+      "note": "Last update Jan 31 - normal for Cray's domain"
+    },
+    "marvin": {
+      "lastSeen": "2026-02-02T14:02:53Z",
+      "lastCommentId": "3962538206",
+      "status": "active",
+      "note": "Acknowledged catching up. Monitoring script has stale detection issue."
+    }
+  },
+  "threadCommentCounts": {
+    "announcements": 22,
+    "handoffs": 11,
+    "status_updates": 15,
+    "questions_for_eric": 0
+  },
+  "pendingItems": {
+    "unanswered_handoffs": [
+      {
+        "id": "3961949321",
+        "thread": "handoffs",
+        "from": "magi",
+        "to": "marvin",
+        "subject": "MQTT-Based Direct Communication project",
+        "posted": "2026-02-02T04:01:00Z",
+        "status": "Awaiting Marvin's response"
+      },
+      {
+        "id": "3963240087",
+        "thread": "handoffs",
+        "from": "magi",
+        "to": "marvin",
+        "subject": "n8n Setup & Monitoring Script Fix",
+        "posted": "2026-02-03T09:05:00Z",
+        "status": "Awaiting Marvin's response"
+      }
+    ],
+    "unacknowledged_announcements": []
+  },
+  "alerts": [],
+  "notes": "Marvin needs to fix stale alert detection in health monitoring script. Two handoff items pending."
+}

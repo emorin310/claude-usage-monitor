@@ -1,0 +1,21 @@
+# Temp files
+*.json.tmp
+*.bak
+
+# Cached API responses (regenerated)
+tasks_*.json
+comments_*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets (if any get added accidentally)
+*.secret
+*.key
+!mind-palace/relationships/contacts.json
+.env
+credentials.txt
+*.secret
+.credentials/
+.secrets/

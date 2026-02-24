@@ -1,0 +1,52 @@
+{
+  "id": "emorin310@gmail.com",
+  "cartId": "8852ea8a-3466-4c02-a93a-e25f80f73ca3",
+  "customerId": "84e967dd-0846-423d-a3d7-dc20cf3b92a8",
+  "firstName": "Tina",
+  "lastName": "Morin",
+  "phoneNumber": "5195730017",
+  "language": "English",
+  "postalCode": "N1T 1M2",
+  "userGroup": null,
+  "pcOptimum": {
+    "memberId": "1126516564",
+    "householdId": "",
+    "walletId": "1126516564",
+    "errorMessage": null,
+    "points": {
+      "balance": 25226,
+      "dollarsRedeemable": 20,
+      "dollarsRedeemedLifetime": 484688
+    }
+  },
+  "pcInsiderMembership": null,
+  "pcPlus": {
+    "cardNumber": null,
+    "email": null,
+    "memberName": null,
+    "membershipId": null,
+    "pointBalance": null
+  },
+  "homeStore": null,
+  "wasInPCPlus": false,
+  "is2SVEnabled": false,
+  "wholesaleClubMembership": {
+    "businessName": null,
+    "liquorVerified": null,
+    "memberSegmentCode": null,
+    "memberSegmentName": null,
+    "membershipCardNumber": null,
+    "taxExempted": null,
+    "tobaccoVerified": null
+  },
+  "preAuthExtraPercent": 0.0,
+  "sameDayOrderPreAuthEnabledForBanner": false,
+  "sameDayOrderPreAuthEnabledForStore": false,
+  "paymentServiceEnabled": false,
+  "shopScanTermsAccepted": false,
+  "inPCOptimum": true,
+  "isHeliosAccount": true,
+  "isColleague": false,
+  "isB2BCustomer": false,
+  "lastStoreId": "0533"
+}

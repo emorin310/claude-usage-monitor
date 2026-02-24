@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { 
+      width: 300px; 
+      padding: 15px; 
+      font-family: Arial, sans-serif; 
+      font-size: 14px;
+    }
+    .header { 
+      text-align: center; 
+      margin-bottom: 15px;
+      color: #2c5aa0;
+      font-weight: bold;
+    }
+    .status { 
+      padding: 8px; 
+      margin: 8px 0; 
+      border-radius: 4px; 
+      font-size: 12px;
+    }
+    .status.success { 
+      background: #d4edda; 
+      color: #155724; 
+      border: 1px solid #c3e6cb;
+    }
+    .status.error { 
+      background: #f8d7da; 
+      color: #721c24; 
+      border: 1px solid #f5c6cb;
+    }
+    .status.info { 
+      background: #d1ecf1; 
+      color: #0c5460; 
+      border: 1px solid #bee5eb;
+    }
+    button { 
+      width: 100%; 
+      padding: 10px; 
+      margin: 5px 0; 
+      border: none; 
+      border-radius: 4px; 
+      background: #007bff; 
+      color: white; 
+      cursor: pointer;
+      font-size: 13px;
+    }
+    button:hover { 
+      background: #0056b3; 
+    }
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    .data-section {
+      margin: 10px 0;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .data-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .export-button {
+      background: #28a745;
+      font-size: 12px;
+      padding: 6px;
+    }
+    .export-button:hover {
+      background: #1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">🛒 Zehrs Assistant</div>
+  
+  <div id="status" class="status info">
+    Ready to capture cart data
+  </div>
+  
+  <button id="captureCart">Capture Cart Now</button>
+  <button id="exportTokens" class="export-button">Export Auth Tokens</button>
+  <button id="exportCart" class="export-button">Export Cart Data</button>
+  
+  <div class="data-section">
+    <div class="data-title">Authentication Status:</div>
+    <div id="authStatus">Checking...</div>
+  </div>
+  
+  <div class="data-section">
+    <div class="data-title">Last Cart Capture:</div>
+    <div id="cartStatus">None</div>
+  </div>
+  
+  <div class="data-section">
+    <div class="data-title">Instructions:</div>
+    <div>
+      1. Log into Zehrs normally<br>
+      2. Visit your cart page<br>
+      3. Click "Capture Cart Now"<br>
+      4. Export data to your system
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

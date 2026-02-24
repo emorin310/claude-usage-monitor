@@ -1,0 +1,42 @@
+{
+  "order_number": "12345679",
+  "date": "2026-02-10",
+  "store": "Zehrs Markets - Cambridge",
+  "items": [
+    {
+      "quantity": 1,
+      "name": "Ground Beef 454g",
+      "price": 8.99,
+      "total": 8.99
+    },
+    {
+      "quantity": 2,
+      "name": "Pasta Sauce",
+      "price": 2.49,
+      "total": 4.98
+    },
+    {
+      "quantity": 1,
+      "name": "Spaghetti 900g",
+      "price": 1.99,
+      "total": 1.99
+    },
+    {
+      "quantity": 1,
+      "name": "Cheddar Cheese 400g",
+      "price": 6.99,
+      "total": 6.99
+    },
+    {
+      "quantity": 6,
+      "name": "Yogurt Cups",
+      "price": 0.99,
+      "total": 5.94
+    }
+  ],
+  "subtotal": 28.89,
+  "tax": 0.46,
+  "delivery_fee": 3.99,
+  "total": 33.34,
+  "source": "sample_data"
+}

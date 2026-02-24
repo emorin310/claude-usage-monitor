@@ -1,0 +1,35 @@
+# Magi - OpenClaw Configuration
+# Smart Home Assistant for the Morin Family
+
+identity:
+  name: Magi
+  emoji: "🏠"
+
+# Telegram channel
+channels:
+  telegram:
+    token: "8556347438:AAFc2TSO2ELdHqhNywgCS2gO5Xmc_-O8rF4"
+    allowedUsers:
+      - 6643669380  # Eric
+
+# Model configuration - 3-tier cost optimization
+models:
+  default: anthropic/claude-sonnet-4-20250514
+  
+  # Model aliases (same as Marvin)
+  aliases:
+    sonnet: anthropic/claude-sonnet-4-20250514
+    haiku: anthropic/claude-3-5-haiku-20241022
+    grok: xai/grok-3
+    gemini: google/gemini-2.5-flash
+    deepseek: deepseek/deepseek-chat
+    tier1: anthropic/claude-opus-4-5
+
+# Heartbeat on cost-effective model
+heartbeat:
+  enabled: true
+  model: google/gemini-2.5-flash
+  intervalMinutes: 15
+
+# Workspace
+workspace: /home/magi/clawd

@@ -1,0 +1,14 @@
+{
+  "started": "2026-02-10T23:55:00Z",
+  "completed": "2026-02-11T05:04:00Z",
+  "status": "completed",
+  "method": "Mac Contacts.app - Look for Duplicates (UI automation)",
+  "result": {
+    "duplicatesFound": 5773,
+    "duplicatedEntries": 13,
+    "action": "merged"
+  },
+  "taskId": "9982267646",
+  "initialContactCount": 6919,
+  "notes": "Eric clicked Merge in the dialog. Reviewing remaining items manually."
+}
