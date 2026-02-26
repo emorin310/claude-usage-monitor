@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Org Chart Tool - UI Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        header .icons {
+            display: flex;
+            gap: 15px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #fafafa;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0b7dda;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-tertiary {
+            background: #FF9800;
+            color: white;
+        }
+
+        .btn-tertiary:hover {
+            background: #e68900;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-undo {
+            background: #9C27B0;
+            color: white;
+        }
+
+        .btn-undo:hover {
+            background: #7b1fa2;
+        }
+
+        .search-box {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            gap: 8px;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            font-size: 13px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            padding: 40px;
+            overflow-x: auto;
+            overflow-y: auto;
+            height: 600px;
+            background: linear-gradient(45deg, #fafafa 25%, transparent 25%, transparent 75%, #fafafa 75%, #fafafa),
+                        linear-gradient(45deg, #fafafa 25%, transparent 25%, transparent 75%, #fafafa 75%, #fafafa);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            background-color: #f0f0f0;
+        }
+
+        .org-chart {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* Org Box */
+        .org-box {
+            background: white;
+            border-radius: 8px;
+            padding: 16px 20px;
+            min-width: 280px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: grab;
+            transition: all 0.2s;
+            border-left: 5px solid;
+            position: relative;
+        }
+
+        .org-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .org-box.office {
+            border-left-color: #ADD8E6;
+        }
+
+        .org-box.plumbing {
+            border-left-color: #90EE90;
+        }
+
+        .org-box.contracting {
+            border-left-color: #FFB347;
+        }
+
+        .org-box.hvac {
+            border-left-color: #FFB6C6;
+        }
+
+        .org-box.hydronics {
+            border-left-color: #DDA0DD;
+        }
+
+        .org-box-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .expand-toggle {
+            cursor: pointer;
+            font-size: 12px;
+            min-width: 16px;
+            color: #666;
+            user-select: none;
+            margin-top: 2px;
+        }
+
+        .org-box-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .org-box-title {
+            font-size: 12px;
+            color: #666;
+            margin: 4px 0;
+        }
+
+        .org-box-meta {
+            font-size: 11px;
+            color: #999;
+            display: flex;
+            gap: 8px;
+        }
+
+        .org-box-meta span {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+
+        .collapsed-count {
+            font-size: 12px;
+            color: #2196F3;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        /* Tree Levels */
+        .level {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            width: 100%;
+        }
+
+        .connections {
+            position: relative;
+            height: 30px;
+            width: 100%;
+        }
+
+        /* Legend */
+        .legend {
+            background: #f9f9f9;
+            padding: 20px 30px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        /* Instructions */
+        .instructions {
+            padding: 12px 30px;
+            background: #e3f2fd;
+            border-top: 1px solid #bbdefb;
+            font-size: 12px;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>📊 Org Chart Tool v1.0</h1>
+            <div class="icons">
+                <span title="Help">❓</span>
+                <span title="Settings">⚙️</span>
+                <span title="Dark Mode">🌙</span>
+                <span title="Menu">≡</span>
+            </div>
+        </header>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="btn-primary">📥 Import</button>
+            <button class="btn-secondary">📤 Export PDF</button>
+            <button class="btn-tertiary">💾 Export JSON</button>
+            <button class="btn-undo">↶ Undo</button>
+            <button class="btn-undo">↷ Redo</button>
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" placeholder="Search by name, title, or department...">
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-area">
+            <div class="org-chart">
+                <!-- Level 1: CEO -->
+                <div class="level">
+                    <div class="org-box office">
+                        <div class="org-box-header">
+                            <span class="expand-toggle">▼</span>
+                            <div>
+                                <div class="org-box-name">Chris van Herksen</div>
+                                <div class="org-box-title">General Manager</div>
+                                <div class="org-box-meta">
+                                    <span>Office</span>
+                                    <span>Executive</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connections -->
+                <div class="connections"></div>
+
+                <!-- Level 2: Direct Reports -->
+                <div class="level">
+                    <div class="org-box office">
+                        <div class="org-box-header">
+                            <span class="expand-toggle">▶</span>
+                            <div>
+                                <div class="org-box-name">Nathan Elgie</div>
+                                <div class="org-box-title">Operations Mgr</div>
+                                <div class="org-box-meta">
+                                    <span>Office</span>
+                                </div>
+                                <div class="collapsed-count">+ 8 more below</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="org-box office">
+                        <div class="org-box-header">
+                            <span class="expand-toggle">▼</span>
+                            <div>
+                                <div class="org-box-name">Tina Park</div>
+                                <div class="org-box-title">Office Manager</div>
+                                <div class="org-box-meta">
+                                    <span>Office</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="org-box office">
+                        <div class="org-box-header">
+                            <span class="expand-toggle">▶</span>
+                            <div>
+                                <div class="org-box-name">Adam Weller</div>
+                                <div class="org-box-title">Sales & Relations</div>
+                                <div class="org-box-meta">
+                                    <span>Office</span>
+                                </div>
+                                <div class="collapsed-count">+ 2 more below</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connections -->
+                <div class="connections"></div>
+
+                <!-- Level 3: Tina's Reports -->
+                <div class="level">
+                    <div class="org-box office">
+                        <div class="org-box-header">
+                            <div>
+                                <div class="org-box-name">Katalina Avila</div>
+                                <div class="org-box-title">Service Coordinator</div>
+                                <div class="org-box-meta">
+                                    <span>Office</span>
+                                    <span>CSR</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="org-box office">
+                        <div class="org-box-header">
+                            <div>
+                                <div class="org-box-name">Nicole Cairney</div>
+                                <div class="org-box-title">CSR / Administrator</div>
+                                <div class="org-box-meta">
+                                    <span>Office</span>
+                                    <span>CSR</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="org-box office">
+                        <div class="org-box-header">
+                            <div>
+                                <div class="org-box-name">Amanda French</div>
+                                <div class="org-box-title">CSR / Dispatcher</div>
+                                <div class="org-box-meta">
+                                    <span>Office</span>
+                                    <span>CSR</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ADD8E6;"></div>
+                    <span>Office</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #90EE90;"></div>
+                    <span>Plumbing</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFB347;"></div>
+                    <span>General Contracting</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFB6C6;"></div>
+                    <span>HVAC</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #DDA0DD;"></div>
+                    <span>Hydronics</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <strong>💡 How to use:</strong> Drag boxes to move • Double-click to edit names/titles • Click ▶/▼ to expand/collapse • Use toolbar for import/export/search
+        </div>
+    </div>
+</body>
+</html>

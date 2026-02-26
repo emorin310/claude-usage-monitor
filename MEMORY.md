@@ -1,5 +1,18 @@
 # MEMORY.md - Magi's Long-Term Memory
 
+## 🧠 Mind Palace (NEW!)
+
+**Status:** Phase 1 COMPLETE as of 2026-02-26
+
+All curated knowledge now lives in `/mnt/bigstore/knowledge/brain/`:
+- **INDEX.md** — Master guide & navigation
+- **SCHEMA.md** — Documentation conventions
+- **identity/**, **relationships/**, **knowledge/**, **schedules/**, **runbooks/**, **state/**
+
+See `PHASE1-REPORT.md` for details. This MEMORY.md remains primary session memory; Mind Palace is curated long-term storage.
+
+---
+
 ## Eric Morin - Key Facts
 
 - **Location:** Cambridge, Ontario, Canada

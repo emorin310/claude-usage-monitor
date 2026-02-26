@@ -1,0 +1,81 @@
+[2026-02-25 04:00:01] Starting OpenClaw auto-update...
+[2026-02-25 04:00:01] Updating OpenClaw package...
+npm error code EACCES
+npm error syscall rename
+npm error path /usr/lib/node_modules/corepack
+npm error dest /usr/lib/node_modules/.corepack-Ly9MGgoL
+npm error errno -13
+npm error Error: EACCES: permission denied, rename '/usr/lib/node_modules/corepack' -> '/usr/lib/node_modules/.corepack-Ly9MGgoL'
+npm error     at async Object.rename (node:internal/fs/promises:781:10)
+npm error     at async moveFile (/usr/lib/node_modules/npm/node_modules/@npmcli/fs/lib/move-file.js:30:5)
+npm error     at async Promise.allSettled (index 0)
+npm error     at async [reifyPackages] (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+npm error     at async Arborist.reify (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+npm error     at async Update.exec (/usr/lib/node_modules/npm/lib/commands/update.js:63:5)
+npm error     at async Npm.exec (/usr/lib/node_modules/npm/lib/npm.js:207:9)
+npm error     at async module.exports (/usr/lib/node_modules/npm/lib/cli/entry.js:74:5) {
+npm error   errno: -13,
+npm error   code: 'EACCES',
+npm error   syscall: 'rename',
+npm error   path: '/usr/lib/node_modules/corepack',
+npm error   dest: '/usr/lib/node_modules/.corepack-Ly9MGgoL'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It is likely you do not have the permissions to access this file as the current user
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm notice
+npm notice New major version of npm available! 10.9.4 -> 11.10.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.10.1
+npm notice To update run: npm install -g npm@11.10.1
+npm notice
+npm error A complete log of this run can be found in: /home/magi/.npm/_logs/2026-02-25T04_00_01_934Z-debug-0.log
+[2026-02-25 04:00:05] ✅ Package updated successfully
+[2026-02-25 04:00:05] Updating gateway...
+/home/magi/clawd/scripts/auto-update.sh: line 45: openclaw: command not found
+[2026-02-25 04:00:05] ✅ Gateway updated successfully
+[2026-02-25 04:00:05] Restarting gateway service...
+/home/magi/clawd/scripts/auto-update.sh: line 60: openclaw: command not found
+[2026-02-25 04:00:05] ✅ Gateway restarted successfully
+[2026-02-25 04:00:05] ✅ All updates completed successfully
+[2026-02-26 04:00:01] Starting OpenClaw auto-update...
+[2026-02-26 04:00:01] Updating OpenClaw package...
+npm error code EACCES
+npm error syscall rename
+npm error path /usr/lib/node_modules/corepack
+npm error dest /usr/lib/node_modules/.corepack-Ly9MGgoL
+npm error errno -13
+npm error Error: EACCES: permission denied, rename '/usr/lib/node_modules/corepack' -> '/usr/lib/node_modules/.corepack-Ly9MGgoL'
+npm error     at async Object.rename (node:internal/fs/promises:781:10)
+npm error     at async moveFile (/usr/lib/node_modules/npm/node_modules/@npmcli/fs/lib/move-file.js:30:5)
+npm error     at async Promise.allSettled (index 0)
+npm error     at async [reifyPackages] (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:325:11)
+npm error     at async Arborist.reify (/usr/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js:142:5)
+npm error     at async Update.exec (/usr/lib/node_modules/npm/lib/commands/update.js:63:5)
+npm error     at async Npm.exec (/usr/lib/node_modules/npm/lib/npm.js:207:9)
+npm error     at async module.exports (/usr/lib/node_modules/npm/lib/cli/entry.js:74:5) {
+npm error   errno: -13,
+npm error   code: 'EACCES',
+npm error   syscall: 'rename',
+npm error   path: '/usr/lib/node_modules/corepack',
+npm error   dest: '/usr/lib/node_modules/.corepack-Ly9MGgoL'
+npm error }
+npm error
+npm error The operation was rejected by your operating system.
+npm error It is likely you do not have the permissions to access this file as the current user
+npm error
+npm error If you believe this might be a permissions issue, please double-check the
+npm error permissions of the file and its containing directories, or try running
+npm error the command again as root/Administrator.
+npm error A complete log of this run can be found in: /home/magi/.npm/_logs/2026-02-26T04_00_02_056Z-debug-0.log
+[2026-02-26 04:00:03] ✅ Package updated successfully
+[2026-02-26 04:00:03] Updating gateway...
+/home/magi/clawd/scripts/auto-update.sh: line 45: openclaw: command not found
+[2026-02-26 04:00:03] ✅ Gateway updated successfully
+[2026-02-26 04:00:03] Restarting gateway service...
+/home/magi/clawd/scripts/auto-update.sh: line 60: openclaw: command not found
+[2026-02-26 04:00:03] ✅ Gateway restarted successfully
+[2026-02-26 04:00:03] ✅ All updates completed successfully

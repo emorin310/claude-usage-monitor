@@ -22,6 +22,39 @@
 **Details:** Eric approved implementing self-maintenance and health monitoring systems
 **Status:** Completed, moved to implementation
 
+## 2026-02-25
+
+### 08:55 AM - Heartbeat Check
+**Type:** Routine  
+**Status:** Council comms unchanged (22/12/16/0), no health alerts, system nominal
+
+### 04:25 AM - Movie Search & Request
+**Type:** Task  
+**Activity:** Searched Jellyfin library for "She's Having a Baby" (found 4 copies) and "Dances with Wolves" (not found)
+**Details:** 
+- Successfully located "She's Having a Baby" (1988) - multiple copies available
+- Sent MQTT request to Marvin for "Dances with Wolves" (1990) high-quality with Atmos
+- Used mqtt-bots skill for inter-agent communication
+**Status:** Request sent, awaiting Marvin's response
+
+### 19:31 PM - Interactive Org Chart Tool - Complete Project Plan
+**Type:** Project  
+**Activity:** Designed and documented comprehensive spec for Option 2 (web-based interactive org chart tool)
+**Deliverables:**
+- `CLAUDE-CODE-SPEC.md` (359 lines) - AI-readable implementation spec
+- `interactive-org-chart-plan.md` (500 lines) - Full detailed specification
+- `README-ORG-CHART-PROJECT.md` (223 lines) - Project summary & navigation
+- `org-chart-ui-demo.html` (466 lines) - Interactive UI mockup (works in browser)
+- `org-chart-ui-mockup.excalidraw` (52KB) - Visual wireframe
+- All files uploaded to `/mnt/bigstore/knowledge/Excalidraw/`
+**Features Specified:** Expand/collapse, inline edit, drag-to-move, CSV import, PDF export, undo/redo
+**Effort:** ~120 hours, 3-4 weeks in 4 phases
+**Status:** Ready for review & developer assignment
+**Links:** `/mnt/bigstore/knowledge/Excalidraw/`
+
 ---
 
 *Journal tracks significant activities, decisions, and system changes for memory continuity.*
+
+**Previous entries:**
+2026-02-24 18:28 - Task: GitHub backup system fully activated - 240 files backed up, 7 secrets sanitized, automation running 4:30 AM daily

@@ -5,7 +5,7 @@ set -e
 
 LOG_FILE="/home/magi/clawd/logs/backup.log"
 BACKUP_DIR="/home/magi/clawd-backup"
-REPO_URL="git@github.com:emorin17/magi-backup.git"  # Update this to your private repo
+REPO_URL="git@github.com:emorin310/magi-backup.git"
 
 mkdir -p "$(dirname "$LOG_FILE")"
 
