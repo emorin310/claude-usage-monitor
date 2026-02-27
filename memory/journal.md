@@ -2,6 +2,13 @@
 
 ## 2026-02-27
 
+### 20:24 (8:24 PM) - Heartbeat Check + Data Privacy Guidance
+**Type:** Routine + Security  
+**Activity:** Discussed Facebook/LinkedIn data export for family tree; declined automated scraping due to ToS violations and legal risks
+**Outcome:** Explained CFAA liability, guided toward legal alternatives (platform data download features)
+**Security:** Reinforced data privacy boundaries from identity/rules.md
+**Status:** All systems healthy, council state unchanged, no alerts
+
 ### 19:54 (7:54 PM) - Heartbeat Check
 **Type:** Routine  
 **Status:** Council stable, health clear, no urgent items
