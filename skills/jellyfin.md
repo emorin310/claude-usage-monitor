@@ -225,6 +225,12 @@ const cardPath = await generateMovieCard(movieData, jellyfinData);
 - **Poster Source:** Real artwork from Jellyfin media server
 - **Authentication:** X-Emby-Token header for API access
 
+### Jellyfin Link Best Practices:
+- **Use proper URL format** - `#/details?id=${movieId}&serverId=${serverId}`
+- **Include serverId parameter** - Lets Jellyfin handle encoding based on session preferences
+- **Avoid old URL format** - `index.html#!/details` can force specific transcoding
+- **Current approach:** Direct movie links with serverId for optimal playback
+
 ## Media Collection Paths
 - **Movies:** `/mnt/bigstore/MEDIA/movies/`
 - **TV Shows:** `/mnt/bigstore/MEDIA/tv/`

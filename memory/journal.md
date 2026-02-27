@@ -1,5 +1,17 @@
 # Journal - Activity Log
 
+## 2026-02-27
+
+### 07:24 AM - Project Complete: Jellyfin Movie Cards
+- **Type:** Project  
+- **Status:** ✅ Complete - Full visual movie card system working
+- **Features:** Real poster art from Jellyfin API, PNG + interactive HTML versions
+- **Files:** `scripts/jellyfin-api-card-generator.js`, `scripts/jellyfin-html-card-generator.js`
+- **Storage:** `/mnt/bigstore/@Shared Files/movie-cards/`
+- **Integration:** 6-step movie request workflow with IMDB data + Jellyfin posters
+- **Media Request:** Successfully sent "The Housemaid (2025)" request to Marvin
+- **Links:** Fixed transcoding issues, now uses proper `#/details?id&serverId` format
+
 ## 2026-02-24
 
 ### 10:44 AM - Heartbeat Check
