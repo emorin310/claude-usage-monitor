@@ -3,8 +3,31 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs').promises;
 const path = require('path');
+const https = require('https');
 
 const CARDS_DIR = '/mnt/bigstore/@Shared Files/movie-cards';
+
+async function downloadImage(url, localPath) {
+  try {
+    const file = await fs.open(localPath, 'w');
+    
+    return new Promise((resolve, reject) => {
+      https.get(url, (response) => {
+        if (response.statusCode !== 200) {
+          reject(new Error(`Failed to download image: ${response.statusCode}`));
+          return;
+        }
+        
+        response.pipe(file.createWriteStream());
+        response.on('end', () => resolve(localPath));
+        response.on('error', reject);
+      }).on('error', reject);
+    });
+  } catch (error) {
+    console.log(`Failed to download poster: ${error.message}`);
+    return null;
+  }
+}
 
 async function generateMovieCard(movieData) {
   // Ensure cards directory exists
@@ -14,6 +37,25 @@ async function generateMovieCard(movieData) {
   const safeTitle = movieData.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
   const filename = `${safeTitle}-${movieData.year}-card.png`;
   const outputPath = path.join(CARDS_DIR, filename);
+
+  // Download poster image locally for reliable loading
+  let localPosterPath = null;
+  if (movieData.posterUrl) {
+    const posterName = `${safeTitle}-poster.jpg`;
+    const posterPath = path.join(CARDS_DIR, posterName);
+    localPosterPath = await downloadImage(movieData.posterUrl, posterPath);
+  }
+
+  // Use local file URL or fallback
+  const posterUrl = localPosterPath ? `file://${localPosterPath}` : '';
+  const posterStyle = localPosterPath ? 
+    `background: url('${posterUrl}') center/cover;` :
+    `background: linear-gradient(135deg, #4a5568, #2d3748);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 72px;
+     color: #718096;`;
 
   const htmlTemplate = `<!DOCTYPE html>
 <html>
@@ -38,24 +80,12 @@ body {
 .poster {
   width: 270px;
   height: 400px;
-  background: url('${movieData.posterUrl}') center/cover;
-  background-color: #2d3748;
+  ${posterStyle}
   position: relative;
-  border: 2px solid #4a5568;
-}
-.poster.fallback {
-  background: linear-gradient(135deg, #4a5568 0%, #2d3748 50%, #1a202c 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 72px;
-  color: #a0aec0;
-  border-right: 2px solid rgba(255,255,255,0.1);
-  position: relative;
+  border-right: 2px solid #2d3748;
 }
 .poster.fallback::before {
   content: "🎬";
-  text-shadow: 0 4px 8px rgba(0,0,0,0.5);
 }
 .content {
   padding: 30px;
@@ -174,7 +204,7 @@ body {
 </head>
 <body>
 <div class="movie-card">
-  <div class="poster${movieData.posterUrl ? '' : ' fallback'}">${movieData.posterUrl ? '' : '🎬'}</div>
+  <div class="poster${localPosterPath ? '' : ' fallback'}"></div>
   <div class="content">
     <div class="media-type">${movieData.type || 'MOVIE'}</div>
     <div class="title">${movieData.title} <span class="year">(${movieData.year})</span></div>
@@ -215,14 +245,8 @@ body {
   await page.setContent(htmlTemplate);
   await page.setViewport({ width: 840, height: 440 });
 
-  // Wait for any images to load
-  try {
-    await page.waitForSelector('.poster', { timeout: 3000 });
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  } catch (e) {
-    // Fallback if poster doesn't load
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  }
+  // Wait longer for images to load
+  await new Promise(resolve => setTimeout(resolve, 3000));
 
   await page.screenshot({
     path: outputPath,
@@ -236,11 +260,11 @@ body {
   return outputPath;
 }
 
-// CLI usage
+// CLI usage with Life as a House data
 if (require.main === module) {
   const movieData = {
-    title: process.argv[2] || "Life as a House",
-    year: process.argv[3] || "2001",
+    title: "Life as a House",
+    year: "2001",
     rating: "R",
     genre: "Drama",
     runtime: "2h 5m",
@@ -250,7 +274,7 @@ if (require.main === module) {
     plot: "When a man is diagnosed with terminal cancer, he takes custody of his misanthropic teenage son. Together they embark on building a house - and rebuilding their relationship.",
     director: "Irwin Winkler",
     cast: "Kevin Kline, Hayden Christensen, Kristin Scott Thomas",
-    posterUrl: "", // Disabled for now - external images don't load reliably
+    posterUrl: "https://m.media-amazon.com/images/M/MV5BMTgxOTY4Mjc0MF5BMl5BanBnXkFtZTYwNTc0MDQ3._V1_SX300.jpg",
     jellyfinUrl: "https://jellyfin.ericmorin.online",
     imdbUrl: "https://imdb.com/title/tt0264796/",
     type: "MOVIE"

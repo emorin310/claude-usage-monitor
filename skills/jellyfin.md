@@ -211,10 +211,19 @@ node scripts/jellyfin-card-generator.js "Movie Title" "Year"
 ### Integration:
 When implementing the 6-step workflow, call:
 ```javascript
-const { generateMovieCard } = require('./scripts/jellyfin-card-generator.js');
-const cardPath = await generateMovieCard(movieData);
+const { generateMovieCard, searchJellyfinMovie } = require('./scripts/jellyfin-api-card-generator.js');
+
+// Get Jellyfin data first, then generate card with real poster
+const jellyfinData = await searchJellyfinMovie(title, year);
+const cardPath = await generateMovieCard(movieData, jellyfinData);
 // Send cardPath via message tool
 ```
+
+### Jellyfin API Configuration:
+- **Server:** https://jellyfin.ericmorin.online
+- **API Key:** Configured in script (c5b4d7fc157b49778470414e5944b0b2)
+- **Poster Source:** Real artwork from Jellyfin media server
+- **Authentication:** X-Emby-Token header for API access
 
 ## Media Collection Paths
 - **Movies:** `/mnt/bigstore/MEDIA/movies/`
