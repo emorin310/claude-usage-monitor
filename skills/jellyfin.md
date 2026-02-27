@@ -181,39 +181,40 @@ When displaying media files, create a rich visual card using HTML/CSS:
 </html>
 ```
 
-### Implementation Options:
+### Implementation Status: ✅ COMPLETE
 
-**Option 1: Browser Screenshot (Preferred)**
-1. Parse IMDB data for poster URL, ratings, cast
-2. Fill HTML template with movie data  
-3. Use browser tool to render HTML as image
-4. Send image via message tool
+**Card Generation System:**
+1. **Puppeteer-based generator** (`scripts/jellyfin-card-generator.js`)
+2. **Shared storage location** (`/mnt/bigstore/@Shared Files/movie-cards/`)
+3. **Auto-naming** (safe filenames based on title + year)
+4. **Fallback support** (placeholder poster if image fails)
 
-**Option 2: Local HTML + Screenshot Tool**
-1. Create HTML file in workspace
-2. Use headless browser (wkhtmltoimage, playwright, etc.)
-3. Generate PNG of card
-
-**Option 3: Canvas/Image Generation Library**
-1. Use Python PIL/Pillow or similar
-2. Programmatically draw card elements
-3. Composite poster image with text/graphics
-
-### Demo Implementation:
+### Usage:
 ```bash
-# Install playwright for headless screenshots
-npm install -g playwright
-playwright install chromium
+# Generate card for any movie
+node scripts/jellyfin-card-generator.js "Movie Title" "Year"
 
-# Generate card
-node scripts/generate-movie-card.js "Life as a House" > /tmp/movie-card.png
+# Auto-generates filename: movie-title-year-card.png
+# Saves to: /mnt/bigstore/@Shared Files/movie-cards/
 ```
 
-### Current Status:
-- ✅ HTML template created and styled
-- ✅ IMDB data parsing working  
-- 🔄 Browser tool integration (auth issue to resolve)
-- 📋 Alternative: Create standalone card generator script
+### Card Features:
+- ✅ Movie poster from IMDB/external sources
+- ✅ Visual progress circle for user scores
+- ✅ Gradient backgrounds and professional styling
+- ✅ Cast, director, synopsis, runtime info
+- ✅ Play button + Jellyfin/IMDB links
+- ✅ Media type indicator (MOVIE/TV/ANIME)
+- ✅ Responsive text truncation
+- ✅ Fallback design for missing posters
+
+### Integration:
+When implementing the 6-step workflow, call:
+```javascript
+const { generateMovieCard } = require('./scripts/jellyfin-card-generator.js');
+const cardPath = await generateMovieCard(movieData);
+// Send cardPath via message tool
+```
 
 ## Media Collection Paths
 - **Movies:** `/mnt/bigstore/MEDIA/movies/`
