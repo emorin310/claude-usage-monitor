@@ -10,12 +10,33 @@
 - **Send to Marvin:** `~/bin/msg-marvin "message"`
 - **Check my inbox:** `~/bin/interbot-check`
 - **Cron:** Already processing inbound messages automatically
+- **Note:** Marvin replies via Discord (where he chats with Eric)
 
 **Details:**
 - **Message directories:** `/mnt/bigstore/interbot/magi-inbox/` (TO me), `/mnt/bigstore/interbot/marvin-inbox/` (TO Marvin)
 - **Processing:** Cron job (automatic, no manual checking needed)
-- **Status:** ✅ Active (replaced MQTT system Feb 28, 2026 at 22:38 UTC)
+- **Status:** ✅ Active & Operational (replaced MQTT system Feb 28, 2026 at 22:38 UTC)
 - **Reliability:** Filesystem-based, no network dependencies
+
+## Media Request Workflow (Magi → Marvin → Jellyfin)
+
+**Request a movie:**
+```bash
+~/bin/msg-marvin '{"action": "request_movie", "title": "Space Time", "year": 2025}'
+```
+
+**Manual Jellyfin library refresh:**
+```bash
+~/bin/msg-marvin '{"action": "refresh_library"}'
+```
+
+**Full pipeline:**
+1. Magi sends JSON request via msg-marvin
+2. Marvin receives → triggers Radarr
+3. Radarr queries indexers → SABnzbd/qBittorrent downloads
+4. Auto-move to `/MEDIA/movies/`
+5. Jellyfin auto-scans and indexes
+6. Movie appears in library (~30 seconds to few minutes)
 
 ## Excalidraw Flowchart
 
