@@ -4,6 +4,19 @@
 - **Skill:** `skills/homeassistant/SKILL.md`
 - **Scripts:** `~/clawd-magi/skills/homeassistant/scripts/`
 
+## Inter-Bot Communication (Magi ↔ Marvin) ⭐ NEW SYSTEM
+
+**TL;DR:**
+- **Send to Marvin:** `~/bin/msg-marvin "message"`
+- **Check my inbox:** `~/bin/interbot-check`
+- **Cron:** Already processing inbound messages automatically
+
+**Details:**
+- **Message directories:** `/mnt/bigstore/interbot/magi-inbox/` (TO me), `/mnt/bigstore/interbot/marvin-inbox/` (TO Marvin)
+- **Processing:** Cron job (automatic, no manual checking needed)
+- **Status:** ✅ Active (replaced MQTT system Feb 28, 2026 at 22:38 UTC)
+- **Reliability:** Filesystem-based, no network dependencies
+
 ## Excalidraw Flowchart
 
 - **Source:** https://playbooks.com/skills/openclaw/skills/excalidraw-flowchart

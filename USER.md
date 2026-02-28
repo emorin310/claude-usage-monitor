@@ -1,7 +1,7 @@
 # USER.md - About Your Human
 
 - **Name:** Eric Morin
-- **Discord ID:** 793158038881042434
+- **Discord:** emorin310 (ID: 793158038881042434)
 - **What to call them:** Eric
 - **Timezone:** EST (America/Toronto)
 - **Location:** Cambridge, Ontario
