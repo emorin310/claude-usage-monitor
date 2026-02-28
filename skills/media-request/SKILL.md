@@ -66,6 +66,9 @@ When user asks for a movie/show:
    ```
 
 ## Quality Rules
+
+**Full spec:** `/mnt/bigstore/marvin/shared/knowledge/media-quality-rules.md`
+
 - Movies: Minimum 1080p, 2-20GB preferred
 - TV: Minimum 720p  
 - Reject: CAM, TS, TC, telesync copies
