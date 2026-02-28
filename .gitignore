@@ -19,3 +19,4 @@ credentials.txt
 *.secret
 .credentials/
 .secrets/
+.env.secrets
