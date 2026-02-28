@@ -146,6 +146,19 @@
 **Type:** Routine  
 **Status:** Council state stable, health clear, no urgent items
 
+### 08:13 (8:13 AM UTC / 3:13 AM EST Sat) - Heartbeat Check + Tax Return Analysis Complete
+**Type:** Routine + Analysis  
+**Status:** Council state stable, health clear, no urgent items
+**Activity:** Extracted and analyzed Eric's tax returns (2023, 2022, 2021)
+**Findings:**
+- ✅ 2023: $5,597 refund (income $235K)
+- ✅ 2022: $1,955 refund (income $135K)
+- ⚠️ 2021: $9,929 owed after reassessment - CRA changed something, needs investigation
+- ⚠️ Unused capital losses $5,830 from 2022 - verify carry-forward to 2023
+- ✅ Created detailed tax review analysis: `/home/magi/clawd/tax-review-2023-2021.md`
+**Awaiting:** Eric's clarification on 2021 reassessment, capital loss treatment, deduction documentation
+**Note:** During quiet hours - monitoring only
+
 ### 06:43 (6:43 AM UTC / 1:43 AM EST Sat) - Heartbeat Check
 **Type:** Routine  
 **Status:** Council state stable, health clear, no urgent items
