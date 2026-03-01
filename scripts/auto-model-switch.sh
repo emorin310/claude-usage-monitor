@@ -1,8 +1,8 @@
 #!/bin/bash
 # Auto-switch between Opus and Sonnet based on Claude usage
 
-STATE_FILE="$HOME/clawd-magi/memory/model-state.json"
-USAGE_SCRIPT="$HOME/clawd-magi/scripts/check-claude-usage.sh"
+STATE_FILE="$HOME/clawd/memory/model-state.json"
+USAGE_SCRIPT="$HOME/clawd/scripts/check-claude-usage.sh"
 
 # Get current usage
 USAGE_OUTPUT=$($USAGE_SCRIPT)
@@ -46,9 +46,9 @@ if [ "$SHOULD_SWITCH" = true ]; then
     
     # Output switch command for the LLM to execute
     if [ "$NEW_MODEL" = "sonnet" ]; then
-        MODEL_FULL="anthropic/claude-sonnet-4-5-20250929"
+        MODEL_FULL="sonnet"
     else
-        MODEL_FULL="anthropic/claude-opus-4-5"
+        MODEL_FULL="opus"
     fi
     
     echo "SWITCH_TO:$MODEL_FULL"
