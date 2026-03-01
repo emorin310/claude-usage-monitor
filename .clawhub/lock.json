@@ -4,6 +4,10 @@
     "vinculum": {
       "version": "1.2.0",
       "installedAt": 1772163497997
+    },
+    "reddit-read-only": {
+      "version": "1.0.0",
+      "installedAt": 1772327525669
     }
   }
 }
