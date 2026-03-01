@@ -17,6 +17,25 @@ msg-marvin '{"action": "request_movie", "title": "Paddington", "year": 2014}'
 msg-magi '{"event": "download_complete", "title": "Paddington"}'
 ```
 
+## Content Rules
+
+### Language Requirements
+- **Default:** English language versions only
+- **Foreign films:** Require explicit user approval before requesting
+- **Subtitles:** Only acceptable for foreign language films with user approval
+- **Override:** User can explicitly request foreign language version (e.g., "get the original Japanese version")
+
+### Quality Preferences
+- Prefer 1080p Remux/BluRay when available
+- 4K acceptable if specifically requested
+- Avoid CAM/TS/low-quality releases
+
+### Verification
+Before adding a non-English film, Magi should confirm:
+> "This film is in [language]. Would you like me to request it with subtitles, or would you prefer an English dubbed version if available?"
+
+---
+
 ## Magi → Marvin
 
 ### Request Movie

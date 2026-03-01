@@ -308,29 +308,47 @@ body {
 
 // CLI usage with Life as a House data
 if (require.main === module) {
+  const args = process.argv.slice(2).reduce((acc, arg, i, arr) => {
+    if (arg.startsWith('--')) {
+      const key = arg.substring(2);
+      if (arr[i + 1] && !arr[i + 1].startsWith('--')) {
+        acc[key] = arr[i + 1];
+      } else {
+        acc[key] = true; // Handle boolean flags
+      }
+    }
+    return acc;
+  }, {});
+
   const movieData = {
-    title: "Life as a House",
-    year: "2001",
-    rating: "R",
-    genre: "Drama",
-    runtime: "2h 5m",
-    score: "74",
-    scorePercentage: 74,
-    reviewCount: "47K reviews",
-    plot: "When a man is diagnosed with terminal cancer, he takes custody of his misanthropic teenage son. Together they embark on building a house - and rebuilding their relationship.",
-    director: "Irwin Winkler",
-    cast: "Kevin Kline, Hayden Christensen, Kristin Scott Thomas",
-    jellyfinUrl: "https://jellyfin.ericmorin.online",
-    imdbUrl: "https://imdb.com/title/tt0264796/",
+    title: args.title,
+    year: args.year,
+    rating: args.officialRating, // Use officialRating for display
+    genre: args.genres,
+    runtime: `${Math.floor(args.runtime / 60)}h ${args.runtime % 60}m`, // Convert minutes back to "Hh Mm"
+    score: parseFloat(args.communityRating).toFixed(1), // Format to one decimal
+    scorePercentage: Math.round(parseFloat(args.communityRating) * 10),
+    reviewCount: "N/A", // Not provided by current API, set default
+    plot: args.overview,
+    director: "N/A", // Not provided by current API, set default
+    cast: "N/A",     // Not provided by current API, set default
+    jellyfinUrl: args.playUrl, // This should be the direct play URL
+    imdbUrl: "https://imdb.com/find?q=" + encodeURIComponent(args.title + " " + args.year), // Dynamic IMDB search
     type: "MOVIE"
   };
 
-  // First try to get data from Jellyfin
-  searchJellyfinMovie(movieData.title, movieData.year)
-    .then(jellyfinData => {
-      console.log('Jellyfin data:', jellyfinData);
-      return generateMovieCard(movieData, jellyfinData);
-    })
+  const jellyfinData = {
+    id: args.jellyfinId,
+    name: args.title,
+    year: args.year,
+    posterUrl: `${args.jellyfinUrl.split('/#/details')[0]}/Items/${args.jellyfinId}/Images/Primary?maxHeight=600&quality=90&tag=${args.posterTag}&api_key=${args.apiKey}`,
+    overview: args.overview,
+    originalMovie: {
+      ServerId: args.jellyfinUrl.split('serverId=')[1],
+    }
+  };
+
+  generateMovieCard(movieData, jellyfinData)
     .then(path => console.log(`Card saved to: ${path}`))
     .catch(console.error);
 }

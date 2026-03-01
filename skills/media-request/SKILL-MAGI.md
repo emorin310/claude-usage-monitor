@@ -4,6 +4,15 @@
 
 Fast, local media library queries for family requests.
 
+## Language Rules (CRITICAL)
+- **Default:** English language versions ONLY
+- **Foreign films:** Require explicit user approval BEFORE requesting
+- **Subtitles:** Only acceptable for foreign language films with user approval
+- **When in doubt:** Ask! "This is a French film — want the original with subtitles, or should I look for an English dub?"
+
+**Before requesting any non-English content, confirm with user:**
+> "This film is in [language]. Would you like me to request it with subtitles, or would you prefer an English dubbed version if available?"
+
 ## Quality Rules (IMPORTANT)
 **Movies:**
 - Minimum: 1080p (no 720p or lower)
@@ -16,7 +25,7 @@ Fast, local media library queries for family requests.
 
 **Always Reject:**
 - Telesync, CAM, HDCAM, TS, TC copies
-- Foreign language audio (unless explicitly requested)
+- Foreign language audio (unless user explicitly approved)
 - Files with "sample" in name (auto-remove)
 
 **Naming:** Clean, standard format (no junk/release tags)
