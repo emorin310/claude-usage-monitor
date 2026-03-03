@@ -1,0 +1,15 @@
+{
+  "daily_requests": {
+    "2026-03-01": 1,
+    "2026-03-02": 1
+  },
+  "last_processed": 1772463602.311899,
+  "total_processed": 2,
+  "automation_enabled": true,
+  "rate_limit": 1,
+  "processing_times": [
+    "15:00",
+    "23:00"
+  ],
+  "created": "2026-03-01T15:53:00Z"
+}

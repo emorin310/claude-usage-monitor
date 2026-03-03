@@ -1,0 +1,48 @@
+🔧 Weekly OpenClaw Maintenance - Mon Mar  2 09:00:01 UTC 2026
+═══════════════════════════════════════════════════
+📊 Checking file sizes...
+📊 File Size Monitor - Mon Mar  2 09:00:01 UTC 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AGENTS.md                      8KB ✓
+SOUL.md                        1KB ✓
+MEMORY.md                      5KB ✓
+TOOLS.md                       3KB ✓
+HEARTBEAT.md                   3KB ✓
+USER.md                        2KB ✓
+IDENTITY.md                    0KB ✓
+memory/journal.md              4KB ✓
+memory/council-state.json      0KB ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ All core files within size limits
+
+📁 Memory folder summary:
+   quality-upgrade-queue.json    2KB
+   council-state.json      0KB
+   2026-02-22.md           0KB
+   inbox-competition.json    1KB
+   2026-01-29.md           0KB
+   2026-01-27.md           5KB
+   session_dump_partial.json    0KB
+   2026-01-28.md           1KB
+   2026-01-30.md           0KB
+   chat_history.json       0KB
+
+💰 Current session status:
+/home/magi/clawd/scripts/weekly-maintenance.sh: line 16: openclaw: command not found
+⚠️ Could not fetch session status
+
+🧹 Memory optimization suggestions:
+   Memory files: 42 files, 102KB total
+   💡 Consider archiving old memory files
+      - Archive: 2026-01-29.md
+      - Archive: 2026-01-27.md
+      - Archive: 2026-01-28.md
+      - Archive: contacts.md
+      - Archive: PDR-mind-palace-v1.md
+
+🎯 Model strategy compliance:
+   ✅ Model strategy documented
+   ✅ Token optimization guide available
+
+🎯 Maintenance complete! Review any warnings above.
+═══════════════════════════════════════════════════

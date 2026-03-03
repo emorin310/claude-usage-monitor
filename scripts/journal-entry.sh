@@ -2,7 +2,7 @@
 # Add a journal entry
 # Usage: ./journal-entry.sh "Type" "Title" "What" "Details" "Link"
 
-JOURNAL="$HOME/clawd-magi/journal.md"
+JOURNAL="$HOME/clawd/journal.md"
 TODAY=$(date +%Y-%m-%d)
 TIME=$(date +%H:%M)
 DAY_NAME=$(date +%A)

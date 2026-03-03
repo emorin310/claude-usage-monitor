@@ -8,6 +8,22 @@
     "reddit-read-only": {
       "version": "1.0.0",
       "installedAt": 1772327525669
+    },
+    "deep-research-pro": {
+      "version": "1.0.2",
+      "installedAt": 1772339539782
+    },
+    "gemini-deep-research": {
+      "version": "1.0.0",
+      "installedAt": 1772339544456
+    },
+    "imsg": {
+      "version": "1.0.0",
+      "installedAt": 1772382203477
+    },
+    "claw-me-maybe": {
+      "version": "1.2.1",
+      "installedAt": 1772382220850
     }
   }
 }

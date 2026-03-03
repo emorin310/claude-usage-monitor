@@ -4,7 +4,7 @@
 # Tries multiple variations and returns best matches
 
 QUERY="$1"
-SEARCH_SCRIPT="/Users/eric/clawd-magi/scripts/scripts/search-library.sh"
+SEARCH_SCRIPT="/Users/eric/clawd/scripts/scripts/search-library.sh"
 
 if [ -z "$QUERY" ]; then
   echo '{"status":"ERROR","message":"Usage: smart-search.sh \"movie name\""}'

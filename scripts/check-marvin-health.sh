@@ -4,7 +4,7 @@
 
 MARVIN_HOST="marvin@marvinbot"
 MARVIN_GATEWAY="http://localhost:18789"  # Check locally via SSH since LAN bind is wonky
-LOG_FILE="$HOME/clawd-magi/memory/marvin-health.log"
+LOG_FILE="$HOME/clawd/memory/marvin-health.log"
 ALERT_THRESHOLD=3  # Alert after 3 consecutive failures
 
 # Ensure log directory exists
@@ -23,7 +23,7 @@ is_healthy() {
 }
 
 # Get failure count from state file
-STATE_FILE="$HOME/clawd-magi/memory/marvin-health-state.json"
+STATE_FILE="$HOME/clawd/memory/marvin-health-state.json"
 get_failure_count() {
     if [[ -f "$STATE_FILE" ]]; then
         jq -r '.consecutiveFailures // 0' "$STATE_FILE" 2>/dev/null || echo 0
@@ -55,7 +55,7 @@ else
     if [[ $failures -ge $ALERT_THRESHOLD ]]; then
         echo "[$timestamp] 🚨 ALERT: Marvin down for $failures checks, attempting recovery..." >> "$LOG_FILE"
         # Attempt recovery
-        "$HOME/clawd-magi/scripts/recover-marvin.sh" >> "$LOG_FILE" 2>&1
+        "$HOME/clawd/scripts/recover-marvin.sh" >> "$LOG_FILE" 2>&1
     fi
 fi
 

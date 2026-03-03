@@ -2,8 +2,8 @@
 # Log rotation script - runs daily to archive logs by date
 # Usage: ./rotate-logs.sh (add to cron for daily execution)
 
-LOG_DIR="$HOME/clawd-magi"
-ARCHIVE_DIR="$HOME/clawd-magi/logs/archive"
+LOG_DIR="$HOME/clawd"
+ARCHIVE_DIR="$HOME/clawd/logs/archive"
 TODAY=$(date +%Y-%m-%d)
 YESTERDAY=$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d "yesterday" +%Y-%m-%d)
 

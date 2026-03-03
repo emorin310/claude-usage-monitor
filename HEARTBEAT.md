@@ -1,6 +1,7 @@
 # HEARTBEAT.md
 
-**⚠️ MODEL REQUIREMENT: All heartbeat checks MUST use haiku (cost optimization)**
+**⚠️ COST CRITICAL: Heartbeats consume ENTIRE session context every ping (currently 452k tokens)**
+**MODEL:** haiku only - never use expensive models for routine checks
 
 ## 🔄 Coordinated Health Monitoring
 
@@ -10,6 +11,7 @@
 - **Todoist Council Comms** - Check for new comments, respond if needed
 - **System alerts review** - Check `/tmp/health_check_final_results.json` for any pending alerts
 - **Memory maintenance** - Update journal.md, review MEMORY.md
+- **Local Hardware Alerts** - Monitor r/CanadianHardwareSwap for deals near Cambridge/GTA
 - **Ad-hoc tasks** - Anything Eric specifically requests
 
 ### Cron Job Role (Automated Checks)  
@@ -28,20 +30,27 @@
 - If needs-magi tasks > 0, review and act on them
 - Update memory/council-state.json if changes found
 
-### 2. Health Alerts Review
+### 2. Local Hardware Deals (Every 4 hours, during business hours 9 AM - 9 PM EST)
+- **Target**: r/CanadianHardwareSwap within 90km of Cambridge, ON
+- **Keywords**: "16GB DDR4 ECC", "E5-2699", "Xeon", "enterprise", "server", "homelab"
+- **Alert criteria**: Posted < 4 hours ago, price mentions, pickup/local delivery
+- **Method**: Use reddit-readonly skill with location filtering
+- **Output**: Discord alert with post title, price, location, permalink
+
+### 3. Health Alerts Review
 - Check `/tmp/health_check_final_results.json` if it exists
 - Review any "alert" or "error" status items from cron health checks
 - Escalate to Eric if manual intervention needed
 - Clear processed alerts
 
-### 3. Memory & Journal Updates
+### 4. Memory & Journal Updates
 - Add entries to journal.md for significant activities
 - Types: Task, Project, Event, Activity, Routine, Alert
 - Keep entries concise (1-2 lines)
 - Include links where relevant
 - Periodically review and update MEMORY.md with distilled learnings
 
-### 4. Proactive Opportunities (Time Permitting)
+### 5. Proactive Opportunities (Time Permitting)
 - Organize workspace files
 - Review and update documentation
 - Check for stuck processes or background tasks
@@ -55,6 +64,7 @@
 - **Use state files** - Track what's been checked to avoid redundancy
 
 ## Notes
-- Cron handles routine monitoring; heartbeat handles reasoning and complex responses
+- Cron handles routine monitoring; heartbeat can serve as backup
 - If cron jobs fail, heartbeat can serve as backup
 - All health monitoring results logged to `/home/magi/clawd/logs/`
+- Hardware monitoring only during reasonable hours (9 AM - 9 PM EST)

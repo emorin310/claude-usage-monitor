@@ -52,5 +52,5 @@ echo "  - Stale (>${STALE_DAYS}d): $STALE"
 if [ "$LARGE" -gt 10 ] || [ "$STALE" -gt 50 ]; then
   echo ""
   echo "⚠️  RECOMMENDED: Run cleanup script to prevent bloat"
-  echo "    ~/clawd-magi/scripts/session-cleanup.sh"
+  echo "    ~/clawd/scripts/session-cleanup.sh"
 fi

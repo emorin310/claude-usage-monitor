@@ -1,7 +1,7 @@
 #!/bin/bash
 # Magi Failsafe: Auto-switch to free model if quota exceeded
 
-LOG_FILE="/Users/eric/clawd-magi/logs/failsafe.log"
+LOG_FILE="/Users/eric/clawd/logs/failsafe.log"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
 # Test if Magi can respond (send a simple status check)

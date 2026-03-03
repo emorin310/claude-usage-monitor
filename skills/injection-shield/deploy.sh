@@ -6,7 +6,7 @@
 #
 # Examples:
 #   ./deploy.sh marvin@marvinbot ~/clawdbot-marvin
-#   ./deploy.sh magi@server.local ~/clawd-magi
+#   ./deploy.sh magi@server.local ~/clawd
 #   ./deploy.sh pi@homelab                          # Auto-detect workspace
 #
 # What it does:
@@ -37,7 +37,7 @@ if [ $# -lt 1 ]; then
     echo ""
     echo "Examples:"
     echo "  $0 marvin@marvinbot ~/clawdbot-marvin"
-    echo "  $0 magi@server ~/clawd-magi"
+    echo "  $0 magi@server ~/clawd"
     echo "  $0 pi@homelab  # Will auto-detect workspace"
     exit 1
 fi

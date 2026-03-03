@@ -49,7 +49,7 @@ health=$(ssh "$MARVIN_HOST" "curl -s --max-time 5 http://localhost:18789/health"
 if [[ -n "$health" ]]; then
     echo "[$timestamp] ✅ Marvin recovered successfully!"
     # Reset failure counter
-    echo '{"consecutiveFailures": 0, "lastCheck": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'", "lastStatus": "recovered"}' > "$HOME/clawd-magi/memory/marvin-health-state.json"
+    echo '{"consecutiveFailures": 0, "lastCheck": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'", "lastStatus": "recovered"}' > "$HOME/clawd/memory/marvin-health-state.json"
     
     # Post to Council
     curl -s -X POST "https://api.todoist.com/rest/v2/comments" \

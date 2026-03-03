@@ -1,8 +1,8 @@
 #!/bin/bash
 # Export all iCloud contacts with pagination
 
-OUTPUT_FILE="$HOME/clawd-magi/data/contacts/icloud-full-export.tsv"
-TEMP_DIR="$HOME/clawd-magi/data/contacts/temp"
+OUTPUT_FILE="$HOME/clawd/data/contacts/icloud-full-export.tsv"
+TEMP_DIR="$HOME/clawd/data/contacts/temp"
 mkdir -p "$TEMP_DIR"
 
 # Clean up any previous temp files

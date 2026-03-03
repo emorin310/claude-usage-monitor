@@ -23,8 +23,8 @@ mosquitto_sub -h "$MQTT_HOST" -u "$MQTT_USER" -P "$MQTT_PASS" \
   -F '%I %t %p' | while read -r timestamp topic payload; do
   
   # Log to file
-  mkdir -p ~/clawd-magi/logs
-  echo "[$timestamp] $topic: $payload" >> ~/clawd-magi/logs/mqtt-received.log
+  mkdir -p ~/clawd/logs
+  echo "[$timestamp] $topic: $payload" >> ~/clawd/logs/mqtt-received.log
   
   # Parse and display
   if [ "$VERBOSE" = true ]; then

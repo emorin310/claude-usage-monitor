@@ -3,7 +3,7 @@
 
 set -e
 
-OUTPUT_DIR="$HOME/clawd-magi/data/contacts"
+OUTPUT_DIR="$HOME/clawd/data/contacts"
 mkdir -p "$OUTPUT_DIR"
 OUTPUT_TSV="$OUTPUT_DIR/contacts-export.tsv"
 OUTPUT_JSON="$OUTPUT_DIR/contacts-export.json"

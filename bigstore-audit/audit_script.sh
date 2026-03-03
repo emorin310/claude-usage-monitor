@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AUDIT_DIR=~/clawd-magi/bigstore-audit
+AUDIT_DIR=~/clawd/bigstore-audit
 TARGET=/Volumes/bigstore/REVIEW
 
 echo "=== Starting Comprehensive Audit ===" > $AUDIT_DIR/audit_log.txt

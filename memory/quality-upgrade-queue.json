@@ -1,0 +1,72 @@
+{
+  "project": "systematic_quality_upgrades",
+  "started": "2026-03-01T04:47:00Z",
+  "status": "initializing",
+  "settings": {
+    "target_quality": "1080p_minimum",
+    "rate_limit": "2_per_day",
+    "codecs_preferred": ["x264", "x265", "AV1"],
+    "containers_preferred": ["MKV", "MP4"],
+    "avoid_formats": ["AVI", "XviD", "DivX"]
+  },
+  "queue": [
+    {
+      "title": "While You Were Sleeping",
+      "year": 1995,
+      "current_quality": "288p",
+      "current_size_gb": 0.68,
+      "current_issues": ["📺 LOW_RES (288p)", "💾 TINY_FILE (0.68GB)", "📼 ANCIENT (288p)", "📼 OLD_FORMAT (AVI)"],
+      "priority": "🎯 HIGH",
+      "status": "queued",
+      "queued_at": "2026-03-01T04:47:00Z"
+    },
+    {
+      "title": "Winter's Bone", 
+      "year": 2010,
+      "current_quality": "352p",
+      "current_size_gb": 1.24,
+      "current_issues": ["📺 LOW_RES (352p)", "📼 ANCIENT (352p)", "📼 OLD_FORMAT (AVI)"],
+      "priority": "🎯 HIGH", 
+      "status": "queued",
+      "queued_at": "2026-03-01T04:47:00Z"
+    },
+    {
+      "title": "Young Frankenstein",
+      "year": 1974,
+      "current_quality": "384p", 
+      "current_size_gb": 1.34,
+      "current_issues": ["📺 LOW_RES (384p)", "📼 ANCIENT (384p)"],
+      "priority": "🎯 HIGH",
+      "status": "queued", 
+      "queued_at": "2026-03-01T04:47:00Z"
+    },
+    {
+      "title": "What We Do in the Shadows",
+      "year": 2014,
+      "current_quality": "384p",
+      "current_size_gb": 1.33, 
+      "current_issues": ["📺 LOW_RES (384p)", "📼 ANCIENT (384p)", "🗂️ OLD_CODEC (XviD)", "📼 OLD_FORMAT (AVI)"],
+      "priority": "🎯 HIGH",
+      "status": "queued",
+      "queued_at": "2026-03-01T04:47:00Z"
+    },
+    {
+      "title": "The Lost World: Jurassic Park",
+      "year": 1997,
+      "current_quality": "720p",
+      "current_size_gb": 3.39,
+      "current_issues": ["🗂️ OLD_CODEC (XviD)", "📼 OLD_FORMAT (AVI)"],
+      "priority": "🔍 LOW",
+      "status": "queued",
+      "queued_at": "2026-03-01T04:47:00Z"
+    }
+  ],
+  "stats": {
+    "total_queued": 5,
+    "high_priority": 4,
+    "low_priority": 1,
+    "processed": 0,
+    "failed": 0,
+    "in_progress": 0
+  }
+}

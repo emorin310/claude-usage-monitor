@@ -1,0 +1,56 @@
+[2026-03-01 15:52:22] 🎬 Quality upgrade processor started (DRY_RUN=true)
+[2026-03-01 15:52:22] 📊 Today's requests: 0/2 (remaining: 2)
+[2026-03-01 15:52:22] 🔄 Processing: While You Were Sleeping (1995) - 288p [🎯 HIGH]
+[2026-03-01 15:52:22]    🧪 DRY RUN: Would send upgrade request to Marvin
+[2026-03-01 15:52:23] 🔄 Processing: Winter's Bone (2010) - 352p [🎯 HIGH]
+[2026-03-01 15:52:23]    🧪 DRY RUN: Would send upgrade request to Marvin
+[2026-03-01 15:52:23] 📋 No new requests processed
+[2026-03-01 15:52:23] ✅ Quality upgrade processor completed
+[2026-03-01 15:55:43] 🎬 Quality upgrade processor started (DRY_RUN=true)
+[2026-03-01 15:55:43] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-01 15:55:44] 🔄 Processing: While You Were Sleeping (1995) - 288p [🎯 HIGH]
+[2026-03-01 15:55:44]    🧪 DRY RUN: Would send upgrade request to Marvin
+[2026-03-01 15:55:44] 📋 No new requests processed
+[2026-03-01 15:55:44] ✅ Quality upgrade processor completed
+[2026-03-01 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-01 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-01 23:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-01 23:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-01 23:00:01] 🔄 Processing: While You Were Sleeping (1995) - 288p [🎯 HIGH]
+[2026-03-01 23:00:01] 🔄 Processing: While You Were Sleeping (1995) - 288p [🎯 HIGH]
+✅ Message sent to marvin (id: 1772406001-0bb0ad30)
+[2026-03-01 23:00:01]    ✅ Request sent to Marvin successfully
+[2026-03-01 23:00:01]    ✅ Request sent to Marvin successfully
+Database updated: ID 1 -> in_progress
+(node:469654) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2026-03-01 23:00:01]    📊 State updated: 1/1 requests today
+[2026-03-01 23:00:01]    📊 State updated: 1/1 requests today
+[2026-03-01 23:00:01] 📋 No new requests processed
+[2026-03-01 23:00:01] 📋 No new requests processed
+[2026-03-01 23:00:01] ✅ Quality upgrade processor completed
+[2026-03-01 23:00:01] ✅ Quality upgrade processor completed
+[2026-03-02 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-02 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-02 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-02 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-02 15:00:01] 🔄 Processing: Winter's Bone (2010) - 352p [🎯 HIGH]
+[2026-03-02 15:00:01] 🔄 Processing: Winter's Bone (2010) - 352p [🎯 HIGH]
+✅ Message sent to marvin (id: 1772463601-77fb4911)
+[2026-03-02 15:00:02]    ✅ Request sent to Marvin successfully
+[2026-03-02 15:00:02]    ✅ Request sent to Marvin successfully
+Database updated: ID 2 -> in_progress
+(node:509620) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2026-03-02 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-02 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-02 15:00:02] 📋 No new requests processed
+[2026-03-02 15:00:02] 📋 No new requests processed
+[2026-03-02 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-02 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-02 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-02 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-02 23:00:02] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-02 23:00:02] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-02 23:00:02] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-02 23:00:02] ⏸️  Rate limit reached for today. Next processing: tomorrow.

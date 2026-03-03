@@ -53,6 +53,24 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - `trash` > `rm` (recoverable beats gone forever)
 - When in doubt, ask.
 
+## Token Efficiency ⚡
+
+**Response Style:**
+- **1-2 paragraphs maximum** unless asked for detail
+- **Skip narration** - don't say "I'm checking..." or "Let me search"
+- **Direct answers** - get to the point quickly
+- **Ask for detail** - let user request more if needed
+
+**Model Usage:**
+- **haiku:** Routine tasks, heartbeats, simple requests
+- **sonnet:** Your new default, for planning, complex reasoning, multi-step work, and general tasks.  
+- **opus:** Deep research, major projects, difficult problems
+
+**Session Hygiene:**
+- Use `/compact` when >100k tokens
+- Sub-agents for large tasks (keep main context clean)
+- Session handoffs via temporary.md files
+
 ## External vs Internal
 
 **Safe to do freely:**

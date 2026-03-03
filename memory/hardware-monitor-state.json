@@ -1,0 +1,13 @@
+{
+  "last_check": "2026-03-02T15:39:16Z",
+  "last_alert": null,
+  "posts_scanned": 20,
+  "matches_found": 0,
+  "next_check": "2026-03-02T19:39:16Z",
+  "search_criteria": {
+    "subreddit": "CanadianHardwareSwap",
+    "location": "within 90km of Cambridge, ON",
+    "keywords": ["16GB DDR4 ECC", "E5-2699", "Xeon", "enterprise", "server", "homelab"],
+    "max_age_hours": 4
+  }
+}

@@ -6,7 +6,7 @@ set -euo pipefail
 
 TODOIST_TOKEN="1425e4eff8e83fc361d6bdd4ac9922c34d5089db"
 HANDOFFS_TASK_ID="9960450396"  # Council Handoffs thread
-LOG_FILE="$HOME/clawd-magi/marvin.md.log"
+LOG_FILE="$HOME/clawd/marvin.md.log"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 MODEL="${2:-ollama/llama3.1:8b}"
 

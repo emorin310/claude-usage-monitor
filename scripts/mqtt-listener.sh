@@ -2,8 +2,8 @@
 # MQTT Listener for Magi
 # Listens to bots/magi/inbox and bots/broadcast
 
-LOG_FILE="/Users/eric/clawd-magi/memory/mqtt-inbox.log"
-STATE_FILE="/Users/eric/clawd-magi/memory/mqtt-last-message.json"
+LOG_FILE="/Users/eric/clawd/memory/mqtt-inbox.log"
+STATE_FILE="/Users/eric/clawd/memory/mqtt-last-message.json"
 
 echo "[$(date -Iseconds)] MQTT Listener started" >> "$LOG_FILE"
 

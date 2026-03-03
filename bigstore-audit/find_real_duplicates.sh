@@ -3,7 +3,7 @@
 # Find real duplicates using MD5 hashing
 # Focus on files >1MB to find significant duplicates
 
-AUDIT_DIR=~/clawd-magi/bigstore-audit
+AUDIT_DIR=~/clawd/bigstore-audit
 TARGET=/Volumes/bigstore/REVIEW
 
 echo "Finding duplicate candidates (files >1MB, same size)..."

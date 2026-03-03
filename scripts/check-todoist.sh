@@ -2,7 +2,7 @@
 # Todoist API v1 Sync monitoring script
 # Uses the Sync API (/api/v1/sync) instead of deprecated REST v2
 
-API_TOKEN="1425e4eff8e83fc361d6bdd4ac9922c34d5089db"
+API_TOKEN=$(cat ~/.config/todoist/api-token)
 API_URL="https://api.todoist.com/api/v1/sync"
 
 # Council Comms thread IDs (Sync API uses different IDs than REST API)

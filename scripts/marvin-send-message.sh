@@ -6,7 +6,7 @@ set -euo pipefail
 
 MARVIN_URL="http://192.168.1.201:18790"
 MARVIN_TOKEN="405987e5394153113d7284c99b2d1a1e70d6b6daf92abd80"
-LOG_FILE="$HOME/clawd-magi/marvin.md.log"
+LOG_FILE="$HOME/clawd/marvin.md.log"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 if [ $# -eq 0 ]; then

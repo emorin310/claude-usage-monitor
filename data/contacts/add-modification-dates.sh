@@ -2,8 +2,8 @@
 # Add modification dates from the SQLite database
 
 DB="$HOME/Library/Application Support/AddressBook/AddressBook-v22.abcddb"
-INPUT="$HOME/clawd-magi/data/contacts/icloud-full-export.tsv"
-OUTPUT="$HOME/clawd-magi/data/contacts/icloud-full-export-with-dates.tsv"
+INPUT="$HOME/clawd/data/contacts/icloud-full-export.tsv"
+OUTPUT="$HOME/clawd/data/contacts/icloud-full-export-with-dates.tsv"
 
 # First, let's check if we can access the database while Contacts is running
 # We'll create a temporary copy to avoid conflicts

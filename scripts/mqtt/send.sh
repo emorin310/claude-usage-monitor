@@ -42,7 +42,7 @@ mosquitto_pub -h "$MQTT_HOST" -u "$MQTT_USER" -P "$MQTT_PASS" \
 
 if [ $? -eq 0 ]; then
   echo "✅ Sent successfully"
-  echo "$TIMESTAMP [$FROM_BOT → $TO_BOT]: $MESSAGE" >> ~/clawd-magi/logs/mqtt-sent.log
+  echo "$TIMESTAMP [$FROM_BOT → $TO_BOT]: $MESSAGE" >> ~/clawd/logs/mqtt-sent.log
 else
   echo "❌ Failed to send"
   exit 1

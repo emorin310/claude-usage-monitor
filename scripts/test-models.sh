@@ -11,9 +11,9 @@ MODELS=(
   "ollama/qwen2.5:14b"
 )
 
-LOG_FILE="$HOME/clawd-magi/logs/model-health.log"
+LOG_FILE="$HOME/clawd/logs/model-health.log"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-RESULTS_FILE="$HOME/clawd-magi/data/model-health-$(date +%Y-%m-%d).json"
+RESULTS_FILE="$HOME/clawd/data/model-health-$(date +%Y-%m-%d).json"
 
 echo "[$TIMESTAMP] Starting model health check" >> "$LOG_FILE"
 

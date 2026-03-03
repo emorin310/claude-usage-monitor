@@ -113,3 +113,9 @@ See `PHASE1-REPORT.md` for details. This MEMORY.md remains primary session memor
 ---
 
 *Last updated: 2026-02-17*
+
+## Jellyfin Quick Connect (2026-03-01)
+- **Script:** ~/clawd/scripts/quickconnect.sh <CODE>
+- **API Key:** ~/clawd/secrets/jellyfin-api-key
+- **Or via Marvin:** msg-marvin '{"action": "quickconnect", "code": "CODE"}'
+- **Usage:** When family asks to authorize a Quick Connect code for their device
