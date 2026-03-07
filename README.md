@@ -22,7 +22,7 @@ A real-time token usage dashboard for **claude.ai Max** subscribers. Watches you
 ## Quick Start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-usage-monitor.git
+git clone https://github.com/emorin310/claude-usage-monitor.git
 cd claude-usage-monitor
 npm install
 cp .env.example .env

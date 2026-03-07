@@ -9,7 +9,7 @@ Real-time token usage dashboard for claude.ai Max subscribers. Displays live ses
 
 ## Installation
 
-1. Clone or download from https://github.com/DigitalDragonCo/claude-usage-monitor
+1. Clone or download from https://github.com/emorin310/claude-usage-monitor
 2. Run the installer:
 
 ```bash
