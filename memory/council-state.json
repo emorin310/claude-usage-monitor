@@ -2,7 +2,7 @@
   "council_threads": {
     "announcements": 22,
     "handoffs": 12,
-    "status_updates": 17,
+    "status_updates": 21,
     "questions": 0
   },
   "tasks": {
@@ -10,5 +10,6 @@
     "overdue": 3,
     "needs_magi": 1
   },
-  "last_checked": "2026-03-03T11:08:17Z"
+  "last_checked": "2026-03-07T06:39:57Z",
+  "notes": "needs-magi task: 'Research & Curate Morning Briefing' (recurring daily 7am) - BLOCKED: web_search unavailable (no Brave API key configured). Overdue count increased from 1 to 3. Council activity: +2 new status updates, +5 new Magi tasks since last check."
 }

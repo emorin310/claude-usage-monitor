@@ -54,3 +54,87 @@ Database updated: ID 2 -> in_progress
 [2026-03-02 23:00:02] 📊 Today's requests: 1/1 (remaining: 0)
 [2026-03-02 23:00:02] ⏸️  Rate limit reached for today. Next processing: tomorrow.
 [2026-03-02 23:00:02] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-03 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-03 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-03 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-03 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-03 15:00:01] 🔄 Processing: Young Frankenstein (1974) - 384p [🎯 HIGH]
+[2026-03-03 15:00:01] 🔄 Processing: Young Frankenstein (1974) - 384p [🎯 HIGH]
+✅ Message sent to marvin (id: 1772550001-8d5e60d1)
+[2026-03-03 15:00:02]    ✅ Request sent to Marvin successfully
+[2026-03-03 15:00:02]    ✅ Request sent to Marvin successfully
+Database updated: ID 3 -> in_progress
+(node:17828) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2026-03-03 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-03 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-03 15:00:02] 📋 No new requests processed
+[2026-03-03 15:00:02] 📋 No new requests processed
+[2026-03-03 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-03 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-03 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-03 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-03 23:00:01] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-03 23:00:01] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-03 23:00:01] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-03 23:00:01] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-04 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-04 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-04 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-04 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-04 15:00:02] 🔄 Processing: What We Do in the Shadows (2014) - 384p [🎯 HIGH]
+[2026-03-04 15:00:02] 🔄 Processing: What We Do in the Shadows (2014) - 384p [🎯 HIGH]
+✅ Message sent to marvin (id: 1772636402-e4f8462b)
+[2026-03-04 15:00:02]    ✅ Request sent to Marvin successfully
+[2026-03-04 15:00:02]    ✅ Request sent to Marvin successfully
+Database updated: ID 4 -> in_progress
+(node:72282) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2026-03-04 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-04 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-04 15:00:02] 📋 No new requests processed
+[2026-03-04 15:00:02] 📋 No new requests processed
+[2026-03-04 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-04 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-04 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-04 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-04 23:00:01] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-04 23:00:01] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-04 23:00:01] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-04 23:00:01] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-05 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-05 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-05 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-05 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-05 15:00:01] 🔄 Processing: The Lost World: Jurassic Park (1997) - 720p [🔍 LOW]
+[2026-03-05 15:00:01] 🔄 Processing: The Lost World: Jurassic Park (1997) - 720p [🔍 LOW]
+✅ Message sent to marvin (id: 1772722801-e4645859)
+[2026-03-05 15:00:01]    ✅ Request sent to Marvin successfully
+[2026-03-05 15:00:01]    ✅ Request sent to Marvin successfully
+Database updated: ID 5 -> in_progress
+(node:120265) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2026-03-05 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-05 15:00:02]    📊 State updated: 1/1 requests today
+[2026-03-05 15:00:02] 📋 No new requests processed
+[2026-03-05 15:00:02] 📋 No new requests processed
+[2026-03-05 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-05 15:00:02] ✅ Quality upgrade processor completed
+[2026-03-05 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-05 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-05 23:00:01] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-05 23:00:01] 📊 Today's requests: 1/1 (remaining: 0)
+[2026-03-05 23:00:01] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-05 23:00:01] ⏸️  Rate limit reached for today. Next processing: tomorrow.
+[2026-03-06 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-06 15:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-06 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-06 15:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-06 15:00:01] 📭 No queued items found. Queue is empty.
+[2026-03-06 15:00:01] 📭 No queued items found. Queue is empty.
+[2026-03-06 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-06 23:00:01] 🎬 Quality upgrade processor started (DRY_RUN=false)
+[2026-03-06 23:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-06 23:00:01] 📊 Today's requests: 0/1 (remaining: 1)
+[2026-03-06 23:00:01] 📭 No queued items found. Queue is empty.
+[2026-03-06 23:00:01] 📭 No queued items found. Queue is empty.

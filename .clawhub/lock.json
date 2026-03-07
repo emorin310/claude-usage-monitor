@@ -24,6 +24,46 @@
     "claw-me-maybe": {
       "version": "1.2.1",
       "installedAt": 1772382220850
+    },
+    "skill-guard": {
+      "version": "1.0.2",
+      "installedAt": 1772693266509
+    },
+    "skill-detector": {
+      "version": "0.1.0",
+      "installedAt": 1772693280809
+    },
+    "agent-team-orchestration-1": {
+      "version": "1.0.0",
+      "installedAt": 1772864751917
+    },
+    "agent-orchestrator": {
+      "version": "0.1.0",
+      "installedAt": 1772865489140
+    },
+    "agent-autonomy-kit": {
+      "version": "1.0.0",
+      "installedAt": 1772865503718
+    },
+    "camelcamelcamel-alerts": {
+      "version": "1.0.0",
+      "installedAt": 1772865515326
+    },
+    "mission-control-dashboard": {
+      "version": "1.0.0",
+      "installedAt": 1772865529827
+    },
+    "email-triage": {
+      "version": "1.0.1",
+      "installedAt": 1772865550588
+    },
+    "morning-email-rollup": {
+      "version": "2.1.0",
+      "installedAt": 1772865554462
+    },
+    "email-prompt-injection-defense": {
+      "version": "1.0.1",
+      "installedAt": 1772865560857
     }
   }
 }

@@ -21,7 +21,7 @@ See `PHASE1-REPORT.md` for details. This MEMORY.md remains primary session memor
 - **Personal Machine:** Mac Studio named "Magrathea"
 - **Interests:** Homelab, electronics, photography, 3D printing, home automation
 - **Vibe:** Enjoys puns, puzzles, nerdy sci-fi references
-- **Brother AI:** Marvin (runs on local network server, handles infra/security/Home Assistant)
+- **Brother AI:** Marvin (runs on local network server, handles infra/security, and Home Assistant)
 
 ### Health
 - **Gout:** Chronic condition (disclosed Feb 4, 2026). Meds: Colchicine + indomethacin.
@@ -36,13 +36,15 @@ See `PHASE1-REPORT.md` for details. This MEMORY.md remains primary session memor
 
 ## AI Model Strategy
 
-**⚠️ CRITICAL: Magi and Marvin share the same Anthropic credit pool. Coordinate usage!**
+**⚠️ CREDIT CRUNCH: Switched to Google Flash primary due to Anthropic credit depletion (March 3, 2026)**
 
 | Tier | Model | Use Cases |
 |------|-------|-----------|
-| **Opus** | Big Brain | Deep research, complex troubleshooting, strategic planning |
-| **Sonnet** | Daily Driver | Everyday tasks, email, routines |
-| **Haiku** | Sentinel | Heartbeats — but NOTE: Haiku doesn't work as cron model override (OAuth limitation). Use `google/gemini-2.0-flash` for cron jobs instead. |
+| **Flash** | Daily Driver | google/gemini-2.5-flash - everyday tasks, email, routines. **Strictly adhere to Flash until Anthropic tokens refresh.** |
+| **Sonnet** | AVOID | anthropic/claude-sonnet-4-20250514 - DO NOT USE until Anthropic tokens refresh. |
+| **Opus** | AVOID | Deep research, complex troubleshooting - DO NOT USE until Anthropic tokens refresh. |
+
+**Note:** Magi and Marvin share the same Anthropic credit pool. **Tier 1 initiative override (2026-03-07):** Eric has authorized `anthropic/claude-opus-4-6` (alias: `opus`) for multi-agent architecture work. Use opus for complex/advanced tasks in this initiative; haiku/flash for routine ops.
 
 ## Active Systems
 
@@ -119,3 +121,6 @@ See `PHASE1-REPORT.md` for details. This MEMORY.md remains primary session memor
 - **API Key:** ~/clawd/secrets/jellyfin-api-key
 - **Or via Marvin:** msg-marvin '{"action": "quickconnect", "code": "CODE"}'
 - **Usage:** When family asks to authorize a Quick Connect code for their device
+
+## Tooling Notes & Development
+- **web_search (Brave API):** No longer viable on headless systems. Remove usage and plan to replace with a Playwright-driven function for web search capabilities.
