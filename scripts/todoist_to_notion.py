@@ -8,7 +8,7 @@ import json
 import urllib.request
 import sys
 
-NOTION_TOKEN = "YOUR_NOTION_TOKEN_HERE"
+NOTION_TOKEN = "YOUR_NOTION_TOKEN_HERE"  # Replace with actual token from environment
 NOTION_DB_ID = "38e23c66-8d68-407c-9067-e1b7e9652f4b"
 NOTION_VERSION = "2022-06-28"
 
