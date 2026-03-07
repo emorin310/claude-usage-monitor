@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mission Control Test</title>
+</head>
+<body>
+    <h1>Mission Control Dashboard - Test Page</h1>
+    <p>If you can see this, the server is working correctly.</p>
+    <p>Time: <span id="time"></span></p>
+    <button onclick="location.href='/login.html'">Go to Login</button>
+    <script>
+        document.getElementById('time').textContent = new Date().toLocaleTimeString();
+    </script>
+</body>
+</html>

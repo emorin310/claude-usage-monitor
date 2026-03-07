@@ -138,17 +138,17 @@ function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   // For page requests, redirect to login
-  res.redirect('/login.html');
+  res.redirect('/login-offline.html');
 }
 
 app.use(sessionMiddleware);
 
 // Public routes (no auth required)
-app.get('/login.html', (req, res) => {
+app.get('/login-offline.html', (req, res) => {
   if (req.authenticated) {
     return res.redirect('/');
   }
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+  res.sendFile(path.join(__dirname, 'public', 'login-offline.html'));
 });
 
 app.get('/auth/check', (req, res) => {

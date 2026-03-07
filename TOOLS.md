@@ -4,39 +4,13 @@
 - **Skill:** `skills/homeassistant/SKILL.md`
 - **Scripts:** `~/clawd-magi/skills/homeassistant/scripts/`
 
-## Inter-Bot Communication (Magi ↔ Marvin) ⭐ NEW SYSTEM
+## Multi-Agent Communication (Deprecated)
 
-**TL;DR:**
-- **Send to Marvin:** `~/bin/msg-marvin "message"`
-- **Check my inbox:** `~/bin/interbot-check`
-- **Cron:** Already processing inbound messages automatically
-- **Note:** Marvin replies via Discord (where he chats with Eric)
-
-**Details:**
-- **Message directories:** `/mnt/bigstore/interbot/magi-inbox/` (TO me), `/mnt/bigstore/interbot/marvin-inbox/` (TO Marvin)
-- **Processing:** Cron job (automatic, no manual checking needed)
-- **Status:** ✅ Active & Operational (replaced MQTT system Feb 28, 2026 at 22:38 UTC)
-- **Reliability:** Filesystem-based, no network dependencies
-
-## Media Request Workflow (Magi → Marvin → Jellyfin)
-
-**Request a movie:**
-```bash
-~/bin/msg-marvin '{"action": "request_movie", "title": "Space Time", "year": 2025}'
-```
-
-**Manual Jellyfin library refresh:**
-```bash
-~/bin/msg-marvin '{"action": "refresh_library"}'
-```
-
-**Full pipeline:**
-1. Magi sends JSON request via msg-marvin
-2. Marvin receives → triggers Radarr
-3. Radarr queries indexers → SABnzbd/qBittorrent downloads
-4. Auto-move to `/MEDIA/movies/`
-5. Jellyfin auto-scans and indexes
-6. Movie appears in library (~30 seconds to few minutes)
+**⚠️ DEPRECATED:** Interbot messaging system has been retired as of March 7, 2026.
+- **Replaced by:** Marvin Jr. subagent system via OpenClaw sessions_spawn
+- **Old scripts:** Archived to `~/clawd/archive/interbot-deprecated/`
+- **Media requests:** Now handled via sessions_send to marvin-jr agent
+- **Status:** ❌ Decommissioned (scripts archived, cron jobs removed)
 
 ## Excalidraw Flowchart
 
@@ -77,3 +51,42 @@
 - **Use when:** Need professional architecture diagrams, AWS diagrams, or complex technical visuals
 - **Output:** `.drawio.png` high-resolution images (transparent, presentation-ready)
 - **Best for:** Architecture diagrams, system designs, AWS infrastructure, technical documentation
+## New Skills (March 7, 2026)
+
+### 🎮 GOG (Google Workspace CLI)
+- **Location:** `~/clawd/skills/gog/`
+- **Purpose:** Google Workspace management (Gmail, Calendar, Drive, Contacts, Sheets, Docs)
+- **Agent:** Beeb (Ops-Scout)
+- **Commands:**
+  - Gmail search: `gog gmail search 'newer_than:7d' --max 10`
+  - Gmail send: `gog gmail send --to a@b.com --subject "Hi" --body "Hello"`
+  - Calendar: `gog calendar events <calendarId> --from <iso> --to <iso>`
+- **Setup:** Requires OAuth setup with Google credentials
+
+### 📧 Gmail Secretary  
+- **Location:** `~/clawd/skills/gmail-secretary/`
+- **Purpose:** Gmail triage assistant using Haiku LLM for classification and draft replies
+- **Agent:** Beeb (Ops-Scout)
+- **Safety:** Never auto-sends emails, only creates drafts and summaries
+- **Features:** Email labeling, urgency classification, draft generation
+
+### 🧠 Self-Improving Agent
+- **Location:** `~/clawd/skills/self-improving/`  
+- **Purpose:** Proactive self-reflection, self-criticism, and learning system
+- **Agent:** Magi (Orchestrator)
+- **Features:** 
+  - Structured memory system in `~/self-improving/`
+  - Hot memory (≤100 lines), domain-specific learning, project learnings
+  - Self-evaluation and mistake catching
+  - Knowledge compounding over time
+
+### 🚀 Agent Autonomy Kit
+- **Location:** `~/clawd/skills/agent-autonomy-kit/`
+- **Purpose:** Transform agents from reactive to proactive with task queues
+- **Agent:** All agents
+- **Features:**
+  - Task queue management (Ready/In Progress/Blocked/Done)
+  - Autonomous work patterns without prompting
+  - Cron job integration for overnight work
+  - Daily reporting automation
+
