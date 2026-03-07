@@ -20,3 +20,6 @@ credentials.txt
 .credentials/
 .secrets/
 .env.secrets
+node_modules/
+*.backup
+*.log

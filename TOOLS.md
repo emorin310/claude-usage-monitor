@@ -87,6 +87,37 @@
 - **Features:**
   - Task queue management (Ready/In Progress/Blocked/Done)
   - Autonomous work patterns without prompting
+
+### 💻 Development Skills (Deap Agent) ⭐ NEW
+**Agent:** Deap (Deep Thought) - Lead Developer & GitHub Repository Manager  
+**Installed:** March 7, 2026  
+**Purpose:** Specialized development agent to handle all coding tasks and free Magi for orchestration
+
+#### **git** - Comprehensive GitHub Management
+- **Location:** `~/clawd/skills/git/`
+- **Capabilities:** Full version control, branching strategies, team workflows, recovery techniques
+- **Usage:** All Git operations, GitHub workflows, repository management
+
+#### **explain-code** - Code Analysis & Explanations  
+- **Location:** `~/clawd/skills/explain-code/`
+- **Capabilities:** Code analysis, explanation generation, debugging assistance
+- **Usage:** Code reviews, documentation, debugging support
+
+#### **documentation** - Automated Documentation Generation
+- **Location:** `~/clawd/skills/documentation/`
+- **Capabilities:** API docs, technical guides, automated documentation
+- **Usage:** Generate comprehensive documentation for projects
+
+#### **test-runner** - Multi-Language Testing
+- **Location:** `~/clawd/skills/test-runner/`
+- **Capabilities:** Vitest/Jest (JS/TS), pytest (Python), XCTest (Swift), Playwright (E2E)
+- **Usage:** Automated testing across multiple languages and frameworks
+
+### 🎯 Development Workflow:
+1. **Magi delegates coding tasks** to Deap via sessions_spawn
+2. **Deap uses specialized skills** for development work  
+3. **Deap commits to GitHub** with proper documentation
+4. **Deap reports completion** back to Magi
   - Cron job integration for overnight work
   - Daily reporting automation
 
