@@ -1,0 +1,26 @@
+#!/bin/bash
+# Check inter-bot inbox
+set -e
+
+INTERBOT_DIR="/mnt/bigstore/interbot"
+SELF="magi"
+INBOX="${INTERBOT_DIR}/${SELF}-inbox"
+PROCESSED="${INTERBOT_DIR}/processed"
+
+PROCESS=false
+[ "$1" = "--process" ] && PROCESS=true
+
+shopt -s nullglob
+MESSAGES=("${INBOX}"/*.json)
+
+if [ ${#MESSAGES[@]} -eq 0 ]; then
+    echo "📭 No messages"
+    exit 0
+fi
+
+echo "📬 ${#MESSAGES[@]} message(s):"
+for msg in "${MESSAGES[@]}"; do
+    echo "---"
+    jq -r '"From: \(.from) | \(.timestamp)\nMessage: \(.message)"' "$msg"
+    [ "$PROCESS" = true ] && mv "$msg" "${PROCESSED}/" && echo "→ Processed"
+done

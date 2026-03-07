@@ -1,0 +1,143 @@
+#!/bin/bash
+# Inter-bot health check - Diagnose and attempt to fix communication issues
+# Called automatically after 2 failed heartbeats
+
+set -e
+
+TARGET="${1:-}"
+INTERBOT_DIR="/mnt/bigstore/interbot"
+LOG_FILE="${INTERBOT_DIR}/heartbeat.log"
+SELF=$(hostname | sed 's/bot$//')
+
+log() { echo "[$(date -Iseconds)] [$SELF] HEALTHCHECK: $*" >> "$LOG_FILE"; }
+
+if [ -z "$TARGET" ]; then
+    echo "Usage: interbot-healthcheck <target>"
+    exit 1
+fi
+
+log "Starting health check for $TARGET"
+
+ISSUES_FOUND=0
+ISSUES_FIXED=0
+
+# 1. Check if target inbox directory exists and is writable
+TARGET_INBOX="${INTERBOT_DIR}/${TARGET}-inbox"
+if [ ! -d "$TARGET_INBOX" ]; then
+    log "ERROR: Target inbox directory missing: $TARGET_INBOX"
+    mkdir -p "$TARGET_INBOX" 2>/dev/null && {
+        log "FIXED: Created inbox directory"
+        ISSUES_FIXED=$((ISSUES_FIXED + 1))
+    } || ISSUES_FOUND=$((ISSUES_FOUND + 1))
+elif [ ! -w "$TARGET_INBOX" ]; then
+    log "ERROR: Target inbox not writable: $TARGET_INBOX"
+    ISSUES_FOUND=$((ISSUES_FOUND + 1))
+else
+    log "OK: Target inbox exists and is writable"
+fi
+
+# 2. Check if target host is reachable via SSH
+if [ "$TARGET" = "magi" ]; then
+    TARGET_HOST="marvinbot"
+elif [ "$TARGET" = "marvin" ]; then
+    TARGET_HOST="marvinbot"
+else
+    TARGET_HOST="$TARGET"
+fi
+
+if ssh -o ConnectTimeout=5 -o BatchMode=yes "${TARGET}@${TARGET_HOST}" "echo ok" >/dev/null 2>&1; then
+    log "OK: SSH connection to $TARGET_HOST working"
+    
+    # 3. Check if target's processor cron is running
+    CRON_COUNT=$(ssh "${TARGET}@${TARGET_HOST}" "crontab -l 2>/dev/null | grep -c interbot-processor" || echo 0)
+    if [ "$CRON_COUNT" -gt 0 ]; then
+        log "OK: Target has $CRON_COUNT processor cron entries"
+    else
+        log "ERROR: Target has no processor cron entries"
+        ISSUES_FOUND=$((ISSUES_FOUND + 1))
+        
+        # Attempt to fix by reinstalling cron
+        log "Attempting to reinstall processor cron on $TARGET..."
+        ssh "${TARGET}@${TARGET_HOST}" '(crontab -l 2>/dev/null | grep -v interbot-processor
+echo "* * * * * ~/bin/interbot-processor"
+echo "* * * * * sleep 5 && ~/bin/interbot-processor"
+echo "* * * * * sleep 10 && ~/bin/interbot-processor"
+echo "* * * * * sleep 15 && ~/bin/interbot-processor"
+echo "* * * * * sleep 20 && ~/bin/interbot-processor"
+echo "* * * * * sleep 25 && ~/bin/interbot-processor"
+echo "* * * * * sleep 30 && ~/bin/interbot-processor"
+echo "* * * * * sleep 35 && ~/bin/interbot-processor"
+echo "* * * * * sleep 40 && ~/bin/interbot-processor"
+echo "* * * * * sleep 45 && ~/bin/interbot-processor"
+echo "* * * * * sleep 50 && ~/bin/interbot-processor"
+echo "* * * * * sleep 55 && ~/bin/interbot-processor") | crontab -' && {
+            log "FIXED: Reinstalled processor cron"
+            ISSUES_FIXED=$((ISSUES_FIXED + 1))
+        }
+    fi
+    
+    # 4. Check if processor script exists and is executable
+    if ssh "${TARGET}@${TARGET_HOST}" "test -x ~/bin/interbot-processor"; then
+        log "OK: Processor script exists and is executable"
+    else
+        log "ERROR: Processor script missing or not executable"
+        ISSUES_FOUND=$((ISSUES_FOUND + 1))
+    fi
+    
+    # 5. Check for stuck lock files
+    if ssh "${TARGET}@${TARGET_HOST}" "test -f /tmp/interbot-processor.lock && fuser /tmp/interbot-processor.lock >/dev/null 2>&1"; then
+        log "OK: Lock file has active process"
+    elif ssh "${TARGET}@${TARGET_HOST}" "test -f /tmp/interbot-processor.lock"; then
+        log "WARNING: Stale lock file found, removing..."
+        ssh "${TARGET}@${TARGET_HOST}" "rm -f /tmp/interbot-processor.lock" && {
+            log "FIXED: Removed stale lock file"
+            ISSUES_FIXED=$((ISSUES_FIXED + 1))
+        }
+    fi
+    
+    # 6. Check for pending messages in target's inbox (stuck queue)
+    PENDING=$(ssh "${TARGET}@${TARGET_HOST}" "ls ${INTERBOT_DIR}/${TARGET}-inbox/*.json 2>/dev/null | wc -l" || echo 0)
+    if [ "$PENDING" -gt 10 ]; then
+        log "WARNING: Target has $PENDING pending messages - possible processing issue"
+        ISSUES_FOUND=$((ISSUES_FOUND + 1))
+    else
+        log "OK: Target inbox has $PENDING pending messages"
+    fi
+    
+else
+    log "ERROR: Cannot SSH to $TARGET_HOST"
+    ISSUES_FOUND=$((ISSUES_FOUND + 1))
+fi
+
+# 7. Check NFS mount
+if mountpoint -q "$INTERBOT_DIR" 2>/dev/null || [ -d "$INTERBOT_DIR" ]; then
+    log "OK: Interbot directory accessible"
+else
+    log "ERROR: Interbot directory not accessible"
+    ISSUES_FOUND=$((ISSUES_FOUND + 1))
+fi
+
+# Summary
+log "Health check complete: $ISSUES_FOUND issues found, $ISSUES_FIXED fixed"
+
+if [ "$ISSUES_FOUND" -gt "$ISSUES_FIXED" ]; then
+    # Alert Eric if we couldn't fix everything
+    echo "⚠️ INTER-BOT HEALTH CHECK FAILED"
+    echo "Target: $TARGET"
+    echo "Issues found: $ISSUES_FOUND"
+    echo "Issues fixed: $ISSUES_FIXED"
+    echo "Check log: $LOG_FILE"
+    
+    # Could notify Eric via Discord here if needed
+    log "ALERT: Unresolved issues remain - manual intervention may be needed"
+    exit 1
+else
+    echo "✅ Health check passed (fixed $ISSUES_FIXED issues)"
+    
+    # Reset fail counter after successful health check
+    echo '{}' > /tmp/interbot-heartbeat-state.json
+    
+    # Send a test heartbeat to verify fix
+    log "Sending verification heartbeat..."
+    exit 0
+fi

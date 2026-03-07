@@ -1,0 +1,39 @@
+#!/bin/bash
+# Inter-bot messaging via shared filesystem (bigstore NFS)
+set -e
+
+INTERBOT_DIR="/mnt/bigstore/interbot"
+SENDER="magi"
+PRIORITY="normal"
+TARGET=""
+MESSAGE=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --priority) PRIORITY="$2"; shift 2 ;;
+        *) if [ -z "$TARGET" ]; then TARGET="$1"; elif [ -z "$MESSAGE" ]; then MESSAGE="$1"; fi; shift ;;
+    esac
+done
+
+if [ -z "$TARGET" ] || [ -z "$MESSAGE" ]; then
+    echo "Usage: interbot-send <target> \"message\" [--priority high|normal|low]"
+    exit 1
+fi
+
+INBOX="${INTERBOT_DIR}/${TARGET}-inbox"
+[ ! -d "$INBOX" ] && echo "❌ Unknown target: $TARGET" && exit 1
+
+MSG_ID="$(date +%s)-$(od -An -tx4 -N4 /dev/urandom | tr -d " ")"
+MSG_FILE="${INBOX}/${MSG_ID}.json"
+cat > "$MSG_FILE" << EOFMSG
+{
+  "id": "${MSG_ID}",
+  "from": "${SENDER}",
+  "to": "${TARGET}",
+  "timestamp": "$(date -Iseconds)",
+  "priority": "${PRIORITY}",
+  "message": $(echo "$MESSAGE" | jq -Rs .)
+}
+EOFMSG
+
+echo "✅ Message sent to ${TARGET} (id: ${MSG_ID})"

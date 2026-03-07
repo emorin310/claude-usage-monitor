@@ -1,0 +1,86 @@
+#!/bin/bash
+# Inter-bot processor v2 for Magi - with fixed heartbeat detection
+
+set -e
+
+INTERBOT_DIR="/mnt/bigstore/interbot"
+SELF="magi"
+INBOX="${INTERBOT_DIR}/${SELF}-inbox"
+PROCESSED="${INTERBOT_DIR}/processed"
+LOG_FILE="${INTERBOT_DIR}/processor-${SELF}.log"
+LOCK_FILE="/tmp/interbot-processor.lock"
+
+exec 200>"$LOCK_FILE"
+flock -n 200 || exit 0
+
+log() { echo "[$(date -Iseconds)] $*" >> "$LOG_FILE"; }
+
+GOOGLE_API_KEY="AIzaSyC470rdmUp52ocg_4t-stDwautlcoP-kUA"
+API_URL="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GOOGLE_API_KEY}"
+
+SYSTEM_PROMPT="You are Magi, an AI assistant helping the Morin family. Be helpful, friendly, and concise."
+
+send_reply() {
+    local from="$1" reply="$2" thread="$3"
+    local send_script="${HOME}/bin/msg-${from}"
+    [ -x "$send_script" ] && { [ -n "$thread" ] && "$send_script" "$reply" --thread "$thread" || "$send_script" "$reply"; }
+}
+
+process_message() {
+    local msg_file="$1"
+    local from=$(jq -r '.from' "$msg_file")
+    local content=$(jq -r '.message' "$msg_file")
+    local msgid=$(jq -r '.id' "$msg_file")
+    local thread=$(jq -r '.threadId // empty' "$msg_file")
+    
+    log "Processing message from $from (id: $msgid)"
+    
+    # HEARTBEAT DETECTION (ZERO TOKENS) - matches both request and reply
+    if echo "$content" | grep -qE '\[HEARTBEAT(-REPLY)?:'; then
+        local hb_id=$(echo "$content" | grep -oE 'HEARTBEAT(-REPLY)?:[^]]*' | cut -d: -f2)
+        if echo "$content" | grep -q "Just checking in"; then
+            log "HEARTBEAT from $from (id: $hb_id) - responding without tokens"
+            send_reply "$from" "[HEARTBEAT-REPLY:${hb_id}] All clear" "$thread"
+            jq --arg type "heartbeat" '. + {type: $type}' "$msg_file" > "${PROCESSED}/${msgid}-$(date +%s).json"
+            rm "$msg_file"; return 0
+        elif echo "$content" | grep -q "HEARTBEAT-REPLY:"; then
+            log "HEARTBEAT-REPLY from $from (id: $hb_id) - archived"
+            jq --arg type "heartbeat-reply" '. + {type: $type}' "$msg_file" > "${PROCESSED}/${msgid}-$(date +%s).json"
+            rm "$msg_file"; return 0
+        fi
+    fi
+    
+
+    # (noise filter above)
+    # === LOOP PREVENTION ===
+    # Rule: Ack once, then stop. Don't ack an ack.
+    local lower_content=$(echo "$content" | tr '[:upper:]' '[:lower:]')
+    
+    # SKIP ONLY: Messages that START with ack words (responses to us - no reply needed)
+    if echo "$lower_content" | grep -qE '^(understood|acknowledged|got it|okay|ok|sure|noted|roger|copy|affirmative|will do|sounds good|perfect|great|thanks|thank you)[\.,!]?($| )'; then
+        log "SKIP: Ack from $from"; jq --arg type "ack-received" '. + {type: $type}' "$msg_file" > "${PROCESSED}/${msgid}-ack.json"; rm "$msg_file"; return 0
+    fi
+    
+    log "Processing: $from"
+
+    # REGULAR MESSAGE - USE LLM
+
+    local payload=$(jq -n --arg prompt "${SYSTEM_PROMPT}\n\nMessage from ${from}: ${content}\n\nRespond helpfully." \
+        '{"contents": [{"parts": [{"text": $prompt}]}], "generationConfig": {"maxOutputTokens": 1024}}')
+    
+    local response=$(curl -s -X POST "$API_URL" -H "Content-Type: application/json" -d "$payload" 2>&1)
+    local reply=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text // empty')
+    
+    [ -z "$reply" ] && { log "API error"; mv "$msg_file" "${PROCESSED}/${msgid}-FAILED.json"; return 1; }
+    
+    log "Got response (${#reply} chars), sending to $from"
+    send_reply "$from" "$reply" "$thread"
+    jq --arg reply "$reply" '. + {response: $reply}' "$msg_file" > "${PROCESSED}/${msgid}-$(date +%s).json"
+    rm "$msg_file"
+}
+
+shopt -s nullglob
+MESSAGES=("${INBOX}"/*.json)
+[ ${#MESSAGES[@]} -eq 0 ] && exit 0
+log "Processing ${#MESSAGES[@]} message(s)"
+for msg in "${MESSAGES[@]}"; do process_message "$msg" || true; done

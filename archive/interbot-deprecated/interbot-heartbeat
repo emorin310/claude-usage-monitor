@@ -1,0 +1,89 @@
+#!/bin/bash
+# Inter-bot heartbeat - Zero token check-in system
+# Usage: interbot-heartbeat <target> [--force]
+# Sends "Just checking in", expects "All clear" response
+# After 2 failed attempts, runs health check
+
+set -e
+
+INTERBOT_DIR="/mnt/bigstore/interbot"
+SELF=$(hostname | sed 's/bot$//')
+STATE_FILE="/tmp/interbot-heartbeat-state.json"
+LOG_FILE="${INTERBOT_DIR}/heartbeat.log"
+TARGET="${1:-}"
+FORCE="${2:-}"
+
+log() { echo "[$(date -Iseconds)] [$SELF] $*" >> "$LOG_FILE"; }
+
+if [ -z "$TARGET" ]; then
+    echo "Usage: interbot-heartbeat <target>"
+    exit 1
+fi
+
+SEND_SCRIPT="${HOME}/bin/msg-${TARGET}"
+if [ ! -x "$SEND_SCRIPT" ]; then
+    log "ERROR: No send script for $TARGET"
+    exit 1
+fi
+
+# Load state
+FAIL_COUNT=0
+if [ -f "$STATE_FILE" ]; then
+    FAIL_COUNT=$(jq -r ".${TARGET}_fails // 0" "$STATE_FILE" 2>/dev/null || echo 0)
+fi
+
+# Generate unique heartbeat ID
+HB_ID="hb-$(date +%s)-$$"
+
+log "Sending heartbeat to $TARGET (id: $HB_ID, previous fails: $FAIL_COUNT)"
+
+# Send heartbeat message with special marker
+"$SEND_SCRIPT" "[HEARTBEAT:${HB_ID}] Just checking in"
+
+# Wait for response (check inbox for up to 30 seconds)
+INBOX="${INTERBOT_DIR}/${SELF}-inbox"
+RESPONSE_FOUND=false
+WAIT_TIME=0
+MAX_WAIT=30
+
+while [ $WAIT_TIME -lt $MAX_WAIT ]; do
+    sleep 5
+    WAIT_TIME=$((WAIT_TIME + 5))
+    
+    # Check for heartbeat response
+    for msg in "${INBOX}"/*.json 2>/dev/null; do
+        [ -f "$msg" ] || continue
+        MSG_CONTENT=$(jq -r '.message // ""' "$msg" 2>/dev/null)
+        if echo "$MSG_CONTENT" | grep -q "HEARTBEAT-REPLY:${HB_ID}"; then
+            log "Heartbeat response received from $TARGET"
+            RESPONSE_FOUND=true
+            # Clean up the response message
+            rm -f "$msg"
+            break 2
+        fi
+    done
+done
+
+if [ "$RESPONSE_FOUND" = true ]; then
+    # Reset fail counter
+    jq -n --arg target "${TARGET}_fails" '{($target): 0}' > "$STATE_FILE"
+    log "Heartbeat OK - $TARGET is alive"
+    echo "✅ Heartbeat OK - $TARGET responded"
+    exit 0
+else
+    # Increment fail counter
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    jq -n --arg target "${TARGET}_fails" --argjson count "$FAIL_COUNT" '{($target): $count}' > "$STATE_FILE"
+    log "WARNING: No heartbeat response from $TARGET (fail count: $FAIL_COUNT)"
+    
+    if [ "$FAIL_COUNT" -ge 2 ]; then
+        log "ALERT: 2 consecutive heartbeat failures - initiating health check on $TARGET"
+        echo "⚠️ 2 heartbeat failures - running health check..."
+        
+        # Run health check
+        "${HOME}/bin/interbot-healthcheck" "$TARGET"
+    else
+        echo "⚠️ No response from $TARGET (attempt $FAIL_COUNT/2)"
+    fi
+    exit 1
+fi
