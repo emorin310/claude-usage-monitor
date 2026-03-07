@@ -531,6 +531,72 @@ app.get('/', requireAuth, (req, res) => {
   .status-online { color: var(--accent-success); }
   .status-offline { color: var(--accent-danger); }
   
+  /* Activity Light - HDD style indicator */
+  .activity-light {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-surface);
+  }
+  .activity-light.pulse {
+    animation: activityPulse 1.5s ease-in-out infinite;
+  }
+  @keyframes activityPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+  
+  /* Status Badge */
+  .status-badge {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  
+  /* Activity Bar */
+  .activity-bar {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .activity-task {
+    font-size: 11px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .activity-time {
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  
+  /* Subagent indicator */
+  .subagent-indicator {
+    font-size: 10px;
+    color: var(--accent-primary);
+    background: rgba(0, 102, 255, 0.1);
+    border: 1px solid rgba(0, 102, 255, 0.2);
+    border-radius: 4px;
+    padding: 3px 8px;
+    margin: 0.25rem 0;
+  }
+  
   /* Token Widget */
   .widget-area { 
     border: 1px solid var(--border-primary); 
@@ -1031,27 +1097,35 @@ app.get('/', requireAuth, (req, res) => {
       let html = '<div class="agent-grid">';
       
       data.agents.forEach(agent => {
-        const providerLogo = getProviderLogo(agent.provider);
+        const statusConfig = {
+          active:    { icon: '🟢', label: 'ACTIVE', color: '#10b981', glow: 'rgba(16,185,129,0.4)', pulse: true },
+          delegated: { icon: '🟡', label: 'DELEGATED', color: '#f59e0b', glow: 'rgba(245,158,11,0.4)', pulse: true },
+          idle:      { icon: '⚪', label: 'IDLE', color: '#6b7280', glow: 'none', pulse: false },
+          error:     { icon: '🔴', label: 'ERROR', color: '#ef4444', glow: 'rgba(239,68,68,0.4)', pulse: false }
+        };
+        const st = statusConfig[agent.status] || statusConfig.idle;
+        const taskDisplay = agent.currentTask ? agent.currentTask.substring(0, 60) : 'No active task';
+        
         html += \`
-          <div class="agent-card">
+          <div class="agent-card" style="border-color:\${st.color}40;">
             <div class="agent-header">
-              <div class="agent-emoji">\${agent.emoji}</div>
+              <div class="agent-emoji" style="position:relative;">
+                \${agent.emoji}
+                <span class="activity-light \${st.pulse ? 'pulse' : ''}" style="background:\${st.color};box-shadow:0 0 8px \${st.glow};"></span>
+              </div>
               <div class="agent-info">
-                <h3>\${agent.name} <span class="provider-logo">\${providerLogo}</span></h3>
+                <h3>\${agent.name}</h3>
                 <p>\${agent.fullName}</p>
-                <p class="status-\${agent.status}">● \${agent.status.toUpperCase()} • \${agent.lastActivity}</p>
+              </div>
+              <div class="status-badge" style="background:\${st.color}20;color:\${st.color};border:1px solid \${st.color}40;">
+                \${st.label}
               </div>
             </div>
-            <div class="agent-metrics">
-              <div class="metric">
-                <div class="metric-value">\${agent.tokensToday.toLocaleString()}</div>
-                <div class="metric-label">Tokens Today</div>
-              </div>
-              <div class="metric">
-                <div class="metric-value">\${agent.cost}</div>
-                <div class="metric-label">Cost Today</div>
-              </div>
+            <div class="activity-bar">
+              <div class="activity-task">\${taskDisplay}</div>
+              <div class="activity-time">⏱ \${agent.lastActivity}</div>
             </div>
+            \${agent.subagentCount > 0 ? \`<div class="subagent-indicator">🔀 \${agent.subagentCount} subagent\${agent.subagentCount > 1 ? 's' : ''} running</div>\` : ''}
             <div class="agent-capabilities">
               \${agent.capabilities.map(cap => \`<span class="capability-tag">\${cap}</span>\`).join('')}
             </div>
@@ -1185,10 +1259,25 @@ app.get('/', requireAuth, (req, res) => {
       });
     }
     
+    // Auto-refresh agent activity every 5 seconds
+    let activityInterval = null;
+    function startActivityPolling() {
+      if (activityInterval) clearInterval(activityInterval);
+      activityInterval = setInterval(() => {
+        const agentsPanel = document.getElementById('agents');
+        if (!agentsPanel.classList.contains('panel-hidden')) {
+          fetch('/api/agent-activity').then(r => r.json()).then(data => {
+            renderAgents(data);
+          }).catch(() => {});
+        }
+      }, 5000);
+    }
+    
     // Initialize
     window.onload = function() {
-      restoreActiveTab(); // Restore last active tab
+      restoreActiveTab();
       loadAgents();
+      startActivityPolling();
     };
   </script>
   </body></html>`);
