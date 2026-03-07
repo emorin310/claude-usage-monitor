@@ -33,56 +33,201 @@ if (fs.existsSync(configPath)) {
   }
 }
 
-// Enhanced agent data
-const agentsData = {
-  agents: [
-    {
-      id: 'magi',
-      name: 'Magi',
-      fullName: 'Magi - Primary Orchestrator',
-      type: 'orchestrator',
-      model: 'anthropic/claude-opus-4-6',
-      provider: 'anthropic',
-      status: 'online',
-      workspace: '~/clawd',
-      emoji: '🤖',
-      tokensToday: 15247,
-      cost: '$3.21',
-      lastActivity: '2 mins ago',
-      capabilities: ['coordination', 'discord-relay', 'task-routing', 'memory-management']
-    },
-    {
-      id: 'beeb',
-      name: 'Beeb',
-      fullName: 'Beeb (Beeblebrox) - Social Scout',
-      type: 'ops-scout',
-      model: 'google/gemini-2.5-flash',
-      provider: 'google',
-      status: 'online',
-      workspace: '~/beeb',
-      emoji: '🛸',
-      tokensToday: 8934,
-      cost: '$0.42',
-      lastActivity: '5 mins ago',
-      capabilities: ['social-monitoring', 'email-triage', 'deal-alerts', 'reddit-scanning']
-    },
-    {
-      id: 'marvin-jr',
-      name: 'Marvin Jr.',
-      fullName: 'Marvin Jr. - Infrastructure Builder',
-      type: 'builder-ops',
-      model: 'anthropic/claude-sonnet-4-6',
-      provider: 'anthropic',
-      status: 'online',
-      workspace: '~/marvin-jr',
-      emoji: '🤖',
-      tokensToday: 12156,
-      cost: '$1.87',
-      lastActivity: '1 min ago',
-      capabilities: ['homelab-management', 'home-assistant', 'media-stack', 'monitoring']
+// Agent configuration (static metadata)
+const agentConfigs = [
+  {
+    id: 'main',
+    name: 'Magi',
+    fullName: 'Magi - Primary Orchestrator',
+    type: 'orchestrator',
+    model: 'anthropic/claude-opus-4-6',
+    provider: 'anthropic',
+    workspace: '~/clawd',
+    emoji: '🧙',
+    agentDir: 'main',
+    capabilities: ['coordination', 'discord-relay', 'task-routing', 'memory-management']
+  },
+  {
+    id: 'deap',
+    name: 'Deap',
+    fullName: 'Deap - Development Specialist',
+    type: 'developer',
+    model: 'anthropic/claude-opus-4-6',
+    provider: 'anthropic',
+    workspace: '~/workspace-deap',
+    emoji: '⚡',
+    agentDir: 'deap',
+    capabilities: ['coding', 'git', 'testing', 'documentation']
+  },
+  {
+    id: 'beeb',
+    name: 'Beeb',
+    fullName: 'Beeb (Beeblebrox) - Social Scout',
+    type: 'ops-scout',
+    model: 'google/gemini-2.5-flash',
+    provider: 'google',
+    workspace: '~/beeb',
+    emoji: '🛸',
+    agentDir: 'beeb',
+    capabilities: ['social-monitoring', 'email-triage', 'deal-alerts', 'reddit-scanning']
+  },
+  {
+    id: 'marvin-jr',
+    name: 'Marvin Jr.',
+    fullName: 'Marvin Jr. - Infrastructure Builder',
+    type: 'builder-ops',
+    model: 'anthropic/claude-sonnet-4-6',
+    provider: 'anthropic',
+    workspace: '~/marvin-jr',
+    emoji: '🔧',
+    agentDir: 'marvin-jr',
+    capabilities: ['homelab-management', 'home-assistant', 'media-stack', 'monitoring']
+  }
+];
+
+const AGENTS_BASE = '/home/magi/.openclaw/agents';
+
+// Real-time agent activity detection
+function getAgentActivity() {
+  const now = Date.now();
+  const results = [];
+
+  for (const agent of agentConfigs) {
+    const agentPath = path.join(AGENTS_BASE, agent.agentDir);
+    const sessionsDir = path.join(agentPath, 'sessions');
+    let status = 'idle';      // idle | active | delegated | error
+    let currentTask = null;
+    let lastActivityTs = null;
+    let activeSessions = [];
+    let subagentCount = 0;
+
+    try {
+      // 1. Read sessions.json for session metadata
+      const sessionsFile = path.join(sessionsDir, 'sessions.json');
+      if (fs.existsSync(sessionsFile)) {
+        const sessions = JSON.parse(fs.readFileSync(sessionsFile, 'utf8'));
+        for (const [key, sess] of Object.entries(sessions)) {
+          if (sess.updatedAt) {
+            if (!lastActivityTs || sess.updatedAt > lastActivityTs) {
+              lastActivityTs = sess.updatedAt;
+            }
+          }
+          // Check for subagent sessions
+          if (key.includes(':subagent:')) {
+            subagentCount++;
+            if (sess.label) currentTask = sess.label;
+          }
+          activeSessions.push({
+            key,
+            label: sess.label || key.split(':').pop(),
+            updatedAt: sess.updatedAt,
+            spawnedBy: sess.spawnedBy || null
+          });
+        }
+      }
+
+      // 2. Check for .lock files (indicates actively running session)
+      const files = fs.readdirSync(sessionsDir);
+      const lockFiles = files.filter(f => f.endsWith('.lock'));
+      const hasActiveLock = lockFiles.length > 0;
+
+      // 3. Check most recent .jsonl file modification time
+      const jsonlFiles = files
+        .filter(f => f.endsWith('.jsonl') && !f.includes('.deleted.'))
+        .map(f => {
+          try {
+            const stat = fs.statSync(path.join(sessionsDir, f));
+            return { name: f, mtime: stat.mtimeMs };
+          } catch { return null; }
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.mtime - a.mtime);
+
+      if (jsonlFiles.length > 0) {
+        const newestMtime = jsonlFiles[0].mtime;
+        if (newestMtime > (lastActivityTs || 0)) {
+          lastActivityTs = newestMtime;
+        }
+
+        // Try to extract last task/label from the most recent session log
+        if (!currentTask) {
+          try {
+            const logPath = path.join(sessionsDir, jsonlFiles[0].name);
+            const content = fs.readFileSync(logPath, 'utf8');
+            const lines = content.trim().split('\n');
+            // Read last few lines to find assistant messages with tool calls
+            for (let i = lines.length - 1; i >= Math.max(0, lines.length - 10); i--) {
+              try {
+                const entry = JSON.parse(lines[i]);
+                if (entry.message?.role === 'assistant' && entry.message?.content) {
+                  const toolCalls = entry.message.content.filter(c => c.type === 'toolCall');
+                  if (toolCalls.length > 0) {
+                    currentTask = toolCalls[0].name;
+                    break;
+                  }
+                  const textBlocks = entry.message.content.filter(c => c.type === 'text');
+                  if (textBlocks.length > 0 && textBlocks[0].text) {
+                    // Extract first meaningful line as task hint
+                    const firstLine = textBlocks[0].text.split('\n')[0].substring(0, 80);
+                    if (firstLine.length > 5) currentTask = firstLine;
+                    break;
+                  }
+                }
+              } catch {}
+            }
+          } catch {}
+        }
+      }
+
+      // 4. Determine status
+      const ageMs = lastActivityTs ? (now - lastActivityTs) : Infinity;
+      
+      if (hasActiveLock && ageMs < 120000) {
+        // Lock file exists and activity within last 2 minutes = active
+        status = 'active';
+      } else if (hasActiveLock && ageMs < 600000) {
+        // Lock file but no recent activity = might be waiting/delegated
+        status = 'delegated';
+      } else if (ageMs < 300000) {
+        // Activity within 5 min but no lock = recently active, now idle
+        status = 'idle';
+      } else {
+        status = 'idle';
+      }
+
+    } catch (err) {
+      status = 'error';
+      currentTask = err.message;
     }
-  ]
-};
+
+    results.push({
+      ...agent,
+      status,
+      currentTask: currentTask || null,
+      lastActivityTs,
+      lastActivity: lastActivityTs ? formatTimeAgo(now - lastActivityTs) : 'never',
+      activeSessions,
+      subagentCount
+    });
+  }
+
+  return results;
+}
+
+function formatTimeAgo(ms) {
+  if (ms < 0) ms = 0;
+  const sec = Math.floor(ms / 1000);
+  if (sec < 5) return 'just now';
+  if (sec < 60) return `${sec}s ago`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  return `${Math.floor(hr / 24)}d ago`;
+}
+
+// Legacy compat
+const agentsData = { get agents() { return getAgentActivity(); } };
 
 // Helper functions
 function getKanbanData() {
@@ -1051,7 +1196,11 @@ app.get('/', requireAuth, (req, res) => {
 
 // API endpoints
 app.get('/api/agents', (req, res) => {
-  res.json(agentsData);
+  res.json({ agents: getAgentActivity() });
+});
+
+app.get('/api/agent-activity', (req, res) => {
+  res.json({ agents: getAgentActivity(), timestamp: Date.now() });
 });
 
 app.get('/api/kanban', (req, res) => {
