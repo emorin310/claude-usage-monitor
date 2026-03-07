@@ -60,6 +60,18 @@ const agentConfigs = [
     capabilities: ['coding', 'git', 'testing', 'documentation']
   },
   {
+    id: 'deep',
+    name: 'Deep',
+    fullName: 'Deep Thought - Lead Developer',
+    type: 'developer',
+    model: 'anthropic/claude-opus-4-6',
+    provider: 'anthropic',
+    workspace: '~/workspace-deep',
+    emoji: '🧠',
+    agentDir: 'deep',
+    capabilities: ['development', 'github', 'code-review', 'architecture']
+  },
+  {
     id: 'beeb',
     name: 'Beeb',
     fullName: 'Beeb (Beeblebrox) - Social Scout',
@@ -181,7 +193,7 @@ function getAgentActivity() {
 
       // 4. Determine status
       const ageMs = lastActivityTs ? (now - lastActivityTs) : Infinity;
-      
+
       if (hasActiveLock && ageMs < 120000) {
         // Lock file exists and activity within last 2 minutes = active
         status = 'active';
@@ -200,6 +212,7 @@ function getAgentActivity() {
       currentTask = err.message;
     }
 
+    const tokenUsage = getAgentTokenUsage(agent.agentDir);
     results.push({
       ...agent,
       status,
@@ -207,7 +220,8 @@ function getAgentActivity() {
       lastActivityTs,
       lastActivity: lastActivityTs ? formatTimeAgo(now - lastActivityTs) : 'never',
       activeSessions,
-      subagentCount
+      subagentCount,
+      tokenUsage
     });
   }
 
@@ -224,6 +238,75 @@ function formatTimeAgo(ms) {
   const hr = Math.floor(min / 60);
   if (hr < 24) return `${hr}h ago`;
   return `${Math.floor(hr / 24)}d ago`;
+}
+
+// ─── Token Usage Tracking ────────────────────────────────────────────────────
+
+function getModelColor(model) {
+  if (model.includes('opus'))   return '#7b68ee';
+  if (model.includes('sonnet')) return '#5b9cf5';
+  if (model.includes('haiku'))  return '#a78bfa';
+  if (model.includes('gemini')) return '#4ade80';
+  if (model.includes('gpt'))   return '#f97316';
+  if (model.includes('claude')) return '#7b68ee';
+  return '#6b7280';
+}
+
+function getAgentTokenUsage(agentDir) {
+  const sessionsFile = path.join(AGENTS_BASE, agentDir, 'sessions', 'sessions.json');
+  const result = { totalTokens: 0, totalCost: 0, inputTokens: 0, outputTokens: 0, cacheRead: 0, cacheWrite: 0, models: {}, sessionCount: 0 };
+
+  try {
+    if (!fs.existsSync(sessionsFile)) return result;
+    const sessions = JSON.parse(fs.readFileSync(sessionsFile, 'utf8'));
+
+    for (const [key, sess] of Object.entries(sessions)) {
+      result.sessionCount++;
+      const input = sess.inputTokens || 0;
+      const output = sess.outputTokens || 0;
+      const cacheR = sess.cacheRead || 0;
+      const cacheW = sess.cacheWrite || 0;
+      const allTokens = input + output + cacheR + cacheW;
+
+      result.inputTokens += input;
+      result.outputTokens += output;
+      result.cacheRead += cacheR;
+      result.cacheWrite += cacheW;
+      result.totalTokens += allTokens;
+
+      const model = sess.model || 'unknown';
+      if (!result.models[model]) {
+        result.models[model] = { tokens: 0, color: getModelColor(model) };
+      }
+      result.models[model].tokens += allTokens;
+    }
+
+    // Estimate cost per model
+    const PRICING = {
+      'opus':   { input: 15, output: 75, cacheRead: 1.875, cacheWrite: 18.75 },
+      'sonnet': { input: 3, output: 15, cacheRead: 0.375, cacheWrite: 3.75 },
+      'haiku':  { input: 0.25, output: 1.25, cacheRead: 0.03, cacheWrite: 0.3 },
+      'gemini': { input: 0.15, output: 0.6, cacheRead: 0.04, cacheWrite: 0.15 },
+    };
+
+    for (const [model, data] of Object.entries(result.models)) {
+      let p = PRICING.sonnet; // default
+      for (const [key, pricing] of Object.entries(PRICING)) {
+        if (model.includes(key)) { p = pricing; break; }
+      }
+      const share = data.tokens / (result.totalTokens || 1);
+      data.cost = (
+        (result.inputTokens * share / 1e6) * p.input +
+        (result.outputTokens * share / 1e6) * p.output +
+        (result.cacheRead * share / 1e6) * p.cacheRead +
+        (result.cacheWrite * share / 1e6) * p.cacheWrite
+      );
+      result.totalCost += data.cost;
+    }
+  } catch (err) {
+    console.error(`Error reading token usage for ${agentDir}:`, err.message);
+  }
+  return result;
 }
 
 // Legacy compat
@@ -269,7 +352,7 @@ function isLocalNetwork(req) {
 function requireAuth(req, res, next) {
   const now = Date.now();
   const bypassAuth = config.localNetworkBypass && isLocalNetwork(req);
-  
+
   if (bypassAuth || (isAuthenticated && now < sessionExpiry)) {
     next();
   } else {
@@ -280,7 +363,7 @@ function requireAuth(req, res, next) {
 // Login page with enhanced styling
 app.get('/login', (req, res) => {
   const bypassAuth = config.autoLogin || (config.localNetworkBypass && isLocalNetwork(req));
-  
+
   if (bypassAuth) {
     isAuthenticated = true;
     sessionExpiry = Date.now() + SESSION_DURATION;
@@ -315,7 +398,7 @@ app.get('/', requireAuth, (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  
+
   :root {
     --bg-primary: #000;
     --bg-secondary: #0a0a0f;
@@ -334,47 +417,47 @@ app.get('/', requireAuth, (req, res) => {
     --accent-danger: #ef4444;
     --font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
-  
-  body { 
-    font-family: var(--font-family); 
+
+  body {
+    font-family: var(--font-family);
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
-    color: var(--text-primary); 
-    min-height: 100vh; 
+    color: var(--text-primary);
+    min-height: 100vh;
     font-size: 13px;
     line-height: 1.4;
     overflow-x: hidden;
   }
-  
+
   /* Header */
-  .header { 
+  .header {
     background: rgba(26, 26, 30, 0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-primary);
-    color: var(--text-primary); 
-    padding: 1rem 2rem; 
+    color: var(--text-primary);
+    padding: 1rem 2rem;
     position: relative;
     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
-  .header h1 { 
-    font-size: 1.5rem; 
-    font-weight: 300; 
+  .header h1 {
+    font-size: 1.5rem;
+    font-weight: 300;
     margin: 0;
     display: flex;
     align-items: center;
     gap: 0.75rem;
   }
-  .header p { 
-    margin: 0.25rem 0 0; 
-    opacity: 0.7; 
+  .header p {
+    margin: 0.25rem 0 0;
+    opacity: 0.7;
     font-size: 12px;
   }
-  
+
   /* Navigation */
-  .nav { 
+  .nav {
     background: var(--bg-surface);
     border-bottom: 1px solid var(--border-primary);
-    padding: 0.75rem 2rem; 
-    display: flex; 
+    padding: 0.75rem 2rem;
+    display: flex;
     align-items: center;
     position: relative;
   }
@@ -382,49 +465,49 @@ app.get('/', requireAuth, (req, res) => {
     display: flex;
     gap: 0.5rem;
   }
-  .nav button { 
+  .nav button {
     background: transparent;
-    color: var(--text-muted); 
+    color: var(--text-muted);
     border: 1px solid transparent;
-    padding: 0.5rem 1rem; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-size: 12px; 
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
     font-weight: 500;
     transition: all 0.2s ease;
     position: relative;
   }
-  .nav button:hover { 
+  .nav button:hover {
     color: var(--text-secondary);
     background: var(--bg-surface-hover);
   }
-  .nav button.active { 
+  .nav button.active {
     color: var(--accent-primary);
     background: rgba(0, 102, 255, 0.1);
     border-color: rgba(0, 102, 255, 0.3);
   }
-  
+
   .nav-spacer { flex: 1; }
-  
-  .quick-links { 
-    display: flex; 
-    gap: 0.5rem; 
-    margin-right: 1rem; 
+
+  .quick-links {
+    display: flex;
+    gap: 0.5rem;
+    margin-right: 1rem;
   }
-  .quick-link { 
-    background: rgba(26, 58, 26, 0.8) !important; 
-    border: 1px solid rgba(42, 74, 42, 0.6) !important; 
-    padding: 0.4rem 0.8rem !important; 
+  .quick-link {
+    background: rgba(26, 58, 26, 0.8) !important;
+    border: 1px solid rgba(42, 74, 42, 0.6) !important;
+    padding: 0.4rem 0.8rem !important;
     font-size: 11px !important;
     color: var(--accent-success) !important;
     transition: all 0.2s ease;
   }
-  .quick-link:hover { 
-    background: rgba(42, 74, 42, 0.8) !important; 
+  .quick-link:hover {
+    background: rgba(42, 74, 42, 0.8) !important;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
   }
-  
+
   .settings-btn {
     background: rgba(74, 74, 84, 0.3) !important;
     border: 1px solid var(--border-secondary) !important;
@@ -437,100 +520,101 @@ app.get('/', requireAuth, (req, res) => {
     background: rgba(74, 74, 84, 0.5) !important;
     color: var(--text-secondary) !important;
   }
-  
-  .logout-btn { 
-    background: rgba(220, 38, 38, 0.2) !important; 
-    border: 1px solid rgba(220, 38, 38, 0.4) !important; 
+
+  .logout-btn {
+    background: rgba(220, 38, 38, 0.2) !important;
+    border: 1px solid rgba(220, 38, 38, 0.4) !important;
     color: var(--accent-danger) !important;
   }
-  .logout-btn:hover { 
-    background: rgba(220, 38, 38, 0.3) !important; 
+  .logout-btn:hover {
+    background: rgba(220, 38, 38, 0.3) !important;
   }
-  
+
   /* Panels */
-  .panel { 
+  .panel {
     background: rgba(22, 22, 26, 0.9);
     backdrop-filter: blur(10px);
-    margin: 1rem 2rem; 
-    padding: 1.5rem; 
-    border-radius: 12px; 
+    margin: 1rem 2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
     border: 1px solid var(--border-primary);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
-  .panel h2 { 
-    margin-top: 0; 
-    color: var(--text-primary); 
-    font-weight: 500; 
+  .panel h2 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-weight: 500;
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
-  
+
   /* Agent Cards */
-  .agent-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 1rem; 
+  .agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
   }
   .agent-card { 
-    background: var(--bg-surface); 
-    border: 1px solid var(--border-secondary); 
-    border-radius: 8px; 
-    padding: 1rem; 
+    background: var(--bg-surface);
+    border: 1px solid var(--border-secondary);
+    border-radius: 8px;
+    padding: 1rem;
     transition: all 0.2s ease;
     cursor: pointer;
+    position: relative;
   }
-  .agent-card:hover { 
-    transform: translateY(-2px); 
+  .agent-card:hover {
+    transform: translateY(-2px);
     border-color: var(--border-primary);
     box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   }
-  .agent-header { 
-    display: flex; 
-    align-items: center; 
-    gap: 0.75rem; 
-    margin-bottom: 0.75rem; 
+  .agent-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
   .agent-emoji { font-size: 1.5rem; }
-  .agent-info h3 { 
-    margin: 0; 
-    font-weight: 500; 
+  .agent-info h3 {
+    margin: 0;
+    font-weight: 500;
     font-size: 14px;
   }
-  .agent-info p { 
-    margin: 0; 
-    color: var(--text-muted); 
-    font-size: 11px; 
+  .agent-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 11px;
   }
-  .agent-metrics { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 0.75rem; 
-    margin: 0.75rem 0; 
+  .agent-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
   }
   .metric { text-align: center; }
-  .metric-value { 
-    font-size: 1.2rem; 
-    font-weight: 600; 
-    color: var(--accent-primary); 
+  .metric-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-primary);
   }
-  .metric-label { 
-    font-size: 10px; 
-    color: var(--text-muted); 
+  .metric-label {
+    font-size: 10px;
+    color: var(--text-muted);
   }
   .agent-capabilities { margin-top: 0.75rem; }
-  .capability-tag { 
-    display: inline-block; 
-    background: var(--bg-tertiary); 
-    color: var(--text-secondary); 
-    padding: 0.15rem 0.4rem; 
-    border-radius: 4px; 
-    font-size: 9px; 
-    margin: 0.15rem 0.15rem 0 0; 
+  .capability-tag {
+    display: inline-block;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 9px;
+    margin: 0.15rem 0.15rem 0 0;
     border: 1px solid var(--border-secondary);
   }
   .status-online { color: var(--accent-success); }
   .status-offline { color: var(--accent-danger); }
-  
+
   /* Activity Light - HDD style indicator */
   .activity-light {
     position: absolute;
@@ -548,7 +632,7 @@ app.get('/', requireAuth, (req, res) => {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(1.3); }
   }
-  
+
   /* Status Badge */
   .status-badge {
     font-size: 9px;
@@ -559,7 +643,88 @@ app.get('/', requireAuth, (req, res) => {
     margin-left: auto;
     white-space: nowrap;
   }
-  
+
+  /* Token Usage Ring */
+  .token-ring-container {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+  }
+  .token-ring-svg {
+    width: 36px;
+    height: 36px;
+    transform: rotate(-90deg);
+  }
+  .token-ring-svg circle { fill: none; stroke-width: 3; }
+  .token-ring-bg { stroke: var(--border-secondary); opacity: 0.4; }
+  .token-ring-segment { transition: stroke-dashoffset 0.6s ease; }
+  .token-ring-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 7px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .token-ring-container:hover .token-tooltip { display: block; }
+  .token-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: -8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 0.75rem;
+    min-width: 220px;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+  .token-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 16px;
+    border: 6px solid transparent;
+    border-top-color: var(--border-primary);
+  }
+  .token-tooltip-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-secondary);
+  }
+  .token-tooltip-model {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.25rem 0;
+  }
+  .token-tooltip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .token-tooltip-total {
+    margin-top: 0.5rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--border-secondary);
+    font-weight: 600;
+    color: var(--accent-primary);
+  }
+
   /* Activity Bar */
   .activity-bar {
     background: var(--bg-tertiary);
@@ -585,7 +750,7 @@ app.get('/', requireAuth, (req, res) => {
     color: var(--text-muted);
     white-space: nowrap;
   }
-  
+
   /* Subagent indicator */
   .subagent-indicator {
     font-size: 10px;
@@ -596,214 +761,214 @@ app.get('/', requireAuth, (req, res) => {
     padding: 3px 8px;
     margin: 0.25rem 0;
   }
-  
+
   /* Token Widget */
-  .widget-area { 
-    border: 1px solid var(--border-primary); 
-    border-radius: 8px; 
-    position: relative; 
-    margin-top: 1rem; 
-    background: var(--bg-surface); 
+  .widget-area {
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    position: relative;
+    margin-top: 1rem;
+    background: var(--bg-surface);
     overflow: hidden;
   }
-  .live-badge { 
-    position: absolute; 
-    top: 10px; 
-    right: 10px; 
-    background: var(--accent-success); 
-    color: var(--text-primary); 
-    padding: 4px 8px; 
-    border-radius: 12px; 
-    font-size: 10px; 
-    z-index: 10; 
+  .live-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--accent-success);
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    z-index: 10;
     font-weight: 500;
   }
-  
+
   /* Kanban Board */
-  .kanban-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 1.5rem; 
+  .kanban-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
   }
-  .kanban-workspace { 
-    display: flex; 
-    gap: 1.5rem; 
+  .kanban-workspace {
+    display: flex;
+    gap: 1.5rem;
   }
-  .kanban-container { 
-    display: flex; 
-    gap: 1rem; 
-    overflow-x: auto; 
-    padding: 1rem 0; 
-    flex: 1; 
+  .kanban-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    flex: 1;
   }
-  .kanban-column { 
-    min-width: 280px; 
-    background: var(--bg-surface); 
-    border: 1px solid var(--border-secondary); 
-    border-radius: 8px; 
-    padding: 1rem; 
-    position: relative; 
-    min-height: 400px; 
+  .kanban-column {
+    min-width: 280px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-secondary);
+    border-radius: 8px;
+    padding: 1rem;
+    position: relative;
+    min-height: 400px;
   }
-  .kanban-column.drag-over { 
-    border-color: var(--accent-primary); 
-    background: rgba(0, 102, 255, 0.05); 
+  .kanban-column.drag-over {
+    border-color: var(--accent-primary);
+    background: rgba(0, 102, 255, 0.05);
   }
-  .column-header { 
-    font-weight: 500; 
-    margin-bottom: 1rem; 
-    padding: 0.5rem; 
-    border-radius: 6px; 
-    color: var(--text-primary); 
-    text-align: center; 
+  .column-header {
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    color: var(--text-primary);
+    text-align: center;
     font-size: 12px;
   }
-  .kanban-card { 
-    background: var(--bg-tertiary); 
-    margin-bottom: 0.75rem; 
-    padding: 0.75rem; 
-    border-radius: 6px; 
-    border-left: 3px solid var(--border-primary); 
-    border: 1px solid var(--border-secondary); 
-    transition: all 0.2s ease; 
-    cursor: grab; 
-    user-select: none; 
+  .kanban-card {
+    background: var(--bg-tertiary);
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--border-primary);
+    border: 1px solid var(--border-secondary);
+    transition: all 0.2s ease;
+    cursor: grab;
+    user-select: none;
   }
-  .kanban-card:hover { 
-    border-color: var(--border-primary); 
-    transform: translateY(-1px); 
+  .kanban-card:hover {
+    border-color: var(--border-primary);
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
-  .kanban-card.dragging { 
-    opacity: 0.5; 
-    transform: rotate(2deg); 
-    cursor: grabbing; 
+  .kanban-card.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+    cursor: grabbing;
   }
-  .card-title { 
-    font-weight: 500; 
-    margin-bottom: 0.4rem; 
-    color: var(--text-primary); 
+  .card-title {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--text-primary);
     font-size: 12px;
   }
-  .card-desc { 
-    font-size: 11px; 
-    color: var(--text-muted); 
-    margin-bottom: 0.5rem; 
-    max-height: 50px; 
-    overflow: hidden; 
-    line-height: 1.3; 
+  .card-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    max-height: 50px;
+    overflow: hidden;
+    line-height: 1.3;
   }
-  .card-meta { 
-    font-size: 9px; 
-    color: var(--text-muted); 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+  .card-meta {
+    font-size: 9px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .priority-high { border-left-color: var(--accent-danger); }
   .priority-medium { border-left-color: var(--accent-warning); }
   .priority-low, .priority-normal { border-left-color: var(--accent-success); }
-  
+
   /* Controls */
-  .kanban-controls, .controls { 
-    display: flex; 
-    gap: 0.75rem; 
+  .kanban-controls, .controls {
+    display: flex;
+    gap: 0.75rem;
   }
-  .btn-primary { 
-    background: var(--accent-primary); 
-    color: var(--text-primary); 
-    border: none; 
-    padding: 0.4rem 0.8rem; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-weight: 500; 
+  .btn-primary {
+    background: var(--accent-primary);
+    color: var(--text-primary);
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
     font-size: 11px;
     transition: all 0.2s ease;
   }
-  .btn-secondary { 
-    background: var(--bg-surface); 
-    color: var(--text-secondary); 
-    border: 1px solid var(--border-secondary); 
-    padding: 0.4rem 0.8rem; 
-    border-radius: 6px; 
-    cursor: pointer; 
+  .btn-secondary {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-secondary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
     font-size: 11px;
     transition: all 0.2s ease;
   }
-  .btn-primary:hover { 
-    background: var(--accent-secondary); 
+  .btn-primary:hover {
+    background: var(--accent-secondary);
     transform: translateY(-1px);
   }
-  .btn-secondary:hover { 
-    background: var(--bg-surface-hover); 
+  .btn-secondary:hover {
+    background: var(--bg-surface-hover);
   }
-  
+
   /* Modals */
-  .modal { 
-    display: none; 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(0,0,0,0.8); 
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
     backdrop-filter: blur(4px);
-    z-index: 1000; 
+    z-index: 1000;
     animation: fadeIn 0.2s ease;
   }
-  .modal.show { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
+  .modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .modal-content { 
-    background: var(--bg-surface); 
-    border: 1px solid var(--border-primary); 
-    border-radius: 12px; 
-    padding: 1.5rem; 
-    max-width: 500px; 
-    width: 90%; 
-    max-height: 80vh; 
-    overflow-y: auto; 
+  .modal-content {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
     animation: slideUp 0.3s ease;
   }
-  .modal-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 1rem; 
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
   }
-  .modal-title { 
-    font-size: 1.1rem; 
-    font-weight: 500; 
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: 500;
   }
-  .modal-close { 
-    background: none; 
-    border: none; 
-    color: var(--text-muted); 
-    font-size: 1.5rem; 
-    cursor: pointer; 
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
     padding: 0;
     transition: color 0.2s ease;
   }
   .modal-close:hover { color: var(--text-primary); }
-  
+
   /* Forms */
   .form-group { margin-bottom: 1rem; }
-  .form-label { 
-    display: block; 
-    margin-bottom: 0.4rem; 
-    font-weight: 500; 
+  .form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
     font-size: 12px;
   }
-  .form-input, .form-textarea, .form-select { 
-    width: 100%; 
-    padding: 0.6rem; 
-    background: var(--bg-tertiary); 
-    border: 1px solid var(--border-secondary); 
-    border-radius: 6px; 
-    color: var(--text-primary); 
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 0.6rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 6px;
+    color: var(--text-primary);
     font-size: 12px;
     transition: border-color 0.2s ease;
   }
@@ -811,67 +976,67 @@ app.get('/', requireAuth, (req, res) => {
     outline: none;
     border-color: var(--accent-primary);
   }
-  .form-textarea { 
-    min-height: 80px; 
-    resize: vertical; 
+  .form-textarea {
+    min-height: 80px;
+    resize: vertical;
   }
-  
+
   /* Settings */
   .settings-section { margin-bottom: 1.5rem; }
-  .settings-section h3 { 
-    font-size: 14px; 
-    margin-bottom: 0.75rem; 
+  .settings-section h3 {
+    font-size: 14px;
+    margin-bottom: 0.75rem;
     color: var(--accent-primary);
   }
-  .link-config { 
-    display: flex; 
-    gap: 0.5rem; 
-    margin-bottom: 0.5rem; 
+  .link-config {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
     align-items: center;
   }
   .link-config input { flex: 1; }
-  .btn-small { 
-    padding: 0.3rem 0.6rem; 
-    font-size: 10px; 
+  .btn-small {
+    padding: 0.3rem 0.6rem;
+    font-size: 10px;
   }
-  
+
   /* Animations */
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
   }
-  
+
   @keyframes slideUp {
-    from { 
-      opacity: 0; 
-      transform: translateY(20px); 
+    from {
+      opacity: 0;
+      transform: translateY(20px);
     }
-    to { 
-      opacity: 1; 
-      transform: translateY(0); 
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
-  
+
   /* Hidden panels */
   .panel-hidden { display: none; }
-  
+
   /* Scrollbars */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg-tertiary); }
-  ::-webkit-scrollbar-thumb { 
-    background: var(--border-primary); 
-    border-radius: 3px; 
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-primary);
+    border-radius: 3px;
   }
-  ::-webkit-scrollbar-thumb:hover { 
-    background: var(--border-secondary); 
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-secondary);
   }
   </style></head><body>
-  
+
   <div class="header">
     <h1>🎛️ Mission Control</h1>
     <p>Multi-Agent Command & Control Center</p>
   </div>
-  
+
   <div class="nav">
     <div class="nav-tabs">
       <button onclick="showPanel('agents')" id="btn-agents">🤖 Agent Fleet</button>
@@ -880,20 +1045,20 @@ app.get('/', requireAuth, (req, res) => {
     </div>
     <div class="nav-spacer"></div>
     <div class="quick-links" id="quick-links">
-      ${config.quickLinks.map(link => 
+      ${config.quickLinks.map(link =>
         `<button onclick="openExternal('${link.url}')" class="quick-link" title="${link.title}">${link.icon} ${link.name}</button>`
       ).join('')}
     </div>
     <button onclick="showSettings()" class="settings-btn" title="Settings">⚙️</button>
     <button onclick="window.location='/logout'" class="logout-btn">🚪 Logout</button>
   </div>
-  
+
   <!-- Enhanced Agents Panel -->
   <div id="agents" class="panel">
     <h2>🤖 Agent Fleet Status</h2>
     <div id="agent-fleet">Loading agent data...</div>
   </div>
-  
+
   <!-- Token Usage Panel -->
   <div id="tokens" class="panel panel-hidden">
     <h2>🔥 Real-Time Token Analytics</h2>
@@ -906,7 +1071,7 @@ app.get('/', requireAuth, (req, res) => {
       <button onclick="refreshTokenWidget()" class="btn-secondary">🔄 Refresh Widget</button>
     </div>
   </div>
-  
+
   <!-- Enhanced Kanban Panel -->
   <div id="kanban" class="panel panel-hidden">
     <div class="kanban-header">
@@ -941,7 +1106,7 @@ app.get('/', requireAuth, (req, res) => {
       </div>
     </div>
   </div>
-  
+
   <!-- Settings Modal -->
   <div id="settings-modal" class="modal">
     <div class="modal-content">
@@ -949,56 +1114,56 @@ app.get('/', requireAuth, (req, res) => {
         <h3 class="modal-title">⚙️ Settings</h3>
         <button class="modal-close" onclick="closeSettings()">&times;</button>
       </div>
-      
+
       <div class="settings-section">
         <h3>🔗 Quick Links Configuration</h3>
         <div id="links-config"></div>
         <button onclick="addQuickLink()" class="btn-secondary btn-small">➕ Add Link</button>
       </div>
-      
+
       <div class="settings-section">
         <h3>🔐 Authentication Settings</h3>
         <div class="form-group">
           <label class="form-label">
-            <input type="checkbox" id="auto-login" ${config.autoLogin ? 'checked' : ''}> 
+            <input type="checkbox" id="auto-login" ${config.autoLogin ? 'checked' : ''}>
             Auto-login (skip login page)
           </label>
         </div>
         <div class="form-group">
           <label class="form-label">
-            <input type="checkbox" id="local-bypass" ${config.localNetworkBypass ? 'checked' : ''}> 
+            <input type="checkbox" id="local-bypass" ${config.localNetworkBypass ? 'checked' : ''}>
             Local network bypass (192.168.x.x auto-login)
           </label>
         </div>
       </div>
-      
+
       <div style="display:flex; gap:1rem; margin-top:2rem;">
         <button onclick="saveSettings()" class="btn-primary">💾 Save Settings</button>
         <button onclick="closeSettings()" class="btn-secondary">Cancel</button>
       </div>
     </div>
   </div>
-  
+
   <script>
     let currentCard = null;
     let kanbanData = null;
     let showingArchive = false;
     let draggedCard = null;
-    
+
     // Tab persistence
     function showPanel(id) {
       document.querySelectorAll('.panel').forEach(p => p.classList.add('panel-hidden'));
       document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
       document.getElementById(id).classList.remove('panel-hidden');
       document.getElementById('btn-' + id).classList.add('active');
-      
+
       // Save current tab to localStorage
       localStorage.setItem('mission-control-active-tab', id);
-      
+
       if (id === 'agents') loadAgents();
       if (id === 'kanban') loadKanban();
     }
-    
+
     // Restore last active tab on load
     function restoreActiveTab() {
       const savedTab = localStorage.getItem('mission-control-active-tab');
@@ -1008,17 +1173,17 @@ app.get('/', requireAuth, (req, res) => {
         showPanel('agents'); // Default fallback
       }
     }
-    
+
     // Enhanced settings
     function showSettings() {
       renderLinksConfig();
       document.getElementById('settings-modal').classList.add('show');
     }
-    
+
     function closeSettings() {
       document.getElementById('settings-modal').classList.remove('show');
     }
-    
+
     function renderLinksConfig() {
       const container = document.getElementById('links-config');
       container.innerHTML = ${JSON.stringify(config.quickLinks)}.map((link, index) => \`
@@ -1030,7 +1195,7 @@ app.get('/', requireAuth, (req, res) => {
         </div>
       \`).join('');
     }
-    
+
     function addQuickLink() {
       const container = document.getElementById('links-config');
       const index = container.children.length;
@@ -1044,29 +1209,29 @@ app.get('/', requireAuth, (req, res) => {
       \`;
       container.appendChild(div);
     }
-    
+
     function removeQuickLink(index) {
       const configs = document.querySelectorAll('.link-config');
       if (configs[index]) {
         configs[index].remove();
       }
     }
-    
+
     function saveSettings() {
       const links = [];
       document.querySelectorAll('.link-config').forEach((config, index) => {
         const icon = config.querySelector('[data-field="icon"]').value;
         const name = config.querySelector('[data-field="name"]').value;
         const url = config.querySelector('[data-field="url"]').value;
-        
+
         if (name && url) {
           links.push({ icon: icon || '🔗', name, url, title: name });
         }
       });
-      
+
       const autoLogin = document.getElementById('auto-login').checked;
       const localBypass = document.getElementById('local-bypass').checked;
-      
+
       fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1085,17 +1250,17 @@ app.get('/', requireAuth, (req, res) => {
         }
       });
     }
-    
+
     function loadAgents() {
       fetch('/api/agents').then(r => r.json()).then(data => {
         renderAgents(data);
       });
     }
-    
+
     function renderAgents(data) {
       const container = document.getElementById('agent-fleet');
       let html = '<div class="agent-grid">';
-      
+
       data.agents.forEach(agent => {
         const statusConfig = {
           active:    { icon: '🟢', label: 'ACTIVE', color: '#10b981', glow: 'rgba(16,185,129,0.4)', pulse: true },
@@ -1105,7 +1270,7 @@ app.get('/', requireAuth, (req, res) => {
         };
         const st = statusConfig[agent.status] || statusConfig.idle;
         const taskDisplay = agent.currentTask ? agent.currentTask.substring(0, 60) : 'No active task';
-        
+
         html += \`
           <div class="agent-card" style="border-color:\${st.color}40;">
             <div class="agent-header">
@@ -1133,19 +1298,69 @@ app.get('/', requireAuth, (req, res) => {
               <strong>Model:</strong> \${agent.model}<br>
               <strong>Workspace:</strong> \${agent.workspace}
             </div>
+            \${renderTokenRing(agent)}
           </div>
         \`;
       });
-      
+
       html += '</div>';
       container.innerHTML = html;
     }
-    
+
+    function renderTokenRing(agent) {
+      var tu = agent.tokenUsage;
+      if (!tu || tu.totalTokens === 0) {
+        return '<div class="token-ring-container"><svg class="token-ring-svg" viewBox="0 0 36 36"><circle class="token-ring-bg" cx="18" cy="18" r="14"/></svg><div class="token-ring-label">0</div></div>';
+      }
+
+      var R = 14, C = 2 * Math.PI * R;
+      var models = Object.entries(tu.models).sort(function(a,b){ return b[1].tokens - a[1].tokens; });
+
+      var segments = '';
+      var offset = 0;
+      models.forEach(function(entry) {
+        var model = entry[0], data = entry[1];
+        var pct = data.tokens / tu.totalTokens;
+        var dashLen = pct * C;
+        var gap = C - dashLen;
+        segments += '<circle class="token-ring-segment" cx="18" cy="18" r="' + R + '" stroke="' + data.color + '" stroke-dasharray="' + dashLen.toFixed(2) + ' ' + gap.toFixed(2) + '" stroke-dashoffset="' + (-offset).toFixed(2) + '" stroke-linecap="round"/>';
+        offset += dashLen;
+      });
+
+      var label;
+      if (tu.totalTokens >= 1e6) label = (tu.totalTokens / 1e6).toFixed(1) + 'M';
+      else if (tu.totalTokens >= 1e3) label = (tu.totalTokens / 1e3).toFixed(0) + 'k';
+      else label = tu.totalTokens.toString();
+
+      var modelLines = models.map(function(entry) {
+        var model = entry[0], data = entry[1];
+        var shortName = model.replace('claude-', '').replace('gemini-', 'gem-');
+        var tokStr = data.tokens >= 1e6 ? (data.tokens / 1e6).toFixed(1) + 'M' : data.tokens >= 1e3 ? (data.tokens / 1e3).toFixed(1) + 'k' : data.tokens;
+        var costStr = data.cost >= 0.01 ? '$' + data.cost.toFixed(2) : '<$0.01';
+        return '<div class="token-tooltip-model"><span class="token-tooltip-dot" style="background:' + data.color + '"></span><span>' + shortName + ': ' + tokStr + ' (' + costStr + ')</span></div>';
+      }).join('');
+
+      var totalCostStr = tu.totalCost >= 0.01 ? '$' + tu.totalCost.toFixed(2) : '<$0.01';
+
+      return '<div class="token-ring-container">' +
+        '<svg class="token-ring-svg" viewBox="0 0 36 36">' +
+        '<circle class="token-ring-bg" cx="18" cy="18" r="' + R + '"/>' +
+        segments +
+        '</svg>' +
+        '<div class="token-ring-label">' + label + '</div>' +
+        '<div class="token-tooltip">' +
+        '<div class="token-tooltip-title">' + agent.emoji + ' ' + agent.name + ' Token Usage</div>' +
+        modelLines +
+        '<div class="token-tooltip-total">Total: ' + tu.totalTokens.toLocaleString() + ' tokens (' + totalCostStr + ')</div>' +
+        '<div style="margin-top:0.25rem;color:var(--text-muted);font-size:10px;">' + tu.sessionCount + ' sessions</div>' +
+        '</div></div>';
+    }
+
     function getProviderLogo(provider) {
       const logos = { 'anthropic': '🔮', 'google': '🔍', 'openai': '🔥' };
       return logos[provider] || '🤖';
     }
-    
+
     function loadKanban() {
       fetch('/api/kanban').then(r => r.json()).then(data => {
         kanbanData = data;
@@ -1153,35 +1368,35 @@ app.get('/', requireAuth, (req, res) => {
         setupDragAndDrop();
       });
     }
-    
+
     function renderKanban(data) {
       const container = document.getElementById('kanban-board');
       let html = '<div class="kanban-container">';
-      
+
       data.columns.forEach(column => {
         let columnCards = data.cards.filter(card => card.column === column.id);
-        
+
         if (!showingArchive) {
           columnCards = columnCards.filter(card => !card.archivedReason);
         } else {
           columnCards = columnCards.filter(card => card.archivedReason);
         }
-        
+
         html += \`
           <div class="kanban-column" data-column="\${column.id}">
             <div class="column-header" style="background:\${column.color}">\${column.title} (\${columnCards.length})</div>
         \`;
-        
+
         columnCards.forEach(card => {
           const shortDesc = card.description ? card.description.substring(0, 100) + (card.description.length > 100 ? '...' : '') : '';
           const cardDate = new Date(card.created).toLocaleDateString();
           const commentCount = card.comments ? card.comments.length : 0;
           const archivedClass = card.archivedReason ? 'archived-card' : '';
-          
+
           html += \`
-            <div class="kanban-card priority-\${card.priority || 'normal'} \${archivedClass}" 
-                 data-card-id="\${card.id}" 
-                 draggable="true" 
+            <div class="kanban-card priority-\${card.priority || 'normal'} \${archivedClass}"
+                 data-card-id="\${card.id}"
+                 draggable="true"
                  onclick="viewCard('\${card.id}')">
               <div class="card-title">\${card.title}</div>
               <div class="card-desc">\${shortDesc}</div>
@@ -1193,59 +1408,59 @@ app.get('/', requireAuth, (req, res) => {
             </div>
           \`;
         });
-        
+
         html += '</div>';
       });
-      
+
       html += '</div>';
       container.innerHTML = html;
     }
-    
+
     function setupDragAndDrop() {
       // Similar drag-drop implementation as before but with enhanced animations
       // [Previous drag-drop code would go here]
     }
-    
+
     function createNewCard() {
       // Modal card creation
       alert('Card creation modal would open here');
     }
-    
+
     function viewCard(cardId) {
       // Modal card viewing
       alert(\`Card \${cardId} details would open here\`);
     }
-    
+
     function refreshKanban() {
       document.getElementById('kanban-board').innerHTML = 'Refreshing mission data...';
       loadKanban();
     }
-    
+
     function refreshTokenWidget() {
       const iframe = document.getElementById('token-iframe');
       iframe.src = iframe.src;
     }
-    
+
     function toggleArchiveView() {
       showingArchive = !showingArchive;
       const btn = document.getElementById('archive-toggle');
       btn.textContent = showingArchive ? '📋 Show Active' : '📁 Show Archived';
       loadKanban();
     }
-    
+
     function toggleLinearPanel() {
       const panel = document.getElementById('linear-panel');
       const toggle = document.getElementById('linear-toggle');
       const isVisible = panel.style.display !== 'none';
-      
+
       panel.style.display = isVisible ? 'none' : 'block';
       toggle.textContent = isVisible ? '📊 Linear' : '📊 Hide';
     }
-    
+
     function openExternal(url) {
       window.open(url, '_blank');
     }
-    
+
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text).then(() => {
         const btn = event.target;
@@ -1258,7 +1473,7 @@ app.get('/', requireAuth, (req, res) => {
         alert('Copy failed - please copy manually: ' + text);
       });
     }
-    
+
     // Auto-refresh agent activity every 5 seconds
     let activityInterval = null;
     function startActivityPolling() {
@@ -1272,7 +1487,7 @@ app.get('/', requireAuth, (req, res) => {
         }
       }, 5000);
     }
-    
+
     // Initialize
     window.onload = function() {
       restoreActiveTab();
@@ -1299,11 +1514,11 @@ app.get('/api/kanban', (req, res) => {
 
 app.post('/api/settings', (req, res) => {
   const { quickLinks, autoLogin, localNetworkBypass } = req.body;
-  
+
   config.quickLinks = quickLinks || config.quickLinks;
   config.autoLogin = autoLogin !== undefined ? autoLogin : config.autoLogin;
   config.localNetworkBypass = localNetworkBypass !== undefined ? localNetworkBypass : config.localNetworkBypass;
-  
+
   if (saveConfig()) {
     res.json({ success: true });
   } else {
@@ -1315,7 +1530,7 @@ app.post('/api/settings', (req, res) => {
 app.post('/api/kanban/create', (req, res) => {
   const { title, description, priority, column } = req.body;
   const data = getKanbanData();
-  
+
   const newCard = {
     id: Date.now().toString(),
     title,
@@ -1325,9 +1540,9 @@ app.post('/api/kanban/create', (req, res) => {
     created: new Date().toISOString(),
     comments: []
   };
-  
+
   data.cards.push(newCard);
-  
+
   if (saveKanbanData(data)) {
     res.json({ success: true, card: newCard });
   } else {
@@ -1338,15 +1553,15 @@ app.post('/api/kanban/create', (req, res) => {
 app.post('/api/kanban/move', (req, res) => {
   const { id, column } = req.body;
   const data = getKanbanData();
-  
+
   const cardIndex = data.cards.findIndex(card => card.id === id);
   if (cardIndex === -1) {
     return res.json({ success: false, error: 'Card not found' });
   }
-  
+
   data.cards[cardIndex].column = column;
   data.cards[cardIndex].updated = new Date().toISOString();
-  
+
   if (saveKanbanData(data)) {
     res.json({ success: true, card: data.cards[cardIndex] });
   } else {
