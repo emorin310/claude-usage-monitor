@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Usage Monitor</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --accent: #d97757;       /* Claude orange */
+    --accent2: #7b68ee;      /* purple for cache */
+    --green: #4ade80;
+    --yellow: #facc15;
+    --red: #f87171;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --font: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* ── Layout ── */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 200px 200px 200px 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "weekly-gauge gauge monthly-gauge rate-chart model-chart"
+      "sessions sessions sessions sessions sessions";
+    gap: 8px;
+    padding: 8px;
+    height: 100vh;
+    min-height: 480px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    overflow: hidden;
+  }
+
+  .card-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  /* ── Gauge ── */
+  .weekly-gauge-area   { grid-area: weekly-gauge;   display: flex; flex-direction: column; align-items: center; }
+  .gauge-area          { grid-area: gauge;           display: flex; flex-direction: column; align-items: center; }
+  .monthly-gauge-area  { grid-area: monthly-gauge;   display: flex; flex-direction: column; align-items: center; }
+
+  .credit-bar-wrap { width: 100%; margin-top: 8px; }
+  .credit-bar-track { width: 100%; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .credit-bar-fill  { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .credit-bar-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-top: 3px; }
+  .gauge-wrap { position: relative; width: 140px; height: 140px; margin: 4px auto; }
+  .gauge-svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+  .gauge-track { fill: none; stroke: var(--border); stroke-width: 14; }
+  .gauge-fill  { fill: none; stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease; }
+  .gauge-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .gauge-pct   { font-size: 28px; font-weight: 700; line-height: 1; }
+  .gauge-label { font-size: 9px; color: var(--muted); margin-top: 2px; }
+  .gauge-reset { font-size: 9px; color: var(--muted); text-align: center; margin-top: 4px; }
+  .gauge-delta-pos { color: var(--red); }
+  .gauge-delta-neg { color: var(--green); }
+
+  .weekly-models { margin-top: 6px; width: 100%; }
+  .model-stat {
+    display: flex; align-items: baseline; gap: 4px;
+    padding: 2px 0; border-bottom: 1px solid var(--border);
+    font-size: 9px;
+  }
+  .model-stat:last-child { border-bottom: none; }
+  .model-stat-name { color: var(--muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .model-stat-pct  { font-weight: 600; font-size: 10px; white-space: nowrap; }
+  .model-stat-reset { color: var(--muted); font-size: 8px; white-space: nowrap; }
+  .gauge-na    { font-size: 10px; color: var(--muted); text-align: center; margin-top: 20px; }
+
+  .stat-row { display: flex; justify-content: space-between; margin-top: 8px; }
+  .stat { text-align: center; flex: 1; }
+  .stat-val { font-size: 14px; font-weight: 600; color: var(--text); }
+  .stat-lbl { font-size: 9px; color: var(--muted); }
+
+  /* ── Rate chart ── */
+  .rate-area  { grid-area: rate-chart; }
+  .model-area { grid-area: model-chart; }
+  .chart-wrap { height: calc(100% - 24px); min-height: 80px; }
+
+  /* ── Sessions table ── */
+  .sessions-area { grid-area: sessions; }
+  .sessions-table-wrap {
+    overflow-y: auto;
+    max-height: calc(100% - 36px);
+  }
+  .sessions-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+  .sessions-table thead tr {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+  .sessions-table th {
+    padding: 4px 6px;
+    font-size: 9px;
+    font-weight: normal;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  /* Prompt column absorbs all remaining width */
+  .sessions-table th.col-prompt,
+  .sessions-table td.col-prompt { width: 100%; }
+  /* Compact columns stay as narrow as their content */
+  .sessions-table th.col-num,
+  .sessions-table td.col-num { white-space: nowrap; }
+  .sessions-table td {
+    padding: 5px 6px;
+    border-bottom: 1px solid #1a1a20;
+    vertical-align: middle;
+  }
+  .session-row { transition: background 0.15s; }
+  .session-row:hover td { background: var(--surface2); }
+  .session-row.sidechain { opacity: 0.7; }
+  .session-row.fresh td { animation: flash 0.8s ease; }
+
+  @keyframes flash {
+    0%   { background: #d9775720; }
+    100% { background: transparent; }
+  }
+
+  .cell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cell-id   { color: var(--accent); font-weight: 600; }
+  .cell-proj { color: var(--muted); }
+  .cell-prompt { color: var(--text); }
+  .cell-model {
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text);
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .model-opus    { color: #c084fc; }
+  .model-sonnet  { color: var(--accent); }
+  .model-haiku   { color: var(--green); }
+  .model-unknown { color: var(--muted); }
+
+  .cell-num { text-align: right; color: var(--text); }
+  .cell-cache { color: var(--accent2); text-align: right; }
+  .cell-time { color: var(--muted); text-align: right; }
+
+  /* ── Sort headers ── */
+  .col-hdr {
+    cursor: pointer;
+    user-select: none;
+  }
+  .col-hdr:hover { color: var(--text); }
+  .sort-arrow {
+    font-size: 8px;
+    color: var(--border);
+    margin-left: 2px;
+    transition: color 0.15s;
+  }
+  .col-hdr.active   { color: var(--text); }
+  .col-hdr.active .sort-arrow { color: var(--accent); }
+  .th-right { text-align: right; }
+
+  .sparkline { height: 24px; }
+
+  /* ── Rate badge ── */
+  .rate-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; color: var(--green);
+  }
+  .rate-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* ── Status bar ── */
+  .statusbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 3px 10px;
+    display: flex; justify-content: space-between;
+    font-size: 9px; color: var(--muted);
+    z-index: 100;
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  .status-dot.connected { background: var(--green); }
+  .status-dot.disconnected { background: var(--red); }
+
+  /* ── No data ── */
+  .empty { text-align: center; color: var(--muted); padding: 24px; }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+
+  <!-- ── Weekly Gauge ── -->
+  <div class="card weekly-gauge-area">
+    <div class="card-title">Weekly — All Models</div>
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 140 140">
+        <circle class="gauge-track" cx="70" cy="70" r="56" />
+        <circle class="gauge-fill" id="weeklyGaugeFill" cx="70" cy="70" r="56"
+          stroke-dasharray="351.86" stroke-dashoffset="351.86" stroke="var(--accent2)" />
+      </svg>
+      <div class="gauge-center">
+        <span class="gauge-pct" id="weeklyGaugeText">—</span>
+        <span class="gauge-label">weekly</span>
+      </div>
+    </div>
+    <div class="gauge-reset" id="weeklyGaugeDelta"></div>
+    <div id="weeklyModels" class="weekly-models"></div>
+    <div class="gauge-na" id="weeklyNA" style="display:none">
+      Session key not configured.
+    </div>
+  </div>
+
+  <!-- ── Gauge ── -->
+  <div class="card gauge-area">
+    <div class="card-title">5-Hour Utilization</div>
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 140 140">
+        <circle class="gauge-track" cx="70" cy="70" r="56" />
+        <circle class="gauge-fill" id="gaugeFill" cx="70" cy="70" r="56"
+          stroke-dasharray="351.86" stroke-dashoffset="351.86" stroke="var(--accent)" />
+      </svg>
+      <div class="gauge-center">
+        <span class="gauge-pct" id="gaugeText">—</span>
+        <span class="gauge-label">used</span>
+      </div>
+    </div>
+    <div class="gauge-reset" id="gaugeReset"></div>
+    <div class="gauge-na" id="gaugeNA" style="display:none">
+      Session key not configured.<br>Add to .env to enable.
+    </div>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-val" id="statSessions">0</div>
+        <div class="stat-lbl">sessions</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="statRate">0</div>
+        <div class="stat-lbl">tok/min</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Monthly Credits Gauge ── -->
+  <div class="card monthly-gauge-area">
+    <div class="card-title">Monthly Credits</div>
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 140 140">
+        <circle class="gauge-track" cx="70" cy="70" r="56" />
+        <circle class="gauge-fill" id="monthlyGaugeFill" cx="70" cy="70" r="56"
+          stroke-dasharray="351.86" stroke-dashoffset="351.86" stroke="var(--green)" />
+      </svg>
+      <div class="gauge-center">
+        <span class="gauge-pct" id="monthlyGaugeText">—</span>
+        <span class="gauge-label">used</span>
+      </div>
+    </div>
+    <div class="gauge-reset" id="monthlyGaugeReset"></div>
+    <div class="credit-bar-wrap" id="monthlyBarWrap" style="display:none">
+      <div class="credit-bar-track">
+        <div class="credit-bar-fill" id="monthlyBarFill"></div>
+      </div>
+      <div class="credit-bar-labels">
+        <span id="monthlyUsed">0</span>
+        <span id="monthlyLimit">0</span>
+      </div>
+    </div>
+    <div class="gauge-na" id="monthlyNA" style="display:none">
+      Extra credits not enabled.
+    </div>
+  </div>
+
+  <!-- ── Rate chart ── -->
+  <div class="card rate-area">
+    <div class="card-title">
+      Token Rate — 10 min
+      <span class="rate-badge" id="rateBadge" style="float:right">
+        <span class="rate-dot"></span><span id="rateValue">0 tok/min</span>
+      </span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="rateChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ── Model breakdown ── -->
+  <div class="card model-area">
+    <div class="card-title">Token Share by Model</div>
+    <div class="chart-wrap" style="display:flex;align-items:center;justify-content:center;">
+      <canvas id="modelChart" style="max-height:140px;max-width:200px;"></canvas>
+    </div>
+  </div>
+
+  <!-- ── Sessions ── -->
+  <div class="card sessions-area">
+    <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Active Sessions</span>
+      <span id="sessionCount" style="color:var(--muted)">0 sessions</span>
+    </div>
+    <div class="sessions-table-wrap">
+      <table class="sessions-table">
+        <thead>
+          <tr>
+            <th class="col-hdr" data-sort="id">ID<span class="sort-arrow">↕</span></th>
+            <th class="col-hdr" data-sort="projectLabel">Project<span class="sort-arrow">↕</span></th>
+            <th class="col-hdr col-prompt" data-sort="firstPrompt">Prompt<span class="sort-arrow">↕</span></th>
+            <th class="col-hdr" data-sort="model">Model<span class="sort-arrow">↕</span></th>
+            <th class="col-hdr th-right col-num" data-sort="input">Input<span class="sort-arrow">↕</span></th>
+            <th class="col-hdr th-right col-num" data-sort="output">Output<span class="sort-arrow">↕</span></th>
+            <th class="col-hdr th-right col-num" data-sort="cacheCreate">Cache↑<span class="sort-arrow">↕</span></th>
+            <th class="col-hdr th-right col-num" data-sort="cacheRead">Cache↓<span class="sort-arrow">↕</span></th>
+            <th>Sparkline</th>
+            <th class="col-hdr th-right" data-sort="lastSeen">Last Seen<span class="sort-arrow">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="sessionsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Status Bar ── -->
+<div class="statusbar">
+  <span><span class="status-dot disconnected" id="statusDot"></span><span id="statusText">Connecting…</span></span>
+  <span id="statusTs"></span>
+</div>
+
+<script>
+// ─── Sort state ────────────────────────────────────────────────────────────
+
+let sortKey = 'lastSeen';
+let sortDir = 'desc';
+let lastState = null;
+
+const SORT_GETTERS = {
+  id:           s => s.id,
+  projectLabel: s => s.projectLabel,
+  firstPrompt:  s => s.firstPrompt || '',
+  model:        s => s.model,
+  input:        s => s.tokens.input,
+  output:       s => s.tokens.output,
+  cacheCreate:  s => s.tokens.cacheCreate,
+  cacheRead:    s => s.tokens.cacheRead,
+  lastSeen:     s => s.lastSeen,
+};
+
+function sortSessions(sessions) {
+  const get = SORT_GETTERS[sortKey] || (s => s.lastSeen);
+  return [...sessions].sort((a, b) => {
+    const av = get(a), bv = get(b);
+    if (typeof av === 'string') return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    return sortDir === 'asc' ? av - bv : bv - av;
+  });
+}
+
+function updateSortArrows() {
+  for (const el of document.querySelectorAll('.col-hdr[data-sort]')) {
+    const arrow = el.querySelector('.sort-arrow');
+    const active = el.dataset.sort === sortKey;
+    el.classList.toggle('active', active);
+    if (arrow) arrow.textContent = active ? (sortDir === 'asc' ? '↑' : '↓') : '↕';
+  }
+}
+
+function initSortHeaders() {
+  for (const el of document.querySelectorAll('.col-hdr[data-sort]')) {
+    el.addEventListener('click', () => {
+      const key = el.dataset.sort;
+      if (sortKey === key) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortKey = key;
+        sortDir = 'desc';
+      }
+      updateSortArrows();
+      if (lastState) renderSessions(lastState);
+    });
+  }
+  updateSortArrows();
+}
+
+// ─── WebSocket ─────────────────────────────────────────────────────────────
+
+const WS_URL = `ws://${location.host}`;
+let ws = null;
+let reconnectTimer = null;
+
+function connect() {
+  ws = new WebSocket(WS_URL);
+
+  ws.onopen = () => {
+    setStatus(true);
+    if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+  };
+
+  ws.onmessage = ({ data }) => {
+    const msg = JSON.parse(data);
+    if (msg.type === 'state') render(msg);
+    if (msg.type === 'ping') document.getElementById('statusTs').textContent = 'ping ' + fmtTime(msg.ts);
+  };
+
+  ws.onclose = () => {
+    setStatus(false);
+    reconnectTimer = setTimeout(connect, 3000);
+  };
+
+  ws.onerror = () => ws.close();
+}
+
+function setStatus(connected) {
+  document.getElementById('statusDot').className = 'status-dot ' + (connected ? 'connected' : 'disconnected');
+  document.getElementById('statusText').textContent = connected ? 'Connected' : 'Reconnecting…';
+}
+
+// ─── Charts ────────────────────────────────────────────────────────────────
+
+const CHART_DEFAULTS = {
+  animation: { duration: 300 },
+  plugins: { legend: { display: false }, tooltip: { enabled: false } },
+  scales: {
+    x: { display: false },
+    y: { display: false, beginAtZero: true },
+  },
+  elements: { point: { radius: 0 } },
+};
+
+const rateCtx = document.getElementById('rateChart').getContext('2d');
+const rateChart = new Chart(rateCtx, {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [{
+      data: [],
+      backgroundColor: '#d9775740',
+      borderColor: '#d97757',
+      borderWidth: 1,
+      borderRadius: 2,
+    }],
+  },
+  options: {
+    ...CHART_DEFAULTS,
+    scales: {
+      x: { display: false },
+      y: { display: false, beginAtZero: true },
+    },
+    maintainAspectRatio: false,
+  },
+});
+
+const modelCtx = document.getElementById('modelChart').getContext('2d');
+const modelChart = new Chart(modelCtx, {
+  type: 'doughnut',
+  data: { labels: [], datasets: [{ data: [], backgroundColor: [], borderWidth: 0 }] },
+  options: {
+    animation: { duration: 400 },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'right',
+        labels: { color: '#6b6b80', font: { size: 9, family: 'SF Mono, monospace' }, boxWidth: 8, padding: 6 },
+      },
+    },
+    cutout: '65%',
+    maintainAspectRatio: false,
+  },
+});
+
+const MODEL_COLORS = {
+  'claude-opus':   '#c084fc',
+  'claude-sonnet': '#d97757',
+  'claude-haiku':  '#4ade80',
+};
+
+function modelColor(name) {
+  for (const [key, color] of Object.entries(MODEL_COLORS)) {
+    if (name.includes(key.split('-')[1])) return color;
+  }
+  return '#6b6b80';
+}
+
+// Per-session sparklines (canvas elements)
+const sparklines = new Map(); // sessionId -> canvas + chart
+
+function getOrCreateSparkline(sessionId) {
+  if (sparklines.has(sessionId)) return sparklines.get(sessionId);
+
+  const canvas = document.createElement('canvas');
+  canvas.className = 'sparkline';
+  canvas.width = 90;
+  canvas.height = 24;
+  const ctx = canvas.getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ data: [], backgroundColor: '#d9775780', borderWidth: 0 }] },
+    options: {
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false, beginAtZero: true } },
+      maintainAspectRatio: false,
+    },
+  });
+  sparklines.set(sessionId, { canvas, chart });
+  return { canvas, chart };
+}
+
+// ─── Render ────────────────────────────────────────────────────────────────
+
+const CIRCUMFERENCE = 2 * Math.PI * 56; // 351.86
+
+function render(state) {
+  lastState = state;
+  renderWeeklyGauge(state);
+  renderGauge(state);
+  renderMonthlyGauge(state);
+  renderStats(state);
+  renderRateChart(state);
+  renderModelChart(state);
+  renderSessions(state);
+  document.getElementById('statusTs').textContent = 'updated ' + fmtTime(state.ts);
+}
+
+function renderApiGauge(fillId, textId, resetId, naId, src, accentColor) {
+  const fill  = document.getElementById(fillId);
+  const text  = document.getElementById(textId);
+  const reset = document.getElementById(resetId);
+  const na    = naId ? document.getElementById(naId) : null;
+
+  if (src === null) {
+    if (na) na.style.display = '';
+    fill.style.display = 'none';
+    text.textContent = '—';
+    return;
+  }
+  if (na) na.style.display = 'none';
+  fill.style.display = '';
+
+  if (src.utilization !== null && src.utilization !== undefined) {
+    const pct = Math.min(100, Math.max(0, src.utilization));
+    fill.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct / 100);
+    fill.style.stroke = pct > 85 ? '#f87171' : pct > 60 ? '#facc15' : accentColor;
+    text.textContent = pct + '%';
+    text.style.color = pct > 85 ? '#f87171' : pct > 60 ? '#facc15' : '#e8e8f0';
+  } else {
+    text.textContent = '—';
+  }
+
+  if (reset && src.resetsAt) {
+    const ms = new Date(src.resetsAt) - Date.now();
+    reset.textContent = ms > 0
+      ? `resets in ${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s`
+      : 'resetting…';
+  }
+}
+
+function renderWeeklyGauge(state) {
+  const util = state.utilization || {};
+  const src  = state.hasUsageApi ? (util.weekly || {}) : null;
+  renderApiGauge('weeklyGaugeFill', 'weeklyGaugeText', 'weeklyGaugeDelta', 'weeklyNA', src, '#7b68ee');
+
+  // Per-model weekly badges
+  const modelsEl = document.getElementById('weeklyModels');
+  if (!modelsEl) return;
+  const models = util.models || {};
+  const entries = Object.entries(models).filter(([, v]) => v.utilization !== null);
+  if (entries.length === 0) {
+    modelsEl.innerHTML = '';
+    return;
+  }
+  modelsEl.innerHTML = entries
+    .sort((a, b) => b[1].utilization - a[1].utilization)
+    .slice(0, 3)
+    .map(([name, v]) => {
+      const short = shortModel(name);
+      const pct   = v.utilization;
+      const color = pct > 85 ? 'var(--red)' : pct > 60 ? 'var(--yellow)' : 'var(--accent2)';
+      const reset = v.resetsAt ? fmtResetDate(v.resetsAt) : '';
+      return `<div class="model-stat">
+        <span class="model-stat-name">${short}</span>
+        <span class="model-stat-pct" style="color:${color}">${pct}%</span>
+        ${reset ? `<span class="model-stat-reset">${reset}</span>` : ''}
+      </div>`;
+    })
+    .join('');
+}
+
+function renderGauge(state) {
+  const src = state.hasUsageApi ? ((state.utilization || {}).fiveHour || {}) : null;
+  renderApiGauge('gaugeFill', 'gaugeText', 'gaugeReset', 'gaugeNA', src, '#d97757');
+}
+
+function renderMonthlyGauge(state) {
+  const monthly = state.hasUsageApi ? (state.utilization || {}).monthly : null;
+  const na      = document.getElementById('monthlyNA');
+  const barWrap = document.getElementById('monthlyBarWrap');
+
+  if (!monthly) {
+    na.style.display = '';
+    barWrap.style.display = 'none';
+    document.getElementById('monthlyGaugeFill').style.display = 'none';
+    document.getElementById('monthlyGaugeText').textContent = '—';
+    return;
+  }
+
+  na.style.display = 'none';
+  document.getElementById('monthlyGaugeFill').style.display = '';
+
+  const pct   = Math.min(100, Math.max(0, monthly.utilization));
+  const fill  = document.getElementById('monthlyGaugeFill');
+  const text  = document.getElementById('monthlyGaugeText');
+  const reset = document.getElementById('monthlyGaugeReset');
+
+  fill.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct / 100);
+  fill.style.stroke = pct > 85 ? '#f87171' : pct > 60 ? '#facc15' : '#4ade80';
+  text.textContent  = pct + '%';
+  text.style.color  = pct > 85 ? '#f87171' : pct > 60 ? '#facc15' : '#e8e8f0';
+
+  // Resets first of next month
+  const now   = new Date();
+  const next1 = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const daysLeft = Math.ceil((next1 - now) / 86400000);
+  reset.textContent = `resets in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}`;
+
+  if (monthly.usedCredits !== null && monthly.monthlyLimit !== null) {
+    barWrap.style.display = '';
+    const barFill = document.getElementById('monthlyBarFill');
+    barFill.style.width = pct + '%';
+    barFill.style.background = fill.style.stroke;
+    document.getElementById('monthlyUsed').textContent  = fmtNum(monthly.usedCredits) + ' used';
+    document.getElementById('monthlyLimit').textContent = fmtNum(monthly.monthlyLimit) + ' limit';
+  }
+}
+
+function renderStats(state) {
+  document.getElementById('statSessions').textContent = state.totalSessions;
+  document.getElementById('statRate').textContent = fmtNum(state.rate?.tokensPerMin || 0);
+  document.getElementById('rateValue').textContent = fmtNum(state.rate?.tokensPerMin || 0) + ' tok/min';
+}
+
+function renderRateChart(state) {
+  const buckets = state.rateBuckets || [];
+  rateChart.data.labels = buckets.map(b => fmtTime(b.ts));
+  rateChart.data.datasets[0].data = buckets.map(b => b.tokens);
+  rateChart.update('none');
+}
+
+function renderModelChart(state) {
+  const bd = state.modelBreakdown || {};
+  const entries = Object.entries(bd).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  modelChart.data.labels   = entries.map(([k]) => shortModel(k));
+  modelChart.data.datasets[0].data  = entries.map(([, v]) => v);
+  modelChart.data.datasets[0].backgroundColor = entries.map(([k]) => modelColor(k));
+  modelChart.update();
+}
+
+let prevSessionIds = new Set();
+
+function renderSessions(state) {
+  const sessions = sortSessions(state.sessions || []);
+  const body = document.getElementById('sessionsBody');
+  document.getElementById('sessionCount').textContent = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
+
+  if (sessions.length === 0) {
+    body.innerHTML = '<tr><td colspan="10" class="empty">No sessions found. Start a Claude Code session to see data.</td></tr>';
+    return;
+  }
+
+  const newIds = new Set(sessions.map(s => s.id));
+  const freshIds = new Set([...newIds].filter(id => !prevSessionIds.has(id)));
+  prevSessionIds = newIds;
+
+  // Build DOM — reuse existing rows by ID to avoid flicker
+  const existing = new Map();
+  for (const row of body.querySelectorAll('.session-row')) {
+    existing.set(row.dataset.id, row);
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  for (const sess of sessions) {
+    let row = existing.get(sess.id);
+    const isNew = freshIds.has(sess.id);
+
+    if (!row) {
+      row = document.createElement('tr');
+      row.className = 'session-row' + (sess.isSidechain ? ' sidechain' : '');
+      row.dataset.id = sess.id;
+      row.innerHTML = `
+        <td class="cell cell-id" title="${sess.fullId}"></td>
+        <td class="cell cell-proj" title="${sess.projectLabel}"></td>
+        <td class="cell cell-prompt col-prompt" title="${sess.firstPrompt}"></td>
+        <td class="cell"><span class="cell-model"></span></td>
+        <td class="cell cell-num input-tok"></td>
+        <td class="cell cell-num output-tok"></td>
+        <td class="cell cell-cache cache-create col-num"></td>
+        <td class="cell cell-cache cache-read col-num"></td>
+        <td class="cell sparkline-cell"></td>
+        <td class="cell cell-time last-seen"></td>
+      `;
+    }
+
+    row.querySelector('.cell-id').textContent       = sess.id;
+    row.querySelector('.cell-proj').textContent     = sess.projectLabel;
+    row.querySelector('.cell-prompt').textContent   = sess.firstPrompt;
+    const modelSpan = row.querySelector('.cell-model');
+    modelSpan.textContent = shortModel(sess.model);
+    modelSpan.className   = 'cell-model ' + modelClass(sess.model);
+    row.querySelector('.input-tok').textContent     = fmtNum(sess.tokens.input);
+    row.querySelector('.output-tok').textContent    = fmtNum(sess.tokens.output);
+    row.querySelector('.cache-create').textContent  = fmtNum(sess.tokens.cacheCreate);
+    row.querySelector('.cache-read').textContent    = fmtNum(sess.tokens.cacheRead);
+    row.querySelector('.last-seen').textContent     = timeAgo(sess.lastSeen);
+
+    // Sparkline
+    const spCell = row.querySelector('.sparkline-cell');
+    const { canvas, chart } = getOrCreateSparkline(sess.fullId);
+    if (!spCell.contains(canvas)) spCell.appendChild(canvas);
+    const events = sess.recentEvents || [];
+    chart.data.labels = events.map(e => '');
+    chart.data.datasets[0].data = events.map(e => e.total);
+    chart.update('none');
+
+    if (isNew) {
+      row.classList.remove('fresh');
+      void row.offsetWidth; // reflow
+      row.classList.add('fresh');
+    }
+
+    fragment.appendChild(row);
+  }
+
+  body.replaceChildren(fragment);
+}
+
+// ─── Formatters ────────────────────────────────────────────────────────────
+
+function fmtNum(n) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+  if (n >= 1_000)     return (n / 1_000).toFixed(1) + 'k';
+  return String(n);
+}
+
+function fmtResetDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' +
+         d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
+function fmtTime(ts) {
+  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+}
+
+function timeAgo(ts) {
+  const sec = Math.floor((Date.now() - ts) / 1000);
+  if (sec < 60)  return sec + 's ago';
+  if (sec < 3600) return Math.floor(sec / 60) + 'm ago';
+  return Math.floor(sec / 3600) + 'h ago';
+}
+
+function shortModel(name) {
+  // claude-sonnet-4-5-20250929 -> sonnet-4.5
+  // claude-opus-4-6 -> opus-4.6
+  const m = name.match(/claude-(\w+)-([\d]+)(?:[-.](\d+))?/);
+  if (m) return `${m[1]}-${m[2]}${m[3] ? '.' + m[3] : ''}`;
+  return name.replace('claude-', '').slice(0, 16);
+}
+
+function modelClass(name) {
+  if (name.includes('opus'))   return 'model-opus';
+  if (name.includes('sonnet')) return 'model-sonnet';
+  if (name.includes('haiku'))  return 'model-haiku';
+  return 'model-unknown';
+}
+
+// ─── Timer to refresh "X ago" labels ───────────────────────────────────────
+
+setInterval(() => {
+  for (const el of document.querySelectorAll('.last-seen')) {
+    // Value is kept from re-render; just let render() handle it
+  }
+}, 10000);
+
+// ─── Init ──────────────────────────────────────────────────────────────────
+
+initSortHeaders();
+connect();
+</script>
+</body>
+</html>
