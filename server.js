@@ -29,8 +29,22 @@ function readSwiftInjected(key) {
   return null;
 }
 
-const SESSION_KEY = process.env.CLAUDE_SESSION_KEY || readSwiftInjected('sessionKey');
-const ORG_ID      = process.env.CLAUDE_ORG_ID      || readSwiftInjected('orgId');
+let SESSION_KEY = process.env.CLAUDE_SESSION_KEY || readSwiftInjected('sessionKey');
+let ORG_ID      = process.env.CLAUDE_ORG_ID      || readSwiftInjected('orgId');
+
+// Update or add keys in .env without clobbering other entries
+function writeEnv(updates) {
+  const envPath = path.join(__dirname, '.env');
+  let lines = [];
+  try { lines = fs.readFileSync(envPath, 'utf8').split('\n'); } catch { /* new file */ }
+  for (const [key, value] of Object.entries(updates)) {
+    const idx = lines.findIndex(l => l.startsWith(key + '='));
+    const line = `${key}=${value}`;
+    if (idx >= 0) lines[idx] = line;
+    else lines.push(line);
+  }
+  fs.writeFileSync(envPath, lines.filter((l, i) => l || i < lines.length - 1).join('\n') + '\n');
+}
 
 // ─── State ───────────────────────────────────────────────────────────────────
 
@@ -387,7 +401,35 @@ function broadcast(wss, data) {
 // ─── Express Server ──────────────────────────────────────────────────────────
 
 const app = express();
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// GET /api/config — current credentials (session key masked)
+app.get('/api/config', (req, res) => {
+  res.json({
+    orgId:            ORG_ID || '',
+    sessionKeyMasked: SESSION_KEY ? SESSION_KEY.slice(0, 24) + '…' : '',
+    hasConfig:        !!(SESSION_KEY && ORG_ID),
+  });
+});
+
+// POST /api/config — update credentials, persist to .env, re-fetch
+app.post('/api/config', async (req, res) => {
+  const { sessionKey, orgId } = req.body || {};
+  if (!sessionKey || !orgId) {
+    return res.status(400).json({ error: 'sessionKey and orgId are required' });
+  }
+  SESSION_KEY = sessionKey.trim();
+  ORG_ID      = orgId.trim();
+  try {
+    writeEnv({ CLAUDE_SESSION_KEY: SESSION_KEY, CLAUDE_ORG_ID: ORG_ID });
+  } catch (err) {
+    console.warn('Could not write .env:', err.message);
+  }
+  await fetchUtilization();
+  broadcast(wss, buildState());
+  res.json({ ok: true });
+});
 
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });

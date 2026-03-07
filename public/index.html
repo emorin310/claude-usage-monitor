@@ -220,6 +220,101 @@
 
   /* ── No data ── */
   .empty { text-align: center; color: var(--muted); padding: 24px; }
+
+  /* ── Config modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    width: 420px;
+    max-width: 95vw;
+  }
+  .modal h2 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .modal-sub {
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .modal-sub a { color: var(--accent2); text-decoration: none; }
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 11px;
+    padding: 7px 9px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus { border-color: var(--accent2); }
+  .field-hint {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  .btn {
+    font-family: var(--font);
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-cancel { background: transparent; color: var(--muted); }
+  .btn-cancel:hover { background: var(--surface2); color: var(--text); }
+  .btn-save { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+  .btn-save:hover { opacity: 0.85; }
+  .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+  .modal-status {
+    font-size: 10px;
+    margin-top: 10px;
+    min-height: 16px;
+    text-align: right;
+  }
+  .modal-status.ok  { color: var(--green); }
+  .modal-status.err { color: var(--red); }
+
+  /* Gear icon in status bar */
+  .gear-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 13px; padding: 0 4px;
+    line-height: 1; transition: color 0.15s;
+  }
+  .gear-btn:hover { color: var(--text); }
 </style>
 </head>
 <body>
@@ -355,10 +450,42 @@
   </div>
 </div>
 
+<!-- ── Config Modal ── -->
+<div class="modal-overlay" id="configOverlay">
+  <div class="modal">
+    <h2>Configure Claude Usage Monitor</h2>
+    <p class="modal-sub">
+      Enter your claude.ai credentials to enable the rate-limit gauges.
+      These are saved to <code>.env</code> in the app directory and never leave your machine.
+    </p>
+
+    <div class="field">
+      <label>Session Key</label>
+      <input type="password" id="cfgSessionKey" placeholder="sk-ant-sid02-…" autocomplete="off" spellcheck="false">
+      <div class="field-hint">DevTools → Application → Cookies → claude.ai → <code>sessionKey</code></div>
+    </div>
+
+    <div class="field">
+      <label>Org ID</label>
+      <input type="text" id="cfgOrgId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+      <div class="field-hint">Run: <code>grep injectedOrgId ~/.claude/fetch-claude-usage.swift</code></div>
+    </div>
+
+    <div class="modal-actions">
+      <div class="modal-status" id="cfgStatus"></div>
+      <button class="btn btn-cancel" id="cfgCancel">Cancel</button>
+      <button class="btn btn-save" id="cfgSave">Save &amp; Connect</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── Status Bar ── -->
 <div class="statusbar">
   <span><span class="status-dot disconnected" id="statusDot"></span><span id="statusText">Connecting…</span></span>
-  <span id="statusTs"></span>
+  <span>
+    <span id="statusTs"></span>
+    <button class="gear-btn" id="gearBtn" title="Configure credentials">⚙</button>
+  </span>
 </div>
 
 <script>
@@ -553,6 +680,7 @@ function render(state) {
   renderModelChart(state);
   renderSessions(state);
   document.getElementById('statusTs').textContent = 'updated ' + fmtTime(state.ts);
+  maybeShowConfigOnFirstLoad(state);
 }
 
 function renderApiGauge(fillId, textId, resetId, naId, src, accentColor) {
@@ -815,10 +943,91 @@ setInterval(() => {
   }
 }, 10000);
 
+// ─── Config Modal ──────────────────────────────────────────────────────────
+
+let configShownOnce = false;
+
+async function openConfig() {
+  const overlay = document.getElementById('configOverlay');
+  overlay.classList.add('open');
+  document.getElementById('cfgStatus').textContent = '';
+  document.getElementById('cfgStatus').className = 'modal-status';
+
+  // Load current values from server
+  try {
+    const res = await fetch('/api/config');
+    const cfg = await res.json();
+    document.getElementById('cfgOrgId').value = cfg.orgId || '';
+    // Show masked key as placeholder so user knows one is saved
+    const keyInput = document.getElementById('cfgSessionKey');
+    keyInput.value = '';
+    keyInput.placeholder = cfg.sessionKeyMasked || 'sk-ant-sid02-…';
+  } catch { /* ignore */ }
+}
+
+function closeConfig() {
+  document.getElementById('configOverlay').classList.remove('open');
+}
+
+async function saveConfig() {
+  const sessionKey = document.getElementById('cfgSessionKey').value.trim();
+  const orgId      = document.getElementById('cfgOrgId').value.trim();
+  const status     = document.getElementById('cfgStatus');
+  const saveBtn    = document.getElementById('cfgSave');
+
+  if (!sessionKey || !orgId) {
+    status.textContent = 'Both fields are required.';
+    status.className = 'modal-status err';
+    return;
+  }
+
+  saveBtn.disabled = true;
+  status.textContent = 'Saving…';
+  status.className = 'modal-status';
+
+  try {
+    const res = await fetch('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionKey, orgId }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    status.textContent = 'Saved! Connecting…';
+    status.className = 'modal-status ok';
+    setTimeout(closeConfig, 1000);
+  } catch (err) {
+    status.textContent = 'Error: ' + err.message;
+    status.className = 'modal-status err';
+  } finally {
+    saveBtn.disabled = false;
+  }
+}
+
+function maybeShowConfigOnFirstLoad(state) {
+  if (configShownOnce) return;
+  configShownOnce = true;
+  if (!state.hasUsageApi) openConfig();
+}
+
+document.getElementById('gearBtn').addEventListener('click', openConfig);
+document.getElementById('cfgCancel').addEventListener('click', closeConfig);
+document.getElementById('cfgSave').addEventListener('click', saveConfig);
+document.getElementById('configOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('configOverlay')) closeConfig();
+});
+// Allow Escape to close
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeConfig();
+});
+
 // ─── Init ──────────────────────────────────────────────────────────────────
 
 initSortHeaders();
 connect();
+
 </script>
 </body>
 </html>
