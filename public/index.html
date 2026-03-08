@@ -19,6 +19,8 @@
     --text: #e8e8f0;
     --muted: #6b6b80;
     --font: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
+    --topbar-h: 36px;
+    --statusbar-h: 26px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -30,18 +32,63 @@
     overflow-x: hidden;
   }
 
+  /* ── Top bar ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--topbar-h);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 12px;
+    z-index: 100;
+  }
+  .app-title {
+    font-size: 11px; font-weight: 600;
+    color: var(--text); letter-spacing: 0.04em;
+  }
+  .app-title .logo { color: var(--accent); margin-right: 6px; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+  /* Live indicator */
+  .live-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 3px 8px;
+    font-family: var(--font); font-size: 10px; color: var(--muted);
+    cursor: default;
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  .live-dot.inactive { background: var(--red); animation: none; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  #liveTs { color: var(--text); font-weight: 600; }
+
+  /* Gear / settings button */
+  .settings-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 4px; padding: 3px 9px;
+    font-family: var(--font); font-size: 10px; color: var(--muted);
+    cursor: pointer; transition: color 0.15s, border-color 0.15s;
+  }
+  .settings-btn:hover { color: var(--text); border-color: var(--accent2); }
+
   /* ── Layout ── */
   .dashboard {
     display: grid;
     grid-template-columns: 200px 200px 200px 1fr 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: min-content 1fr;
     grid-template-areas:
       "weekly-gauge gauge monthly-gauge rate-chart model-chart"
       "sessions sessions sessions sessions sessions";
     gap: 8px;
     padding: 8px;
-    height: 100vh;
-    min-height: 480px;
+    height: calc(100vh - var(--topbar-h) - var(--statusbar-h));
+    margin-top: var(--topbar-h);
+    align-content: start;
   }
 
   .card {
@@ -60,10 +107,10 @@
     margin-bottom: 8px;
   }
 
-  /* ── Gauge ── */
-  .weekly-gauge-area   { grid-area: weekly-gauge;   display: flex; flex-direction: column; align-items: center; }
-  .gauge-area          { grid-area: gauge;           display: flex; flex-direction: column; align-items: center; }
-  .monthly-gauge-area  { grid-area: monthly-gauge;   display: flex; flex-direction: column; align-items: center; }
+  /* ── Gauge cards – fixed to their content, no stretch ── */
+  .weekly-gauge-area   { grid-area: weekly-gauge;   display: flex; flex-direction: column; align-items: center; align-self: start; }
+  .gauge-area          { grid-area: gauge;           display: flex; flex-direction: column; align-items: center; align-self: start; }
+  .monthly-gauge-area  { grid-area: monthly-gauge;   display: flex; flex-direction: column; align-items: center; align-self: start; }
 
   .credit-bar-wrap { width: 100%; margin-top: 8px; }
   .credit-bar-track { width: 100%; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
@@ -81,8 +128,6 @@
   .gauge-pct   { font-size: 28px; font-weight: 700; line-height: 1; }
   .gauge-label { font-size: 9px; color: var(--muted); margin-top: 2px; }
   .gauge-reset { font-size: 9px; color: var(--muted); text-align: center; margin-top: 4px; }
-  .gauge-delta-pos { color: var(--red); }
-  .gauge-delta-neg { color: var(--green); }
 
   .weekly-models { margin-top: 6px; width: 100%; }
   .model-stat {
@@ -101,13 +146,13 @@
   .stat-val { font-size: 14px; font-weight: 600; color: var(--text); }
   .stat-lbl { font-size: 9px; color: var(--muted); }
 
-  /* ── Rate chart ── */
+  /* ── Rate / Model chart cards ── */
   .rate-area  { grid-area: rate-chart; }
   .model-area { grid-area: model-chart; }
   .chart-wrap { height: calc(100% - 24px); min-height: 80px; }
 
   /* ── Sessions table ── */
-  .sessions-area { grid-area: sessions; }
+  .sessions-area { grid-area: sessions; min-height: 0; overflow: hidden; }
   .sessions-table-wrap {
     overflow-y: auto;
     max-height: calc(100% - 36px);
@@ -133,10 +178,8 @@
     border-bottom: 1px solid var(--border);
     white-space: nowrap;
   }
-  /* Prompt column absorbs all remaining width */
   .sessions-table th.col-prompt,
   .sessions-table td.col-prompt { width: 100%; }
-  /* Compact columns stay as narrow as their content */
   .sessions-table th.col-num,
   .sessions-table td.col-num { white-space: nowrap; }
   .sessions-table td {
@@ -144,7 +187,7 @@
     border-bottom: 1px solid #1a1a20;
     vertical-align: middle;
   }
-  .session-row { transition: background 0.15s; }
+  .session-row { transition: background 0.15s; cursor: default; }
   .session-row:hover td { background: var(--surface2); }
   .session-row.sidechain { opacity: 0.7; }
   .session-row.fresh td { animation: flash 0.8s ease; }
@@ -179,17 +222,9 @@
   .cell-time { color: var(--muted); text-align: right; }
 
   /* ── Sort headers ── */
-  .col-hdr {
-    cursor: pointer;
-    user-select: none;
-  }
+  .col-hdr { cursor: pointer; user-select: none; }
   .col-hdr:hover { color: var(--text); }
-  .sort-arrow {
-    font-size: 8px;
-    color: var(--border);
-    margin-left: 2px;
-    transition: color 0.15s;
-  }
+  .sort-arrow { font-size: 8px; color: var(--border); margin-left: 2px; transition: color 0.15s; }
   .col-hdr.active   { color: var(--text); }
   .col-hdr.active .sort-arrow { color: var(--accent); }
   .th-right { text-align: right; }
@@ -202,15 +237,15 @@
     font-size: 10px; color: var(--green);
   }
   .rate-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   /* ── Status bar ── */
   .statusbar {
     position: fixed; bottom: 0; left: 0; right: 0;
+    height: var(--statusbar-h);
     background: var(--surface);
     border-top: 1px solid var(--border);
-    padding: 3px 10px;
-    display: flex; justify-content: space-between;
+    padding: 0 10px;
+    display: flex; align-items: center; justify-content: space-between;
     font-size: 9px; color: var(--muted);
     z-index: 100;
   }
@@ -220,6 +255,42 @@
 
   /* ── No data ── */
   .empty { text-align: center; color: var(--muted); padding: 24px; }
+
+  /* ── Session hover flyout ── */
+  .session-flyout {
+    display: none;
+    position: fixed;
+    z-index: 250;
+    width: 300px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    pointer-events: none;
+  }
+  .flyout-title {
+    font-size: 10px; font-weight: 700; color: var(--accent);
+    margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 6px;
+  }
+  .flyout-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 8px; padding: 2px 0; font-size: 9px;
+  }
+  .flyout-label { color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+  .flyout-value { color: var(--text); text-align: right; word-break: break-all; }
+  .flyout-divider { border-top: 1px solid var(--border); margin: 6px 0; }
+  .flyout-prompt {
+    font-size: 9px; color: var(--text);
+    margin-top: 4px; line-height: 1.5;
+    max-height: 60px; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  }
+  .flyout-badge {
+    display: inline-block; font-size: 8px; padding: 1px 5px;
+    border-radius: 3px; background: var(--surface2);
+    margin: 1px 2px 1px 0;
+  }
 
   /* ── Config modal ── */
   .modal-overlay {
@@ -236,62 +307,45 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 20px 24px;
-    width: 420px;
+    width: 440px;
     max-width: 95vw;
   }
   .modal h2 {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--text);
+    font-size: 13px; font-weight: 600;
+    margin-bottom: 4px; color: var(--text);
   }
   .modal-sub {
-    font-size: 9px;
-    color: var(--muted);
-    margin-bottom: 16px;
-    line-height: 1.6;
+    font-size: 9px; color: var(--muted);
+    margin-bottom: 16px; line-height: 1.6;
   }
-  .modal-sub a { color: var(--accent2); text-decoration: none; }
+  .modal-section-header {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--accent2); margin: 14px 0 8px;
+    border-top: 1px solid var(--border); padding-top: 10px;
+  }
   .field { margin-bottom: 12px; }
   .field label {
-    display: block;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 4px;
+    display: block; font-size: 9px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin-bottom: 4px;
   }
-  .field input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 11px;
-    padding: 7px 9px;
-    outline: none;
-    transition: border-color 0.15s;
+  .field input, .field select {
+    width: 100%; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 5px;
+    color: var(--text); font-family: var(--font); font-size: 11px;
+    padding: 7px 9px; outline: none; transition: border-color 0.15s;
   }
-  .field input:focus { border-color: var(--accent2); }
-  .field-hint {
-    font-size: 9px;
-    color: var(--muted);
-    margin-top: 3px;
-  }
+  .field input:focus, .field select:focus { border-color: var(--accent2); }
+  .field-hint { font-size: 9px; color: var(--muted); margin-top: 3px; }
   .modal-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-    margin-top: 16px;
+    display: flex; gap: 8px;
+    justify-content: flex-end; margin-top: 16px;
+    align-items: center;
   }
   .btn {
-    font-family: var(--font);
-    font-size: 11px;
-    padding: 6px 14px;
-    border-radius: 5px;
-    border: 1px solid var(--border);
-    cursor: pointer;
+    font-family: var(--font); font-size: 11px;
+    padding: 6px 14px; border-radius: 5px;
+    border: 1px solid var(--border); cursor: pointer;
     transition: background 0.15s;
   }
   .btn-cancel { background: transparent; color: var(--muted); }
@@ -299,25 +353,28 @@
   .btn-save { background: var(--accent2); color: #fff; border-color: var(--accent2); }
   .btn-save:hover { opacity: 0.85; }
   .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
-  .modal-status {
-    font-size: 10px;
-    margin-top: 10px;
-    min-height: 16px;
-    text-align: right;
-  }
+  .modal-status { font-size: 10px; flex: 1; min-height: 16px; }
   .modal-status.ok  { color: var(--green); }
   .modal-status.err { color: var(--red); }
-
-  /* Gear icon in status bar */
-  .gear-btn {
-    background: none; border: none; cursor: pointer;
-    color: var(--muted); font-size: 13px; padding: 0 4px;
-    line-height: 1; transition: color 0.15s;
-  }
-  .gear-btn:hover { color: var(--text); }
 </style>
 </head>
 <body>
+
+<!-- ── Top Bar ── -->
+<div class="topbar" id="topbar">
+  <span class="app-title">
+    <span class="logo">◆</span>Claude Usage Monitor
+  </span>
+  <div class="topbar-right">
+    <div class="live-btn" id="liveBtn" title="Last update time">
+      <span class="live-dot" id="liveDot"></span>
+      <span id="liveTs">connecting…</span>
+    </div>
+    <button class="settings-btn" id="gearBtn" title="Configure credentials and settings">
+      ⚙ Settings
+    </button>
+  </div>
+</div>
 
 <div class="dashboard">
 
@@ -342,7 +399,7 @@
     </div>
   </div>
 
-  <!-- ── Gauge ── -->
+  <!-- ── 5-Hour Gauge ── -->
   <div class="card gauge-area">
     <div class="card-title">5-Hour Utilization</div>
     <div class="gauge-wrap">
@@ -358,7 +415,7 @@
     </div>
     <div class="gauge-reset" id="gaugeReset"></div>
     <div class="gauge-na" id="gaugeNA" style="display:none">
-      Session key not configured.<br>Add to .env to enable.
+      Session key not configured.
     </div>
     <div class="stat-row">
       <div class="stat">
@@ -372,9 +429,9 @@
     </div>
   </div>
 
-  <!-- ── Monthly Credits Gauge ── -->
+  <!-- ── Monthly Add. API Credits Gauge ── -->
   <div class="card monthly-gauge-area">
-    <div class="card-title">Monthly Credits</div>
+    <div class="card-title">Monthly Add. API Credits</div>
     <div class="gauge-wrap">
       <svg class="gauge-svg" viewBox="0 0 140 140">
         <circle class="gauge-track" cx="70" cy="70" r="56" />
@@ -428,8 +485,8 @@
       <span>Active Sessions</span>
       <span id="sessionCount" style="color:var(--muted)">0 sessions</span>
     </div>
-    <div class="sessions-table-wrap">
-      <table class="sessions-table">
+    <div class="sessions-table-wrap" id="sessionsWrap">
+      <table class="sessions-table" id="sessionsTable">
         <thead>
           <tr>
             <th class="col-hdr" data-sort="id">ID<span class="sort-arrow">↕</span></th>
@@ -450,42 +507,63 @@
   </div>
 </div>
 
+<!-- ── Session Hover Flyout ── -->
+<div class="session-flyout" id="sessionFlyout"></div>
+
 <!-- ── Config Modal ── -->
 <div class="modal-overlay" id="configOverlay">
   <div class="modal">
-    <h2>Configure Claude Usage Monitor</h2>
+    <h2>Settings</h2>
     <p class="modal-sub">
-      Enter your claude.ai credentials to enable the rate-limit gauges.
-      These are saved to <code>.env</code> in the app directory and never leave your machine.
+      Configure your claude.ai credentials to enable rate-limit gauges.
+      All values are saved to <code>.env</code> in the app directory.
     </p>
 
+    <div class="modal-section-header">Credentials</div>
+
     <div class="field">
-      <label>Session Key</label>
+      <label>Session Key <span style="color:var(--muted);font-size:8px;text-transform:none">(CLAUDE_SESSION_KEY)</span></label>
       <input type="password" id="cfgSessionKey" placeholder="sk-ant-sid02-…" autocomplete="off" spellcheck="false">
       <div class="field-hint">DevTools → Application → Cookies → claude.ai → <code>sessionKey</code></div>
     </div>
 
     <div class="field">
-      <label>Org ID</label>
+      <label>Org ID <span style="color:var(--muted);font-size:8px;text-transform:none">(CLAUDE_ORG_ID)</span></label>
       <input type="text" id="cfgOrgId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
       <div class="field-hint">Run: <code>grep injectedOrgId ~/.claude/fetch-claude-usage.swift</code></div>
+    </div>
+
+    <div class="modal-section-header">Update Frequency</div>
+
+    <div class="field">
+      <label>Poll Interval <span style="color:var(--muted);font-size:8px;text-transform:none">(USAGE_POLL_MS)</span></label>
+      <select id="cfgPollInterval">
+        <option value="5000">5 seconds</option>
+        <option value="10000">10 seconds</option>
+        <option value="15000">15 seconds</option>
+        <option value="30000" selected>30 seconds (default)</option>
+        <option value="60000">1 minute</option>
+        <option value="120000">2 minutes</option>
+        <option value="300000">5 minutes</option>
+      </select>
+      <div class="field-hint">How often the server polls the claude.ai usage API</div>
     </div>
 
     <div class="modal-actions">
       <div class="modal-status" id="cfgStatus"></div>
       <button class="btn btn-cancel" id="cfgCancel">Cancel</button>
-      <button class="btn btn-save" id="cfgSave">Save &amp; Connect</button>
+      <button class="btn btn-save" id="cfgSave">Save &amp; Apply</button>
     </div>
   </div>
 </div>
 
 <!-- ── Status Bar ── -->
 <div class="statusbar">
-  <span><span class="status-dot disconnected" id="statusDot"></span><span id="statusText">Connecting…</span></span>
   <span>
-    <span id="statusTs"></span>
-    <button class="gear-btn" id="gearBtn" title="Configure credentials">⚙</button>
+    <span class="status-dot disconnected" id="statusDot"></span>
+    <span id="statusText">Connecting…</span>
   </span>
+  <span id="statusInfo" style="color:var(--muted)"></span>
 </div>
 
 <script>
@@ -559,11 +637,12 @@ function connect() {
   ws.onmessage = ({ data }) => {
     const msg = JSON.parse(data);
     if (msg.type === 'state') render(msg);
-    if (msg.type === 'ping') document.getElementById('statusTs').textContent = 'ping ' + fmtTime(msg.ts);
+    if (msg.type === 'ping') updateLiveTs(msg.ts);
   };
 
   ws.onclose = () => {
     setStatus(false);
+    document.getElementById('liveDot').className = 'live-dot inactive';
     reconnectTimer = setTimeout(connect, 3000);
   };
 
@@ -573,6 +652,11 @@ function connect() {
 function setStatus(connected) {
   document.getElementById('statusDot').className = 'status-dot ' + (connected ? 'connected' : 'disconnected');
   document.getElementById('statusText').textContent = connected ? 'Connected' : 'Reconnecting…';
+}
+
+function updateLiveTs(ts) {
+  document.getElementById('liveTs').textContent = fmtTime(ts);
+  document.getElementById('liveDot').className = 'live-dot';
 }
 
 // ─── Charts ────────────────────────────────────────────────────────────────
@@ -602,10 +686,7 @@ const rateChart = new Chart(rateCtx, {
   },
   options: {
     ...CHART_DEFAULTS,
-    scales: {
-      x: { display: false },
-      y: { display: false, beginAtZero: true },
-    },
+    scales: { x: { display: false }, y: { display: false, beginAtZero: true } },
     maintainAspectRatio: false,
   },
 });
@@ -618,8 +699,7 @@ const modelChart = new Chart(modelCtx, {
     animation: { duration: 400 },
     plugins: {
       legend: {
-        display: true,
-        position: 'right',
+        display: true, position: 'right',
         labels: { color: '#6b6b80', font: { size: 9, family: 'SF Mono, monospace' }, boxWidth: 8, padding: 6 },
       },
     },
@@ -641,16 +721,13 @@ function modelColor(name) {
   return '#6b6b80';
 }
 
-// Per-session sparklines (canvas elements)
-const sparklines = new Map(); // sessionId -> canvas + chart
+const sparklines = new Map();
 
 function getOrCreateSparkline(sessionId) {
   if (sparklines.has(sessionId)) return sparklines.get(sessionId);
-
   const canvas = document.createElement('canvas');
   canvas.className = 'sparkline';
-  canvas.width = 90;
-  canvas.height = 24;
+  canvas.width = 90; canvas.height = 24;
   const ctx = canvas.getContext('2d');
   const chart = new Chart(ctx, {
     type: 'bar',
@@ -679,7 +756,10 @@ function render(state) {
   renderRateChart(state);
   renderModelChart(state);
   renderSessions(state);
-  document.getElementById('statusTs').textContent = 'updated ' + fmtTime(state.ts);
+  updateLiveTs(state.ts);
+  // Show poll interval in status bar
+  const pollSec = Math.round((state.pollIntervalMs || 30000) / 1000);
+  document.getElementById('statusInfo').textContent = `polling every ${pollSec}s`;
   maybeShowConfigOnFirstLoad(state);
 }
 
@@ -721,15 +801,11 @@ function renderWeeklyGauge(state) {
   const src  = state.hasUsageApi ? (util.weekly || {}) : null;
   renderApiGauge('weeklyGaugeFill', 'weeklyGaugeText', 'weeklyGaugeDelta', 'weeklyNA', src, '#7b68ee');
 
-  // Per-model weekly badges
   const modelsEl = document.getElementById('weeklyModels');
   if (!modelsEl) return;
   const models = util.models || {};
   const entries = Object.entries(models).filter(([, v]) => v.utilization !== null);
-  if (entries.length === 0) {
-    modelsEl.innerHTML = '';
-    return;
-  }
+  if (entries.length === 0) { modelsEl.innerHTML = ''; return; }
   modelsEl.innerHTML = entries
     .sort((a, b) => b[1].utilization - a[1].utilization)
     .slice(0, 3)
@@ -743,8 +819,7 @@ function renderWeeklyGauge(state) {
         <span class="model-stat-pct" style="color:${color}">${pct}%</span>
         ${reset ? `<span class="model-stat-reset">${reset}</span>` : ''}
       </div>`;
-    })
-    .join('');
+    }).join('');
 }
 
 function renderGauge(state) {
@@ -778,7 +853,6 @@ function renderMonthlyGauge(state) {
   text.textContent  = pct + '%';
   text.style.color  = pct > 85 ? '#f87171' : pct > 60 ? '#facc15' : '#e8e8f0';
 
-  // Resets first of next month
   const now   = new Date();
   const next1 = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   const daysLeft = Math.ceil((next1 - now) / 86400000);
@@ -832,7 +906,6 @@ function renderSessions(state) {
   const freshIds = new Set([...newIds].filter(id => !prevSessionIds.has(id)));
   prevSessionIds = newIds;
 
-  // Build DOM — reuse existing rows by ID to avoid flicker
   const existing = new Map();
   for (const row of body.querySelectorAll('.session-row')) {
     existing.set(row.dataset.id, row);
@@ -860,8 +933,14 @@ function renderSessions(state) {
         <td class="cell sparkline-cell"></td>
         <td class="cell cell-time last-seen"></td>
       `;
+      // Flyout hover
+      attachFlyout(row, sess);
+    } else {
+      // Update the stored sess data reference for hover
+      row._sessData = sess;
     }
 
+    row._sessData = sess;
     row.querySelector('.cell-id').textContent       = sess.id;
     row.querySelector('.cell-proj').textContent     = sess.projectLabel;
     row.querySelector('.cell-prompt').textContent   = sess.firstPrompt;
@@ -874,18 +953,17 @@ function renderSessions(state) {
     row.querySelector('.cache-read').textContent    = fmtNum(sess.tokens.cacheRead);
     row.querySelector('.last-seen').textContent     = timeAgo(sess.lastSeen);
 
-    // Sparkline
     const spCell = row.querySelector('.sparkline-cell');
     const { canvas, chart } = getOrCreateSparkline(sess.fullId);
     if (!spCell.contains(canvas)) spCell.appendChild(canvas);
     const events = sess.recentEvents || [];
-    chart.data.labels = events.map(e => '');
+    chart.data.labels = events.map(() => '');
     chart.data.datasets[0].data = events.map(e => e.total);
     chart.update('none');
 
     if (isNew) {
       row.classList.remove('fresh');
-      void row.offsetWidth; // reflow
+      void row.offsetWidth;
       row.classList.add('fresh');
     }
 
@@ -893,6 +971,84 @@ function renderSessions(state) {
   }
 
   body.replaceChildren(fragment);
+}
+
+// ─── Session Flyout ────────────────────────────────────────────────────────
+
+const flyout = document.getElementById('sessionFlyout');
+let flyoutHideTimer = null;
+
+function attachFlyout(row, sess) {
+  row.addEventListener('mouseenter', (e) => {
+    if (flyoutHideTimer) { clearTimeout(flyoutHideTimer); flyoutHideTimer = null; }
+    showFlyout(row._sessData || sess, row.getBoundingClientRect());
+  });
+  row.addEventListener('mouseleave', () => {
+    flyoutHideTimer = setTimeout(hideFlyout, 120);
+  });
+}
+
+function showFlyout(sess, rect) {
+  flyout.innerHTML = buildFlyoutHTML(sess);
+  flyout.style.display = 'block';
+
+  // Position: prefer right side, flip left if too close to edge
+  const fw = 300, fh = flyout.scrollHeight || 320;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let left = rect.right + 8;
+  if (left + fw > vw - 8) left = rect.left - fw - 8;
+  let top = rect.top;
+  if (top + fh > vh - 8) top = vh - fh - 8;
+  if (top < 40) top = 40;
+  flyout.style.left = Math.max(8, left) + 'px';
+  flyout.style.top  = top + 'px';
+}
+
+function hideFlyout() {
+  flyout.style.display = 'none';
+  flyoutHideTimer = null;
+}
+
+function buildFlyoutHTML(sess) {
+  const dur = sess.lastSeen - (sess.firstSeen || sess.lastSeen);
+  const durStr = dur < 60000
+    ? Math.floor(dur / 1000) + 's'
+    : dur < 3600000
+      ? Math.floor(dur / 60000) + 'm ' + Math.floor((dur % 60000) / 1000) + 's'
+      : Math.floor(dur / 3600000) + 'h ' + Math.floor((dur % 3600000) / 60000) + 'm';
+
+  const modelBadges = (sess.models || [sess.model])
+    .map(m => `<span class="flyout-badge ${modelClass(m)}">${shortModel(m)}</span>`)
+    .join('');
+
+  const total = (sess.tokens.input || 0) + (sess.tokens.output || 0)
+              + (sess.tokens.cacheRead || 0) + (sess.tokens.cacheCreate || 0);
+
+  return `
+    <div class="flyout-title">${sess.id} ${sess.isSidechain ? '<span style="color:var(--muted);font-size:8px">[sidechain]</span>' : ''}</div>
+    <div class="flyout-row"><span class="flyout-label">Full ID</span><span class="flyout-value" style="font-size:8px;color:var(--muted)">${sess.fullId}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Project</span><span class="flyout-value">${sess.projectPath || sess.projectLabel}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Models</span><span class="flyout-value">${modelBadges}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Source</span><span class="flyout-value">local</span></div>
+    <div class="flyout-divider"></div>
+    <div class="flyout-row"><span class="flyout-label">Started</span><span class="flyout-value">${fmtDatetime(sess.firstSeen || sess.lastSeen)}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Last seen</span><span class="flyout-value">${fmtDatetime(sess.lastSeen)}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Duration</span><span class="flyout-value">${dur > 0 ? durStr : '—'}</span></div>
+    <div class="flyout-row"><span class="flyout-label">API calls</span><span class="flyout-value">${sess.totalEvents || '—'}</span></div>
+    <div class="flyout-divider"></div>
+    <div class="flyout-row"><span class="flyout-label">Input</span><span class="flyout-value">${fmtNum(sess.tokens.input)}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Output</span><span class="flyout-value">${fmtNum(sess.tokens.output)}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Cache read</span><span class="flyout-value" style="color:var(--accent2)">${fmtNum(sess.tokens.cacheRead)}</span></div>
+    <div class="flyout-row"><span class="flyout-label">Cache write</span><span class="flyout-value" style="color:var(--accent2)">${fmtNum(sess.tokens.cacheCreate)}</span></div>
+    <div class="flyout-row"><span class="flyout-label"><strong>Total</strong></span><span class="flyout-value"><strong>${fmtNum(total)}</strong></span></div>
+    <div class="flyout-divider"></div>
+    <div style="font-size:8px;color:var(--muted);margin-bottom:3px">FIRST PROMPT</div>
+    <div class="flyout-prompt">${escHtml(sess.firstPrompt || '(none captured)')}</div>
+  `;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ─── Formatters ────────────────────────────────────────────────────────────
@@ -913,16 +1069,20 @@ function fmtTime(ts) {
   return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
 }
 
+function fmtDatetime(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' +
+         d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
 function timeAgo(ts) {
   const sec = Math.floor((Date.now() - ts) / 1000);
-  if (sec < 60)  return sec + 's ago';
-  if (sec < 3600) return Math.floor(sec / 60) + 'm ago';
+  if (sec < 60)    return sec + 's ago';
+  if (sec < 3600)  return Math.floor(sec / 60) + 'm ago';
   return Math.floor(sec / 3600) + 'h ago';
 }
 
 function shortModel(name) {
-  // claude-sonnet-4-5-20250929 -> sonnet-4.5
-  // claude-opus-4-6 -> opus-4.6
   const m = name.match(/claude-(\w+)-([\d]+)(?:[-.](\d+))?/);
   if (m) return `${m[1]}-${m[2]}${m[3] ? '.' + m[3] : ''}`;
   return name.replace('claude-', '').slice(0, 16);
@@ -935,14 +1095,6 @@ function modelClass(name) {
   return 'model-unknown';
 }
 
-// ─── Timer to refresh "X ago" labels ───────────────────────────────────────
-
-setInterval(() => {
-  for (const el of document.querySelectorAll('.last-seen')) {
-    // Value is kept from re-render; just let render() handle it
-  }
-}, 10000);
-
 // ─── Config Modal ──────────────────────────────────────────────────────────
 
 let configShownOnce = false;
@@ -953,15 +1105,24 @@ async function openConfig() {
   document.getElementById('cfgStatus').textContent = '';
   document.getElementById('cfgStatus').className = 'modal-status';
 
-  // Load current values from server
   try {
     const res = await fetch('/api/config');
     const cfg = await res.json();
     document.getElementById('cfgOrgId').value = cfg.orgId || '';
-    // Show masked key as placeholder so user knows one is saved
     const keyInput = document.getElementById('cfgSessionKey');
     keyInput.value = '';
     keyInput.placeholder = cfg.sessionKeyMasked || 'sk-ant-sid02-…';
+    // Set poll interval select
+    const pollSel = document.getElementById('cfgPollInterval');
+    const pollVal = String(cfg.pollIntervalMs || 30000);
+    // Find closest option
+    let best = pollSel.options[0];
+    let bestDiff = Infinity;
+    for (const opt of pollSel.options) {
+      const diff = Math.abs(Number(opt.value) - Number(pollVal));
+      if (diff < bestDiff) { bestDiff = diff; best = opt; }
+    }
+    best.selected = true;
   } catch { /* ignore */ }
 }
 
@@ -970,13 +1131,14 @@ function closeConfig() {
 }
 
 async function saveConfig() {
-  const sessionKey = document.getElementById('cfgSessionKey').value.trim();
-  const orgId      = document.getElementById('cfgOrgId').value.trim();
-  const status     = document.getElementById('cfgStatus');
-  const saveBtn    = document.getElementById('cfgSave');
+  const sessionKey    = document.getElementById('cfgSessionKey').value.trim();
+  const orgId         = document.getElementById('cfgOrgId').value.trim();
+  const pollIntervalMs = parseInt(document.getElementById('cfgPollInterval').value, 10);
+  const status        = document.getElementById('cfgStatus');
+  const saveBtn       = document.getElementById('cfgSave');
 
   if (!sessionKey || !orgId) {
-    status.textContent = 'Both fields are required.';
+    status.textContent = 'Session key and Org ID are required.';
     status.className = 'modal-status err';
     return;
   }
@@ -989,15 +1151,15 @@ async function saveConfig() {
     const res = await fetch('/api/config', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionKey, orgId }),
+      body: JSON.stringify({ sessionKey, orgId, pollIntervalMs }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || `HTTP ${res.status}`);
     }
-    status.textContent = 'Saved! Connecting…';
+    status.textContent = 'Saved!';
     status.className = 'modal-status ok';
-    setTimeout(closeConfig, 1000);
+    setTimeout(closeConfig, 900);
   } catch (err) {
     status.textContent = 'Error: ' + err.message;
     status.className = 'modal-status err';
@@ -1018,7 +1180,6 @@ document.getElementById('cfgSave').addEventListener('click', saveConfig);
 document.getElementById('configOverlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('configOverlay')) closeConfig();
 });
-// Allow Escape to close
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeConfig();
 });
@@ -1027,7 +1188,6 @@ document.addEventListener('keydown', (e) => {
 
 initSortHeaders();
 connect();
-
 </script>
 </body>
 </html>

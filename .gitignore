@@ -4,3 +4,4 @@ logs/
 .pid
 *.log
 .DS_Store
+test-results/

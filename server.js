@@ -14,8 +14,9 @@ const STATS_CACHE = path.join(CLAUDE_DIR, 'stats-cache.json');
 const SWIFT_SCRIPT = path.join(CLAUDE_DIR, 'fetch-claude-usage.swift');
 
 const PORT = parseInt(process.env.PORT || '3847', 10);
-const USAGE_POLL_MS = parseInt(process.env.USAGE_POLL_MS || '30000', 10);
+let currentPollMs = Math.max(5000, parseInt(process.env.USAGE_POLL_MS || '30000', 10));
 const RATE_WINDOW_MS = 60_000; // 1-minute sliding window for token rate
+let pollingInterval = null;
 
 // Read org ID and session key from env or fall back to the swift script
 function readSwiftInjected(key) {
@@ -168,6 +169,8 @@ function processNewLines(filePath, newContent) {
         isSidechain,
         tokens: { input: 0, output: 0, cacheRead: 0, cacheCreate: 0 },
         events: [],
+        firstSeen: ts,
+        totalEvents: 0,
         lastSeen: ts,
       });
     }
@@ -181,6 +184,7 @@ function processNewLines(filePath, newContent) {
     sess.tokens.cacheRead  += cacheRead;
     sess.tokens.cacheCreate += cacheCreate;
     sess.events.push({ ts, input: inputTok, output: outputTok, cacheRead, cacheCreate });
+    sess.totalEvents += 1;
 
     // Keep only last 100 events per session for sparklines
     if (sess.events.length > 100) sess.events.shift();
@@ -341,12 +345,15 @@ function buildState() {
       id: s.shortId,
       fullId: s.id,
       projectLabel: s.projectLabel,
+      projectPath: s.projectPath,
       firstPrompt: s.firstPrompt || '(no prompt captured)',
       model: s.model,
       models: [...s.modelHistory],
       isSidechain: s.isSidechain,
       tokens: s.tokens,
       totalTokens: tokensTotal(s.tokens),
+      firstSeen: s.firstSeen || s.lastSeen,
+      totalEvents: s.totalEvents || 0,
       lastSeen: s.lastSeen,
       // Last 20 events for mini sparkline
       recentEvents: s.events.slice(-20).map(e => ({
@@ -380,6 +387,7 @@ function buildState() {
     ts: now,
     utilization: utilizationData,
     hasUsageApi: !!(SESSION_KEY && ORG_ID),
+    pollIntervalMs: currentPollMs,
     rate,
     sessions: sessionList,
     modelBreakdown,
@@ -404,25 +412,32 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// GET /api/config — current credentials (session key masked)
+// GET /api/config — current credentials (session key masked) + poll interval
 app.get('/api/config', (req, res) => {
   res.json({
     orgId:            ORG_ID || '',
     sessionKeyMasked: SESSION_KEY ? SESSION_KEY.slice(0, 24) + '…' : '',
     hasConfig:        !!(SESSION_KEY && ORG_ID),
+    pollIntervalMs:   currentPollMs,
   });
 });
 
-// POST /api/config — update credentials, persist to .env, re-fetch
+// POST /api/config — update credentials + poll interval, persist to .env, re-fetch
 app.post('/api/config', async (req, res) => {
-  const { sessionKey, orgId } = req.body || {};
+  const { sessionKey, orgId, pollIntervalMs } = req.body || {};
   if (!sessionKey || !orgId) {
     return res.status(400).json({ error: 'sessionKey and orgId are required' });
   }
   SESSION_KEY = sessionKey.trim();
   ORG_ID      = orgId.trim();
+  const envUpdates = { CLAUDE_SESSION_KEY: SESSION_KEY, CLAUDE_ORG_ID: ORG_ID };
+  if (pollIntervalMs && Number.isInteger(pollIntervalMs) && pollIntervalMs >= 5000) {
+    currentPollMs = pollIntervalMs;
+    envUpdates.USAGE_POLL_MS = pollIntervalMs;
+    startPolling(); // restart interval with new cadence
+  }
   try {
-    writeEnv({ CLAUDE_SESSION_KEY: SESSION_KEY, CLAUDE_ORG_ID: ORG_ID });
+    writeEnv(envUpdates);
   } catch (err) {
     console.warn('Could not write .env:', err.message);
   }
@@ -450,12 +465,17 @@ server.listen(PORT, () => {
 
 startWatcher(wss);
 
-// Initial utilization fetch, then poll
+// Initial utilization fetch, then start polling loop
+function startPolling() {
+  if (pollingInterval) clearInterval(pollingInterval);
+  pollingInterval = setInterval(async () => {
+    await fetchUtilization();
+    broadcast(wss, buildState());
+  }, currentPollMs);
+}
+
 fetchUtilization();
-setInterval(async () => {
-  await fetchUtilization();
-  broadcast(wss, buildState());
-}, USAGE_POLL_MS);
+startPolling();
 
 // Heartbeat so iframe knows it's alive
 setInterval(() => broadcast(wss, { type: 'ping', ts: Date.now() }), 5000);
