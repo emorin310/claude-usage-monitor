@@ -79,16 +79,16 @@
   /* ── Layout ── */
   .dashboard {
     display: grid;
-    grid-template-columns: 200px 200px 200px 1fr 1fr;
-    grid-template-rows: min-content 1fr;
+    grid-template-columns: 180px 180px 180px 1fr 1fr 180px;
+    grid-template-rows: minmax(220px, auto) auto;
     grid-template-areas:
-      "weekly-gauge gauge monthly-gauge rate-chart model-chart"
-      "sessions sessions sessions sessions sessions";
+      "weekly-gauge gauge sonnet-gauge rate-chart model-chart monthly-gauge"
+      "sessions sessions sessions sessions sessions sessions";
     gap: 8px;
     padding: 8px;
-    height: calc(100vh - var(--topbar-h) - var(--statusbar-h));
+    padding-bottom: calc(var(--statusbar-h) + 16px);
     margin-top: var(--topbar-h);
-    align-content: start;
+    box-sizing: border-box;
   }
 
   .card {
@@ -107,17 +107,18 @@
     margin-bottom: 8px;
   }
 
-  /* ── Gauge cards – fixed to their content, no stretch ── */
-  .weekly-gauge-area   { grid-area: weekly-gauge;   display: flex; flex-direction: column; align-items: center; align-self: start; }
-  .gauge-area          { grid-area: gauge;           display: flex; flex-direction: column; align-items: center; align-self: start; }
-  .monthly-gauge-area  { grid-area: monthly-gauge;   display: flex; flex-direction: column; align-items: center; align-self: start; }
+  /* ── Gauge cards – stretch to match chart card height ── */
+  .weekly-gauge-area   { grid-area: weekly-gauge;   display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+  .gauge-area          { grid-area: gauge;           display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+  .monthly-gauge-area  { grid-area: monthly-gauge;   display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+  .sonnet-gauge-area   { grid-area: sonnet-gauge;    display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
 
   .credit-bar-wrap { width: 100%; margin-top: 8px; }
   .credit-bar-track { width: 100%; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
   .credit-bar-fill  { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
   .credit-bar-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-top: 3px; }
-  .gauge-wrap { position: relative; width: 140px; height: 140px; margin: 4px auto; }
-  .gauge-svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+  .gauge-wrap { position: relative; width: clamp(100px, 100%, 140px); height: clamp(100px, 100%, 140px); margin: 4px auto; aspect-ratio: 1; }
+  .gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .gauge-track { fill: none; stroke: var(--border); stroke-width: 14; }
   .gauge-fill  { fill: none; stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease; }
   .gauge-center {
@@ -152,10 +153,9 @@
   .chart-wrap { height: calc(100% - 24px); min-height: 80px; }
 
   /* ── Sessions table ── */
-  .sessions-area { grid-area: sessions; min-height: 0; overflow: hidden; }
+  .sessions-area { grid-area: sessions; overflow: hidden; }
   .sessions-table-wrap {
     overflow-y: auto;
-    max-height: calc(100% - 36px);
   }
   .sessions-table {
     width: 100%;
@@ -187,7 +187,7 @@
     border-bottom: 1px solid #1a1a20;
     vertical-align: middle;
   }
-  .session-row { transition: background 0.15s; cursor: default; }
+  .session-row { transition: background 0.15s; cursor: pointer; }
   .session-row:hover td { background: var(--surface2); }
   .session-row.sidechain { opacity: 0.7; }
   .session-row.fresh td { animation: flash 0.8s ease; }
@@ -455,6 +455,26 @@
     </div>
     <div class="gauge-na" id="monthlyNA" style="display:none">
       Extra credits not enabled.
+    </div>
+  </div>
+
+  <!-- ── Sonnet Weekly Gauge ── -->
+  <div class="card sonnet-gauge-area">
+    <div class="card-title">Weekly — Sonnet</div>
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 140 140">
+        <circle class="gauge-track" cx="70" cy="70" r="56" />
+        <circle class="gauge-fill" id="sonnetGaugeFill" cx="70" cy="70" r="56"
+          stroke-dasharray="351.86" stroke-dashoffset="351.86" stroke="#5b9cf5" />
+      </svg>
+      <div class="gauge-center">
+        <span class="gauge-pct" id="sonnetGaugeText">—</span>
+        <span class="gauge-label">weekly</span>
+      </div>
+    </div>
+    <div class="gauge-reset" id="sonnetGaugeReset"></div>
+    <div class="gauge-na" id="sonnetNA" style="display:none">
+      Session key not configured.
     </div>
   </div>
 
@@ -752,6 +772,7 @@ function render(state) {
   renderWeeklyGauge(state);
   renderGauge(state);
   renderMonthlyGauge(state);
+  renderSonnetGauge(state);
   renderStats(state);
   renderRateChart(state);
   renderModelChart(state);
@@ -761,6 +782,8 @@ function render(state) {
   const pollSec = Math.round((state.pollIntervalMs || 30000) / 1000);
   document.getElementById('statusInfo').textContent = `polling every ${pollSec}s`;
   maybeShowConfigOnFirstLoad(state);
+  // Tell parent iframe to resize to content height
+  // Height reporting handled by ResizeObserver (see bottom of script)
 }
 
 function renderApiGauge(fillId, textId, resetId, naId, src, accentColor) {
@@ -790,10 +813,54 @@ function renderApiGauge(fillId, textId, resetId, naId, src, accentColor) {
 
   if (reset && src.resetsAt) {
     const ms = new Date(src.resetsAt) - Date.now();
-    reset.textContent = ms > 0
-      ? `resets in ${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s`
-      : 'resetting…';
+    if (ms > 0) {
+      const totalSec = Math.floor(ms / 1000);
+      const d = Math.floor(totalSec / 86400);
+      const h = Math.floor((totalSec % 86400) / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      const parts = [];
+      if (d > 0) parts.push(`${d}d`);
+      if (h > 0) parts.push(`${h}h`);
+      if (m > 0 || d > 0 || h > 0) parts.push(`${m}m`);
+      parts.push(`${s}s`);
+      reset.textContent = `resets in ${parts.join(' ')}`;
+    } else {
+      reset.textContent = 'resetting…';
+    }
   }
+}
+
+function renderSonnetGauge(state) {
+  const util = state.utilization || {};
+  const models = util.models || {};
+  // Try 'sonnet' key first, then scan for any key containing 'sonnet'
+  let sonnetData = models['sonnet'];
+  if (!sonnetData) {
+    const key = Object.keys(models).find(k => k.toLowerCase().includes('sonnet'));
+    if (key) sonnetData = models[key];
+  }
+
+  const na = document.getElementById('sonnetNA');
+  const fill = document.getElementById('sonnetGaugeFill');
+  const text = document.getElementById('sonnetGaugeText');
+  const reset = document.getElementById('sonnetGaugeReset');
+
+  if (!sonnetData || sonnetData.utilization === null) {
+    if (na) na.style.display = '';
+    if (fill) fill.style.display = 'none';
+    if (text) text.textContent = '—';
+    return;
+  }
+  if (na) na.style.display = 'none';
+  if (fill) fill.style.display = '';
+
+  const pct = Math.min(100, Math.max(0, sonnetData.utilization));
+  const color = pct > 85 ? 'var(--red)' : pct > 60 ? 'var(--yellow)' : '#5b9cf5';
+  const offset = CIRCUMFERENCE * (1 - pct / 100);
+  if (fill) { fill.style.strokeDashoffset = offset; fill.style.stroke = color; }
+  if (text) text.textContent = pct + '%';
+  if (reset && sonnetData.resetsAt) reset.textContent = fmtResetDate(sonnetData.resetsAt);
 }
 
 function renderWeeklyGauge(state) {
@@ -978,13 +1045,19 @@ function renderSessions(state) {
 const flyout = document.getElementById('sessionFlyout');
 let flyoutHideTimer = null;
 
+let activeFlyoutRow = null;
+
 function attachFlyout(row, sess) {
-  row.addEventListener('mouseenter', (e) => {
-    if (flyoutHideTimer) { clearTimeout(flyoutHideTimer); flyoutHideTimer = null; }
-    showFlyout(row._sessData || sess, row.getBoundingClientRect());
-  });
-  row.addEventListener('mouseleave', () => {
-    flyoutHideTimer = setTimeout(hideFlyout, 120);
+  row.addEventListener('click', () => {
+    const data = row._sessData || sess;
+    if (activeFlyoutRow === row && flyout.style.display === 'block') {
+      hideFlyout();
+      activeFlyoutRow = null;
+    } else {
+      if (flyoutHideTimer) { clearTimeout(flyoutHideTimer); flyoutHideTimer = null; }
+      activeFlyoutRow = row;
+      showFlyout(data, row.getBoundingClientRect());
+    }
   });
 }
 
@@ -1007,7 +1080,15 @@ function showFlyout(sess, rect) {
 function hideFlyout() {
   flyout.style.display = 'none';
   flyoutHideTimer = null;
+  activeFlyoutRow = null;
 }
+
+// Close flyout when clicking anywhere outside it or the active row
+document.addEventListener('click', function(e) {
+  if (flyout.style.display === 'block' && !flyout.contains(e.target) && (!activeFlyoutRow || !activeFlyoutRow.contains(e.target))) {
+    hideFlyout();
+  }
+});
 
 function buildFlyoutHTML(sess) {
   const dur = sess.lastSeen - (sess.firstSeen || sess.lastSeen);
@@ -1066,7 +1147,7 @@ function fmtResetDate(iso) {
 }
 
 function fmtTime(ts) {
-  return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  return new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
 }
 
 function fmtDatetime(ts) {
@@ -1188,6 +1269,34 @@ document.addEventListener('keydown', (e) => {
 
 initSortHeaders();
 connect();
+
+// ─── Iframe auto-resize via ResizeObserver ──────────────────────────────────
+// Reports content height to parent. Uses scrollHeight (intrinsic content size)
+// instead of offsetHeight (which reflects container size and causes feedback loops).
+(function() {
+  const TOPBAR_H = 36;
+  const STATUSBAR_H = 26;
+  const MAX_HEIGHT = 1200;
+  var lastReported = 0;
+
+  function reportHeight() {
+    const dashboard = document.querySelector('.dashboard');
+    if (!dashboard) return;
+    // scrollHeight = intrinsic content height (not influenced by iframe container size)
+    var h = TOPBAR_H + dashboard.scrollHeight + STATUSBAR_H + 4;
+    if (h > MAX_HEIGHT) h = MAX_HEIGHT;
+    // Only report if height actually changed (prevents feedback loop)
+    if (Math.abs(h - lastReported) < 2) return;
+    lastReported = h;
+    window.parent.postMessage({ type: 'iframeResize', height: h }, '*');
+  }
+
+  const dashboard = document.querySelector('.dashboard');
+  if (dashboard && window.ResizeObserver) {
+    new ResizeObserver(reportHeight).observe(dashboard);
+  }
+  window.addEventListener('load', reportHeight);
+})();
 </script>
 </body>
 </html>
